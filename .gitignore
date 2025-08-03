@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+npm-debug.log*
+
+# Vite cache
+.vite/
+
+# Mac system files
+.DS_Store
+
+# Editor directories and files
+.vscode/
