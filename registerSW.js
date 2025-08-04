@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/amstar2-checklist-scoring-app/sw.js', { scope: '/amstar2-checklist-scoring-app/' })})}
