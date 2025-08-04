@@ -1,4 +1,4 @@
 import { h, render } from 'preact';
-import AMSTAR2Checklist from './Form.jsx';
+import App from './App.jsx';
 
-render(<AMSTAR2Checklist />, document.getElementById('root'));
+render(<App />, document.getElementById('root'));

@@ -1,26 +1,19 @@
 import { useState } from 'preact/hooks';
 
-function Question1({ answer, onAnswerChange }) {
-  const handleChange = (option) => {
-    onAnswerChange(option);
-  };
-
+function Question1({ onUpdate, state }) {
   const question = {
     text: '1. Did the research questions and inclusion criteria for the review include the components of PICO?',
     columns: [
       {
         label: 'For Yes:',
-        description: '',
         options: ['Population', 'Intervention', 'Comparator group', 'Outcome'],
       },
       {
         label: 'Optional (recommended):',
-        description: '',
         options: ['Timeframe for follow-up'],
       },
       {
         label: '',
-        description: '',
         options: ['Yes', 'No'],
       },
     ],
@@ -39,14 +32,15 @@ function Question1({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -60,24 +54,7 @@ function Question1({ answer, onAnswerChange }) {
   );
 }
 
-function Question2({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question2({ onUpdate, state }) {
   const question = {
     text: '2. Did the report of the review contain an explicit statement that the review methods were established prior to the conduct of the review and did the report justify any significant deviations from the protocol?',
     columns: [
@@ -118,15 +95,15 @@ function Question2({ answer, onAnswerChange }) {
             <div className="font-light text-gray-800 mb-4 h-12">{col.description}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -140,24 +117,7 @@ function Question2({ answer, onAnswerChange }) {
   );
 }
 
-function Question3({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question3({ onUpdate, state }) {
   const question = {
     text: '3. Did the review authors explain their selection of the study designs for inclusion in the review?',
     columns: [
@@ -189,15 +149,15 @@ function Question3({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -211,24 +171,7 @@ function Question3({ answer, onAnswerChange }) {
   );
 }
 
-function Question4({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question4({ onUpdate, state }) {
   const question = {
     text: '4. Did the review authors use a comprehensive literature search strategy? ',
     columns: [
@@ -270,15 +213,15 @@ function Question4({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -292,24 +235,7 @@ function Question4({ answer, onAnswerChange }) {
   );
 }
 
-function Question5({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question5({ onUpdate, state }) {
   const question = {
     text: '5. Did the review authors perform study selection in duplicate?',
     columns: [
@@ -340,15 +266,15 @@ function Question5({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -362,24 +288,7 @@ function Question5({ answer, onAnswerChange }) {
   );
 }
 
-function Question6({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question6({ onUpdate, state }) {
   const question = {
     text: '6. Did the review authors perform data extraction in duplicate?',
     columns: [
@@ -410,15 +319,15 @@ function Question6({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -432,24 +341,7 @@ function Question6({ answer, onAnswerChange }) {
   );
 }
 
-function Question7({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question7({ onUpdate, state }) {
   const question = {
     text: '7. Did the review authors provide a list of excluded studies and justify the exclusions?',
     columns: [
@@ -481,15 +373,15 @@ function Question7({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -503,24 +395,7 @@ function Question7({ answer, onAnswerChange }) {
   );
 }
 
-function Question8({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question8({ onUpdate, state }) {
   const question = {
     text: '8. Did the review authors describe the included studies in adequate detail?',
     columns: [
@@ -563,15 +438,15 @@ function Question8({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -585,24 +460,7 @@ function Question8({ answer, onAnswerChange }) {
   );
 }
 
-function Question9({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
   const question = {
     text: '9. Did the review authors use a satisfactory technique for assessing the risk of bias (RoB) in individual studies that were included in the review?',
     subtitle: 'RCTs',
@@ -661,15 +519,15 @@ function Question9({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={statea[colIdx][optIdx]}
+                    onChange={() => onUpdatea(colIdx, optIdx, !statea[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -690,15 +548,15 @@ function Question9({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={stateb[colIdx][optIdx]}
+                    onChange={() => onUpdateb(colIdx, optIdx, !stateb[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -712,24 +570,7 @@ function Question9({ answer, onAnswerChange }) {
   );
 }
 
-function Question10({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question10({ onUpdate, state }) {
   const question = {
     text: '10. Did the review authors report on the sources of funding for the studies included in the review?',
     columns: [
@@ -759,15 +600,15 @@ function Question10({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -781,24 +622,7 @@ function Question10({ answer, onAnswerChange }) {
   );
 }
 
-function Question11({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
   const question = {
     text: '11. If meta-analysis was performed did the review authors use appropriate methods for statistical combination of results?',
     subtitle: 'RCTs',
@@ -817,7 +641,7 @@ function Question11({ answer, onAnswerChange }) {
       },
     ],
     subtitle2: 'NRSI',
-    columns: [
+    columns2: [
       {
         label: 'For Yes:',
         options: [
@@ -837,6 +661,7 @@ function Question11({ answer, onAnswerChange }) {
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
+      <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle}</div>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
           <div
@@ -847,15 +672,44 @@ function Question11({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={statea[colIdx][optIdx]}
+                    onChange={() => onUpdatea(colIdx, optIdx, !statea[colIdx][optIdx])}
+                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  />
+                  <span className="text-gray-700">{option}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle2}</div>
+      <div className="flex gap-6">
+        {question.columns2.map((col, colIdx) => (
+          <div
+            key={colIdx}
+            className={colIdx === question.columns2.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}
+          >
+            {/* Label */}
+            <div className="font-medium text-gray-800 h-8">{col.label}</div>
+            {/* Options */}
+            <div className="flex flex-col gap-2">
+              {col.options.map((option, optIdx) => (
+                <label
+                  key={optIdx}
+                  className="flex items-center space-x-2"
+                >
+                  <input
+                    type="checkbox"
+                    checked={stateb[colIdx][optIdx]}
+                    onChange={() => onUpdateb(colIdx, optIdx, !stateb[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -869,24 +723,7 @@ function Question11({ answer, onAnswerChange }) {
   );
 }
 
-function Question12({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question12({ onUpdate, state }) {
   const question = {
     text: '12. If meta-analysis was performed, did the review authors assess the potential impact of RoB in individual studies on the results of the meta-analysis or other evidence synthesis?',
     columns: [
@@ -917,15 +754,15 @@ function Question12({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -939,24 +776,7 @@ function Question12({ answer, onAnswerChange }) {
   );
 }
 
-function Question13({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question13({ onUpdate, state }) {
   const question = {
     text: '13. Did the review authors account for RoB in individual studies when interpreting/ discussing the results of the review?',
     columns: [
@@ -987,15 +807,15 @@ function Question13({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -1009,24 +829,7 @@ function Question13({ answer, onAnswerChange }) {
   );
 }
 
-function Question14({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question14({ onUpdate, state }) {
   const question = {
     text: '14. Did the review authors provide a satisfactory explanation for, and discussion of, any heterogeneity observed in the results of the review?',
     columns: [
@@ -1057,15 +860,15 @@ function Question14({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -1079,24 +882,7 @@ function Question14({ answer, onAnswerChange }) {
   );
 }
 
-function Question15({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question15({ onUpdate, state }) {
   const question = {
     text: '15. If they performed quantitative synthesis did the review authors carry out an adequate investigation of publication bias (small study bias) and discuss its likely impact on the results of the review?',
     columns: [
@@ -1126,15 +912,15 @@ function Question15({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -1148,24 +934,7 @@ function Question15({ answer, onAnswerChange }) {
   );
 }
 
-function Question16({ answer, onAnswerChange }) {
-  const [checked, setChecked] = useState({
-    Population: false,
-    Intervention: false,
-    'Comparator group': false,
-    Outcome: false,
-    'Timeframe for follow-up': false,
-    Yes: false,
-    No: false,
-  });
-
-  const handleChange = (option) => {
-    setChecked((prev) => ({
-      ...prev,
-      [option]: !prev[option],
-    }));
-  };
-
+function Question16({ onUpdate, state }) {
   const question = {
     text: '16. Did the review authors report any potential sources of conflict of interest, including any funding they received for conducting the review?',
     options: ['Yes', 'Partial Yes', 'No'],
@@ -1197,15 +966,15 @@ function Question16({ answer, onAnswerChange }) {
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
-              {col.options.map((option) => (
+              {col.options.map((option, optIdx) => (
                 <label
-                  key={option}
+                  key={optIdx}
                   className="flex items-center space-x-2"
                 >
                   <input
                     type="checkbox"
-                    checked={checked[option]}
-                    onChange={() => handleChange(option)}
+                    checked={state[colIdx][optIdx]}
+                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -1240,7 +1009,7 @@ function scoreChecklist() {
   return 'High';
 }
 
-export default function AMSTAR2Checklist() {
+export default function AMSTAR2Checklist({ checklistState }) {
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewerName, setReviewerName] = useState('');
   const [reviewDate, setReviewDate] = useState('');
@@ -1272,11 +1041,8 @@ export default function AMSTAR2Checklist() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">AMSTAR 2 Critical Appraisal Tool</h1>
-          <p className="text-gray-600 mb-6">
-            A critical appraisal tool for systematic reviews that include randomised or non-randomised studies of healthcare interventions,
-            or both
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">AMSTAR 2 Checklist</h1>
+          <p className="text-gray-600 mb-6">App description here</p>
 
           {/* Review Details */}
           <div className="grid md:grid-cols-3 gap-4 mb-6">
@@ -1315,141 +1081,114 @@ export default function AMSTAR2Checklist() {
         {/* Questions */}
         <div className="space-y-6">
           <Question1
-            answer={answers[0]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[0] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q1[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q1}
           />
           <Question2
-            answer={answers[1]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[1] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q2[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q2}
           />
           <Question3
-            answer={answers[2]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[2] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q3[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q3}
           />
           <Question4
-            answer={answers[3]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[3] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q4[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q4}
           />
           <Question5
-            answer={answers[4]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[4] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q5[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q5}
           />
           <Question6
-            answer={answers[5]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[5] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q6[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q6}
           />
           <Question7
-            answer={answers[6]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[6] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q7[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q7}
           />
           <Question8
-            answer={answers[7]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[7] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q8[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q8}
           />
           <Question9
-            answer={answers[8]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[8] = val;
-              setAnswers(newAnswers);
+            onUpdatea={(colIdx, optIdx, value) => {
+              checklistState.state.q9a[colIdx][optIdx] = value;
             }}
+            statea={checklistState.state.q9a}
+            onUpdateb={(colIdx, optIdx, value) => {
+              checklistState.state.q9b[colIdx][optIdx] = value;
+            }}
+            stateb={checklistState.state.q9b}
           />
           <Question10
-            answer={answers[9]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[9] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q10[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q10}
           />
           <Question11
-            answer={answers[10]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[10] = val;
-              setAnswers(newAnswers);
+            onUpdatea={(colIdx, optIdx, value) => {
+              checklistState.state.q11a[colIdx][optIdx] = value;
             }}
+            statea={checklistState.state.q11a}
+            onUpdateb={(colIdx, optIdx, value) => {
+              checklistState.state.q11b[colIdx][optIdx] = value;
+            }}
+            stateb={checklistState.state.q11b}
           />
           <Question12
-            answer={answers[11]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[11] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q12[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q12}
           />
           <Question13
-            answer={answers[12]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[12] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q13[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q13}
           />
           <Question14
-            answer={answers[13]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[13] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q14[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q14}
           />
           <Question15
-            answer={answers[14]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[14] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q15[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q15}
           />
           <Question16
-            answer={answers[15]}
-            onAnswerChange={(val) => {
-              const newAnswers = [...answers];
-              newAnswers[15] = val;
-              setAnswers(newAnswers);
+            onUpdate={(colIdx, optIdx, value) => {
+              checklistState.state.q16[colIdx][optIdx] = value;
             }}
+            state={checklistState.state.q16}
           />
         </div>
 
         {/* Export Button */}
-        <div className="mt-8 text-center">
-          <button
-            // onClick={exportToPDF}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-colors duration-200 inline-flex items-center space-x-2"
-          >
+        {/* <div className="mt-8 text-center">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-colors duration-200 inline-flex items-center space-x-2">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -1465,16 +1204,6 @@ export default function AMSTAR2Checklist() {
             </svg>
             <span>Export as PDF</span>
           </button>
-        </div>
-
-        {/* Citation */}
-        {/* <div className="mt-12 bg-gray-50 rounded-lg p-6">
-          <h4 className="font-semibold text-gray-900 mb-2">Citation</h4>
-          <p className="text-sm text-gray-600 italic">
-            To cite this tool: Shea BJ, Reeves BC, Wells G, Thuku M, Hamel C, Moran J, Moher D, Tugwell P, Welch V, Kristjansson E, Henry
-            DA. AMSTAR 2: a critical appraisal tool for systematic reviews that include randomised or non-randomised studies of healthcare
-            interventions, or both. BMJ. 2017 Sep 21;358:j4008.
-          </p>
         </div> */}
       </div>
     </div>
