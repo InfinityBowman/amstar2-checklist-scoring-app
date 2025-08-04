@@ -14,6 +14,9 @@ This is a web application for interactively filling out and scoring AMSTAR 2 che
 - **Multiple Reviews:** Add, save, and navigate between multiple AMSTAR 2 checklists for different reviews.
 - **Data Visualization:** Visualize AMSTAR 2 results across your reviews to spot trends.
 - **Import/Export CSV:** Import a checklist from a CSV file or export your checklist(s) for use in other tools.
+- **Auto-Populate Yes/No:** Auto-populate the final Yes/No fields based on other fields.
+- **Better Mobile Compatibility:** Make it look nice and usable on mobile.
+- **Improved Accessibility:** Make it more accessible.
 
 Stay tuned for updates as these features are developed!
 
