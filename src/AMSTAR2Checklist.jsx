@@ -19,6 +19,39 @@ function Question1({ onUpdate, state }) {
     ],
   };
 
+  // Helper to auto-toggle Yes/No in last column based on first column
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    // Update the clicked checkbox
+    onUpdate(colIdx, optIdx, value);
+
+    // After updating, check if all options in the first column are checked
+    const allChecked = state[0].every((v, i) => (colIdx === 0 && i === optIdx ? value : v));
+
+    // Set Yes/No in last column accordingly
+    if (allChecked) {
+      if (!state[2][0]) onUpdate(2, 0, true); // Yes
+      if (state[2][1]) onUpdate(2, 1, false); // No
+    } else {
+      if (state[2][0]) onUpdate(2, 0, false); // Yes
+      if (!state[2][1]) onUpdate(2, 1, true); // No
+    }
+  }
+
+  // Ensure Yes/No are mutually exclusive when toggled directly
+  function handleYesNo(colIdx, optIdx, value) {
+    // If checking Yes, uncheck No; if checking No, uncheck Yes
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true); // Yes
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false); // Uncheck No
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true); // No
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false); // Uncheck Yes
+    } else {
+      // Just toggle as normal
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text} </h3>
@@ -40,7 +73,13 @@ function Question1({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : colIdx === 2
+                        ? handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : onUpdate(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -80,6 +119,40 @@ function Question2({ onUpdate, state }) {
     ],
   };
 
+  // Helper to auto-toggle Yes/Partial Yes/No in last column based on first two columns
+  function autoToggleMain(colIdx, optIdx, value) {
+    const allPartialYes = state[0].every((v, i) => (colIdx === 0 && i === optIdx ? value : v));
+    const allYes = allPartialYes && state[1].every((v, i) => (colIdx === 1 && i === optIdx ? value : v));
+    onUpdate(colIdx, optIdx, value);
+
+    if (allYes) {
+      onUpdate(2, 0, true); // Yes
+      onUpdate(2, 1, false); // Partial Yes
+      onUpdate(2, 2, false); // No
+    } else if (allPartialYes) {
+      onUpdate(2, 0, false); // Yes
+      onUpdate(2, 1, true); // Partial Yes
+      onUpdate(2, 2, false); // No
+    } else {
+      onUpdate(2, 0, false); // Yes
+      onUpdate(2, 1, false); // Partial Yes
+      onUpdate(2, 2, true); // No
+    }
+  }
+
+  // Ensure Yes/Partial Yes/No are mutually exclusive when toggled directly
+  function handleMain(colIdx, optIdx, value) {
+    if (value) {
+      // Set the selected option to true, others to false
+      onUpdate(colIdx, 0, optIdx === 0);
+      onUpdate(colIdx, 1, optIdx === 1);
+      onUpdate(colIdx, 2, optIdx === 2);
+    } else {
+      // Just toggle as normal
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -103,7 +176,11 @@ function Question2({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0 || colIdx === 1
+                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -136,6 +213,37 @@ function Question3({ onUpdate, state }) {
     ],
   };
 
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    // Simulate the next state for the first column
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+
+    // Update the clicked checkbox
+    onUpdate(colIdx, optIdx, value);
+
+    // Set Yes/No in last column accordingly (mutually exclusive)
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+    }
+  }
+
+  // Ensure Yes/No are mutually exclusive when toggled directly
+  function handleYesNo(colIdx, optIdx, value) {
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true); // Yes
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false); // Uncheck No
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true); // No
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false); // Uncheck Yes
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -157,7 +265,11 @@ function Question3({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -200,6 +312,40 @@ function Question4({ onUpdate, state }) {
     ],
   };
 
+  function autoToggleMain(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col1 = colIdx === 1 ? state[1].map((v, i) => (i === optIdx ? value : v)) : state[1];
+
+    const allPartialYes = col0.every(Boolean);
+    const allYes = allPartialYes && col1.every(Boolean);
+
+    onUpdate(colIdx, optIdx, value);
+
+    if (allYes) {
+      onUpdate(2, 0, true);
+      onUpdate(2, 1, false);
+      onUpdate(2, 2, false);
+    } else if (allPartialYes) {
+      onUpdate(2, 0, false);
+      onUpdate(2, 1, true);
+      onUpdate(2, 2, false);
+    } else {
+      onUpdate(2, 0, false);
+      onUpdate(2, 1, false);
+      onUpdate(2, 2, true);
+    }
+  }
+
+  function handleMain(colIdx, optIdx, value) {
+    if (value) {
+      onUpdate(colIdx, 0, optIdx === 0);
+      onUpdate(colIdx, 1, optIdx === 1);
+      onUpdate(colIdx, 2, optIdx === 2);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -221,7 +367,11 @@ function Question4({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0 || colIdx === 1
+                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -253,6 +403,33 @@ function Question5({ onUpdate, state }) {
     ],
   };
 
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+
+    onUpdate(colIdx, optIdx, value);
+
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+    }
+  }
+
+  function handleYesNo(colIdx, optIdx, value) {
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true);
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true);
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -274,7 +451,11 @@ function Question5({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -306,6 +487,31 @@ function Question6({ onUpdate, state }) {
     ],
   };
 
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+    }
+  }
+
+  function handleYesNo(colIdx, optIdx, value) {
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true);
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true);
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -327,7 +533,11 @@ function Question6({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -360,6 +570,37 @@ function Question7({ onUpdate, state }) {
     ],
   };
 
+  function autoToggleMain(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col1 = colIdx === 1 ? state[1].map((v, i) => (i === optIdx ? value : v)) : state[1];
+    const allPartialYes = col0.every(Boolean);
+    const allYes = allPartialYes && col1.every(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (allYes) {
+      onUpdate(2, 0, true);
+      onUpdate(2, 1, false);
+      onUpdate(2, 2, false);
+    } else if (allPartialYes) {
+      onUpdate(2, 0, false);
+      onUpdate(2, 1, true);
+      onUpdate(2, 2, false);
+    } else {
+      onUpdate(2, 0, false);
+      onUpdate(2, 1, false);
+      onUpdate(2, 2, true);
+    }
+  }
+
+  function handleMain(colIdx, optIdx, value) {
+    if (value) {
+      onUpdate(colIdx, 0, optIdx === 0);
+      onUpdate(colIdx, 1, optIdx === 1);
+      onUpdate(colIdx, 2, optIdx === 2);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -381,7 +622,11 @@ function Question7({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0 || colIdx === 1
+                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -425,6 +670,37 @@ function Question8({ onUpdate, state }) {
     ],
   };
 
+  function autoToggleMain(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col1 = colIdx === 1 ? state[1].map((v, i) => (i === optIdx ? value : v)) : state[1];
+    const allPartialYes = col0.every(Boolean);
+    const allYes = allPartialYes && col1.every(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (allYes) {
+      onUpdate(2, 0, true);
+      onUpdate(2, 1, false);
+      onUpdate(2, 2, false);
+    } else if (allPartialYes) {
+      onUpdate(2, 0, false);
+      onUpdate(2, 1, true);
+      onUpdate(2, 2, false);
+    } else {
+      onUpdate(2, 0, false);
+      onUpdate(2, 1, false);
+      onUpdate(2, 2, true);
+    }
+  }
+
+  function handleMain(colIdx, optIdx, value) {
+    if (value) {
+      onUpdate(colIdx, 0, optIdx === 0);
+      onUpdate(colIdx, 1, optIdx === 1);
+      onUpdate(colIdx, 2, optIdx === 2);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -434,9 +710,7 @@ function Question8({ onUpdate, state }) {
             key={colIdx}
             className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}
           >
-            {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
                 <label
@@ -446,7 +720,11 @@ function Question8({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0 || colIdx === 1
+                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -505,6 +783,76 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
     ],
   };
 
+  function autoToggleMainA(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? statea[0].map((v, i) => (i === optIdx ? value : v)) : statea[0];
+    const col1 = colIdx === 1 ? statea[1].map((v, i) => (i === optIdx ? value : v)) : statea[1];
+    const allPartialYes = col0.every(Boolean);
+    const allYes = allPartialYes && col1.every(Boolean);
+    onUpdatea(colIdx, optIdx, value);
+    if (allYes) {
+      onUpdatea(2, 0, true);
+      onUpdatea(2, 1, false);
+      onUpdatea(2, 2, false);
+      onUpdatea(2, 3, false);
+    } else if (allPartialYes) {
+      onUpdatea(2, 0, false);
+      onUpdatea(2, 1, true);
+      onUpdatea(2, 2, false);
+      onUpdatea(2, 3, false);
+    } else {
+      onUpdatea(2, 0, false);
+      onUpdatea(2, 1, false);
+      onUpdatea(2, 2, true);
+      onUpdatea(2, 3, false);
+    }
+  }
+
+  function handleMainA(colIdx, optIdx, value) {
+    if (value) {
+      onUpdatea(colIdx, 0, optIdx === 0);
+      onUpdatea(colIdx, 1, optIdx === 1);
+      onUpdatea(colIdx, 2, optIdx === 2);
+      onUpdatea(colIdx, 3, optIdx === 3);
+    } else {
+      onUpdatea(colIdx, optIdx, value);
+    }
+  }
+
+  function autoToggleMainB(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? stateb[0].map((v, i) => (i === optIdx ? value : v)) : stateb[0];
+    const col1 = colIdx === 1 ? stateb[1].map((v, i) => (i === optIdx ? value : v)) : stateb[1];
+    const allPartialYes = col0.every(Boolean);
+    const allYes = allPartialYes && col1.every(Boolean);
+    onUpdateb(colIdx, optIdx, value);
+    if (allYes) {
+      onUpdateb(2, 0, true);
+      onUpdateb(2, 1, false);
+      onUpdateb(2, 2, false);
+      onUpdateb(2, 3, false);
+    } else if (allPartialYes) {
+      onUpdateb(2, 0, false);
+      onUpdateb(2, 1, true);
+      onUpdateb(2, 2, false);
+      onUpdateb(2, 3, false);
+    } else {
+      onUpdateb(2, 0, false);
+      onUpdateb(2, 1, false);
+      onUpdateb(2, 2, true);
+      onUpdateb(2, 3, false);
+    }
+  }
+
+  function handleMainB(colIdx, optIdx, value) {
+    if (value) {
+      onUpdateb(colIdx, 0, optIdx === 0);
+      onUpdateb(colIdx, 1, optIdx === 1);
+      onUpdateb(colIdx, 2, optIdx === 2);
+      onUpdateb(colIdx, 3, optIdx === 3);
+    } else {
+      onUpdateb(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -527,7 +875,11 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
                   <input
                     type="checkbox"
                     checked={statea[colIdx][optIdx]}
-                    onChange={() => onUpdatea(colIdx, optIdx, !statea[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0 || colIdx === 1
+                        ? autoToggleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
+                        : handleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -556,7 +908,11 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
                   <input
                     type="checkbox"
                     checked={stateb[colIdx][optIdx]}
-                    onChange={() => onUpdateb(colIdx, optIdx, !stateb[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0 || colIdx === 1
+                        ? autoToggleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
+                        : handleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -587,6 +943,32 @@ function Question10({ onUpdate, state }) {
     ],
   };
 
+  // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+    }
+  }
+
+  function handleYesNo(colIdx, optIdx, value) {
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true);
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true);
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -608,7 +990,11 @@ function Question10({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -658,6 +1044,60 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
     ],
   };
 
+  // RCTs section logic
+  function autoToggleMainA(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? statea[0].map((v, i) => (i === optIdx ? value : v)) : statea[0];
+    const allChecked = col0.every(Boolean);
+    onUpdatea(colIdx, optIdx, value);
+    if (allChecked) {
+      onUpdatea(1, 0, true); // Yes
+      onUpdatea(1, 1, false); // No
+      onUpdatea(1, 2, false); // No meta-analysis conducted
+    } else {
+      onUpdatea(1, 0, false);
+      onUpdatea(1, 1, true);
+      onUpdatea(1, 2, false);
+    }
+  }
+
+  function handleMainA(colIdx, optIdx, value) {
+    // Yes/No/No meta-analysis conducted mutually exclusive
+    if (value) {
+      onUpdatea(colIdx, 0, optIdx === 0);
+      onUpdatea(colIdx, 1, optIdx === 1);
+      onUpdatea(colIdx, 2, optIdx === 2);
+    } else {
+      onUpdatea(colIdx, optIdx, value);
+    }
+  }
+
+  // NRSI section logic
+  function autoToggleMainB(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? stateb[0].map((v, i) => (i === optIdx ? value : v)) : stateb[0];
+    const allChecked = col0.every(Boolean);
+    onUpdateb(colIdx, optIdx, value);
+    if (allChecked) {
+      onUpdateb(1, 0, true); // Yes
+      onUpdateb(1, 1, false); // No
+      onUpdateb(1, 2, false); // No meta-analysis conducted
+    } else {
+      onUpdateb(1, 0, false);
+      onUpdateb(1, 1, true);
+      onUpdateb(1, 2, false);
+    }
+  }
+
+  function handleMainB(colIdx, optIdx, value) {
+    // Yes/No/No meta-analysis conducted mutually exclusive
+    if (value) {
+      onUpdateb(colIdx, 0, optIdx === 0);
+      onUpdateb(colIdx, 1, optIdx === 1);
+      onUpdateb(colIdx, 2, optIdx === 2);
+    } else {
+      onUpdateb(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -680,7 +1120,11 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
                   <input
                     type="checkbox"
                     checked={statea[colIdx][optIdx]}
-                    onChange={() => onUpdatea(colIdx, optIdx, !statea[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
+                        : handleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -709,7 +1153,11 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
                   <input
                     type="checkbox"
                     checked={stateb[colIdx][optIdx]}
-                    onChange={() => onUpdateb(colIdx, optIdx, !stateb[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
+                        : handleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -741,6 +1189,33 @@ function Question12({ onUpdate, state }) {
     ],
   };
 
+  // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. 'No meta-analysis conducted' is mutually exclusive.
+  function autoToggleMain(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (anyChecked) {
+      onUpdate(1, 0, true); // Yes
+      onUpdate(1, 1, false); // No
+      onUpdate(1, 2, false); // No meta-analysis conducted
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+      onUpdate(1, 2, false);
+    }
+  }
+
+  function handleMain(colIdx, optIdx, value) {
+    // Yes/No/No meta-analysis conducted mutually exclusive
+    if (value) {
+      onUpdate(colIdx, 0, optIdx === 0);
+      onUpdate(colIdx, 1, optIdx === 1);
+      onUpdate(colIdx, 2, optIdx === 2);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -762,7 +1237,11 @@ function Question12({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -794,6 +1273,32 @@ function Question13({ onUpdate, state }) {
     ],
   };
 
+  // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+    }
+  }
+
+  function handleYesNo(colIdx, optIdx, value) {
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true);
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true);
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -815,7 +1320,11 @@ function Question13({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -847,6 +1356,32 @@ function Question14({ onUpdate, state }) {
     ],
   };
 
+  // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+    }
+  }
+
+  function handleYesNo(colIdx, optIdx, value) {
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true);
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true);
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -868,7 +1403,11 @@ function Question14({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -899,6 +1438,33 @@ function Question15({ onUpdate, state }) {
     ],
   };
 
+  // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. 'No meta-analysis conducted' is mutually exclusive.
+  function autoToggleMain(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+      onUpdate(1, 2, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+      onUpdate(1, 2, false);
+    }
+  }
+
+  function handleMain(colIdx, optIdx, value) {
+    // Yes/No/No meta-analysis conducted mutually exclusive
+    if (value) {
+      onUpdate(colIdx, 0, optIdx === 0);
+      onUpdate(colIdx, 1, optIdx === 1);
+      onUpdate(colIdx, 2, optIdx === 2);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -920,7 +1486,11 @@ function Question15({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -953,6 +1523,32 @@ function Question16({ onUpdate, state }) {
     ],
   };
 
+  // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
+  function autoToggleYesNo(colIdx, optIdx, value) {
+    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const anyChecked = col0.some(Boolean);
+    onUpdate(colIdx, optIdx, value);
+    if (anyChecked) {
+      onUpdate(1, 0, true);
+      onUpdate(1, 1, false);
+    } else {
+      onUpdate(1, 0, false);
+      onUpdate(1, 1, true);
+    }
+  }
+
+  function handleYesNo(colIdx, optIdx, value) {
+    if (optIdx === 0 && value) {
+      onUpdate(colIdx, 0, true);
+      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+    } else if (optIdx === 1 && value) {
+      onUpdate(colIdx, 1, true);
+      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+    } else {
+      onUpdate(colIdx, optIdx, value);
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
@@ -974,7 +1570,11 @@ function Question16({ onUpdate, state }) {
                   <input
                     type="checkbox"
                     checked={state[colIdx][optIdx]}
-                    onChange={() => onUpdate(colIdx, optIdx, !state[colIdx][optIdx])}
+                    onChange={() =>
+                      colIdx === 0
+                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                    }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -988,53 +1588,10 @@ function Question16({ onUpdate, state }) {
   );
 }
 
-function scoreChecklist() {
-  const criticalItems = [1, 3, 6, 8, 9, 11, 13];
-  let criticalFlaws = 0;
-  let nonCriticalFlaws = 0;
-
-  answers.forEach((val, i) => {
-    if (val !== 'Yes') {
-      if (criticalItems.includes(i)) {
-        criticalFlaws++;
-      } else {
-        nonCriticalFlaws++;
-      }
-    }
-  });
-
-  if (criticalFlaws > 1) return 'Critically Low';
-  if (criticalFlaws === 1) return 'Low';
-  if (nonCriticalFlaws > 1) return 'Moderate';
-  return 'High';
-}
-
-export default function AMSTAR2Checklist({ checklistState }) {
+export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) {
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewerName, setReviewerName] = useState('');
   const [reviewDate, setReviewDate] = useState('');
-  const [answers, setAnswers] = useState(Array(16).fill(''));
-
-  function scoreChecklist() {
-    const criticalItems = [1, 3, 6, 8, 9, 11, 13];
-    let criticalFlaws = 0;
-    let nonCriticalFlaws = 0;
-
-    answers.forEach((val, i) => {
-      if (val !== 'Yes') {
-        if (criticalItems.includes(i)) {
-          criticalFlaws++;
-        } else {
-          nonCriticalFlaws++;
-        }
-      }
-    });
-
-    if (criticalFlaws > 1) return 'Critically Low';
-    if (criticalFlaws === 1) return 'Low';
-    if (nonCriticalFlaws > 1) return 'Moderate';
-    return 'High';
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -1051,7 +1608,11 @@ export default function AMSTAR2Checklist({ checklistState }) {
               <input
                 type="text"
                 value={reviewTitle}
-                onChange={(e) => setReviewTitle(e.target.value)}
+                onChange={(e) => {
+                  setReviewTitle(e.target.value);
+                  checklistState.state.title = e.target.value;
+                  onChecklistChange({ ...checklistState.state });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter review title"
               />
@@ -1061,7 +1622,11 @@ export default function AMSTAR2Checklist({ checklistState }) {
               <input
                 type="text"
                 value={reviewerName}
-                onChange={(e) => setReviewerName(e.target.value)}
+                onChange={(e) => {
+                  setReviewerName(e.target.value);
+                  checklistState.state.reviewerName = e.target.value;
+                  onChecklistChange({ ...checklistState.state });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your name"
               />
@@ -1071,7 +1636,11 @@ export default function AMSTAR2Checklist({ checklistState }) {
               <input
                 type="date"
                 value={reviewDate}
-                onChange={(e) => setReviewDate(e.target.value)}
+                onChange={(e) => {
+                  setReviewDate(e.target.value);
+                  checklistState.state.reviewDate = e.target.value;
+                  onChecklistChange({ ...checklistState.state });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -1083,104 +1652,122 @@ export default function AMSTAR2Checklist({ checklistState }) {
           <Question1
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q1[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q1}
           />
           <Question2
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q2[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q2}
           />
           <Question3
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q3[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q3}
           />
           <Question4
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q4[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q4}
           />
           <Question5
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q5[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q5}
           />
           <Question6
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q6[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q6}
           />
           <Question7
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q7[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q7}
           />
           <Question8
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q8[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q8}
           />
           <Question9
             onUpdatea={(colIdx, optIdx, value) => {
               checklistState.state.q9a[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             statea={checklistState.state.q9a}
             onUpdateb={(colIdx, optIdx, value) => {
               checklistState.state.q9b[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             stateb={checklistState.state.q9b}
           />
           <Question10
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q10[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q10}
           />
           <Question11
             onUpdatea={(colIdx, optIdx, value) => {
               checklistState.state.q11a[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             statea={checklistState.state.q11a}
             onUpdateb={(colIdx, optIdx, value) => {
               checklistState.state.q11b[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             stateb={checklistState.state.q11b}
           />
           <Question12
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q12[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q12}
           />
           <Question13
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q13[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q13}
           />
           <Question14
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q14[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q14}
           />
           <Question15
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q15[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q15}
           />
           <Question16
             onUpdate={(colIdx, optIdx, value) => {
               checklistState.state.q16[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState.state });
             }}
             state={checklistState.state.q16}
           />
