@@ -5,70 +5,70 @@ export default class ChecklistState {
 
   getDefaultState() {
     return {
-      q1: [[false, false, false, false], [false], [false, false]],
+      q1: [[false, false, false, false], [false], [false, true]],
       q2: [
         [false, false, false, false],
         [false, false, false],
-        [false, false],
+        [false, , true],
       ],
       q3: [
         [false, false, false],
-        [false, false],
+        [false, true],
       ],
       q4: [
         [false, false, false],
         [false, false, false, false, false],
-        [false, false, false],
+        [false, false, true],
       ],
       q5: [
         [false, false],
-        [false, false],
+        [false, true],
       ],
       q6: [
         [false, false],
-        [false, false],
+        [false, true],
       ],
-      q7: [[false], [false], [false, false, false]],
+      q7: [[false], [false], [false, false, true]],
       q8: [
         [false, false, false, false, false],
         [false, false, false, false],
-        [false, false, false],
+        [false, false, true],
       ],
       q9a: [
         [false, false],
         [false, false],
-        [false, false, false, false],
+        [false, false, true, false],
       ],
       q9b: [
         [false, false],
         [false, false],
-        [false, false, false, false],
+        [false, false, true, false],
       ],
-      q10: [[false], [false, false]],
+      q10: [[false], [false, true]],
       q11a: [
         [false, false, false],
-        [false, false, false],
+        [false, true, false],
       ],
       q11b: [
         [false, false, false, false],
-        [false, false, false],
+        [false, true, false],
       ],
       q12: [
         [false, false],
-        [false, false, false],
+        [false, true, false],
       ],
       q13: [
         [false, false],
-        [false, false],
+        [false, true],
       ],
       q14: [
         [false, false],
-        [false, false],
+        [false, true],
       ],
-      q15: [[false], [false, false, false]],
+      q15: [[false], [false, true, false]],
       q16: [
         [false, false],
-        [false, false],
+        [false, true],
       ],
     };
   }

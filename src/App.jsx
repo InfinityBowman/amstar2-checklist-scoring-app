@@ -123,14 +123,24 @@ export default function App() {
 
   // Handler to switch between checklists
   const handleSelectChecklist = (id) => {
-    console.log('handleselectchecklist');
     setCurrentId(id);
   };
 
   // Handler to update checklist state from AMSTAR2Checklist
   const handleChecklistChange = (newState) => {
-    console.log('handlecheckchange');
-    setCurrentChecklistState(new ChecklistState(newState));
+    const updatedState = new ChecklistState(newState);
+    setCurrentChecklistState(updatedState);
+
+    // Update the checklists array with the new state
+    setChecklists((prev) => {
+      const idx = prev.findIndex((c) => c.id === updatedState.state.id);
+      if (idx !== -1) {
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], ...updatedState.state };
+        return updated;
+      }
+      return prev;
+    });
   };
 
   // Handler to delete the currently selected checklist

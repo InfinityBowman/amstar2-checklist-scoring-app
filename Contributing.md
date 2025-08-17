@@ -1,0 +1,31 @@
+# Contributing to AMSTAR 2 Checklist Scoring App
+
+Thank you for your interest in contributing! Your help is welcome and appreciated.
+
+## Quick Start
+
+1. **Fork the repository** and clone it to your local machine:
+   ```sh
+   git clone https://github.com/InfinityBowman/amstar2-checklist-scoring-app.git
+   cd amstar2-checklist-scoring-app
+   ```
+2. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+3. **Install dependencies for the server and run it:**
+   ```sh
+   cd server
+   npm install
+   ```
+   Run the server
+   ```sh
+   node server.js
+   cd ..
+   ```
+
+4. **Start the development server:**
+   ```sh
+   npm run dev
+   ```
+   The app will be available at [http://localhost:5173/amstar2-checklist-scoring-app/](http://localhost:5173/amstar2-checklist-scoring-app/).
