@@ -4,7 +4,8 @@ import { createSignal, onCleanup, Show } from 'solid-js';
  * TODO
  * On join room owner needs to send room state to joiners
  */
-const SIGNAL_URL = 'ws://localhost:3000';
+// const SIGNAL_URL = 'ws://localhost:3000';
+const SIGNAL_URL = 'wss://amstar2-checklist-scoring-app-server.onrender.com';
 
 export default function SharedCheckbox() {
   const [checked, setChecked] = createSignal(false);
