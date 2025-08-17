@@ -1,8 +1,9 @@
-import { createSignal, createEffect, onCleanup, onMount } from 'solid-js';
+import { createSignal, createEffect, onCleanup, onMount, Show } from 'solid-js';
 import AMSTAR2Checklist from './AMSTAR2Checklist.jsx';
 import { saveChecklist, getAllChecklists, removeAllChecklists, generateUUID, deleteChecklist } from './db.js';
 import ChecklistState from './ChecklistState.js';
 import { ExportChecklist, ImportChecklist } from './ChecklistIO.js';
+import SharedCheckbox from './Shared.jsx';
 
 /**
  * TODO
@@ -14,6 +15,7 @@ export default function App() {
   const [checklists, setChecklists] = createSignal([]);
   const [currentId, setCurrentId] = createSignal(null);
   const [currentChecklistState, setCurrentChecklistState] = createSignal(null);
+  const [sharedTab, setSharedTab] = createSignal(false);
   let autosaveTimeout = null;
 
   // Load all checklists on mount
@@ -225,6 +227,12 @@ export default function App() {
         >
           Export as CSV
         </button>
+        <button
+          onClick={() => setSharedTab(!sharedTab())}
+          class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition"
+        >
+          Toggle Shared
+        </button>
         <label class="bg-blue-100 text-blue-800 px-4 py-2 rounded shadow hover:bg-blue-200 transition cursor-pointer">
           Import CSV
           <input
@@ -248,14 +256,18 @@ export default function App() {
           </button>
         ))}
       </div>
-      {currentChecklistState() ? (
+      <Show when={sharedTab()}>
+        <SharedCheckbox />
+      </Show>
+      <Show
+        when={currentChecklistState() && !sharedTab()}
+        fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
+      >
         <AMSTAR2Checklist
           checklistState={currentChecklistState()}
           onChecklistChange={handleChecklistChange}
         />
-      ) : (
-        <div class="p-8 text-center text-gray-600">No checklist selected.</div>
-      )}
+      </Show>
     </div>
   );
 }
