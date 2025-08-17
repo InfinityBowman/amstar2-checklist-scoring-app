@@ -15,3 +15,7 @@ npm-debug.log*
 
 # Editor directories and files
 .vscode/
+
+# Ignore all HTML files except index.html
+*.html
+!index.html
