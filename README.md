@@ -1,6 +1,6 @@
 # AMSTAR 2 Checklist Scoring App
 
-Visit it here[https://InfinityBowman.github.io/amstar2-checklist-scoring-app]
+Visit it [here](https://InfinityBowman.github.io/amstar2-checklist-scoring-app)
 
 This is a web application for interactively filling out and scoring AMSTAR 2 checklists for systematic reviews. The app is built with Preact and stores your checklists locally in your browser using IndexedDB, so your data is private and persistent across sessions. **The app works fully offline and will save your checklists until you delete them in the site or clear your browser's site data.**
 
