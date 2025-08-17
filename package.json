@@ -14,14 +14,14 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "preact": "^10.27.0"
+    "solid-js": "^1.9.9"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.10.2",
     "@tailwindcss/vite": "^4.1.11",
     "gh-pages": "^6.3.0",
     "tailwindcss": "^4.1.11",
     "vite": "^7.0.6",
-    "vite-plugin-pwa": "^1.0.2"
+    "vite-plugin-pwa": "^1.0.2",
+    "vite-plugin-solid": "^2.11.8"
   }
 }

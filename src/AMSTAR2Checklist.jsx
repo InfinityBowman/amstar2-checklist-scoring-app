@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { createSignal } from 'solid-js';
 
 function Question1({ onUpdate, state }) {
   const question = {
@@ -1589,9 +1589,9 @@ function Question16({ onUpdate, state }) {
 }
 
 export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) {
-  const [reviewTitle, setReviewTitle] = useState('');
-  const [reviewerName, setReviewerName] = useState('');
-  const [reviewDate, setReviewDate] = useState('');
+  const [reviewTitle, setReviewTitle] = createSignal('');
+  const [reviewerName, setReviewerName] = createSignal('');
+  const [reviewDate, setReviewDate] = createSignal('');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -1607,7 +1607,7 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
               <label className="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
               <input
                 type="text"
-                value={reviewTitle}
+                value={reviewTitle()}
                 onChange={(e) => {
                   setReviewTitle(e.target.value);
                   checklistState.state.title = e.target.value;
@@ -1621,7 +1621,7 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
               <label className="block text-sm font-medium text-gray-700 mb-2">Reviewer Name</label>
               <input
                 type="text"
-                value={reviewerName}
+                value={reviewerName()}
                 onChange={(e) => {
                   setReviewerName(e.target.value);
                   checklistState.state.reviewerName = e.target.value;
@@ -1635,7 +1635,7 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
               <label className="block text-sm font-medium text-gray-700 mb-2">Review Date</label>
               <input
                 type="date"
-                value={reviewDate}
+                value={reviewDate()}
                 onChange={(e) => {
                   setReviewDate(e.target.value);
                   checklistState.state.reviewDate = e.target.value;

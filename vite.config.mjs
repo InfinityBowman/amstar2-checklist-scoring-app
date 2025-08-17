@@ -1,13 +1,13 @@
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
-import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import solid from 'vite-plugin-solid';
 
 export default defineConfig({
   base: '/amstar2-checklist-scoring-app/',
   plugins: [
-    preact(),
     tailwindcss(),
+    solid(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt'],
