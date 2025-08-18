@@ -1,6 +1,7 @@
-import { createSignal } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 
-function Question1({ onUpdate, state }) {
+function Question1({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q1;
   const question = {
     text: '1. Did the research questions and inclusion criteria for the review include the components of PICO?',
     columns: [
@@ -25,15 +26,15 @@ function Question1({ onUpdate, state }) {
     onUpdate(colIdx, optIdx, value);
 
     // After updating, check if all options in the first column are checked
-    const allChecked = state[0].every((v, i) => (colIdx === 0 && i === optIdx ? value : v));
+    const allChecked = state()[0].every((v, i) => (colIdx === 0 && i === optIdx ? value : v));
 
     // Set Yes/No in last column accordingly
     if (allChecked) {
-      if (!state[2][0]) onUpdate(2, 0, true); // Yes
-      if (state[2][1]) onUpdate(2, 1, false); // No
+      if (!state()[2][0]) onUpdate(2, 0, true); // Yes
+      if (state()[2][1]) onUpdate(2, 1, false); // No
     } else {
-      if (state[2][0]) onUpdate(2, 0, false); // Yes
-      if (!state[2][1]) onUpdate(2, 1, true); // No
+      if (state()[2][0]) onUpdate(2, 0, false); // Yes
+      if (!state()[2][1]) onUpdate(2, 1, true); // No
     }
   }
 
@@ -42,10 +43,10 @@ function Question1({ onUpdate, state }) {
     // If checking Yes, uncheck No; if checking No, uncheck Yes
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true); // Yes
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false); // Uncheck No
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false); // Uncheck No
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true); // No
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false); // Uncheck Yes
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false); // Uncheck Yes
     } else {
       // Just toggle as normal
       onUpdate(colIdx, optIdx, value);
@@ -72,13 +73,13 @@ function Question1({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                         : colIdx === 2
-                        ? handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : onUpdate(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : onUpdate(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -93,7 +94,9 @@ function Question1({ onUpdate, state }) {
   );
 }
 
-function Question2({ onUpdate, state }) {
+function Question2({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q2;
+
   const question = {
     text: '2. Did the report of the review contain an explicit statement that the review methods were established prior to the conduct of the review and did the report justify any significant deviations from the protocol?',
     columns: [
@@ -121,8 +124,8 @@ function Question2({ onUpdate, state }) {
 
   // Helper to auto-toggle Yes/Partial Yes/No in last column based on first two columns
   function autoToggleMain(colIdx, optIdx, value) {
-    const allPartialYes = state[0].every((v, i) => (colIdx === 0 && i === optIdx ? value : v));
-    const allYes = allPartialYes && state[1].every((v, i) => (colIdx === 1 && i === optIdx ? value : v));
+    const allPartialYes = state()[0].every((v, i) => (colIdx === 0 && i === optIdx ? value : v));
+    const allYes = allPartialYes && state()[1].every((v, i) => (colIdx === 1 && i === optIdx ? value : v));
     onUpdate(colIdx, optIdx, value);
 
     if (allYes) {
@@ -175,11 +178,11 @@ function Question2({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -194,7 +197,9 @@ function Question2({ onUpdate, state }) {
   );
 }
 
-function Question3({ onUpdate, state }) {
+function Question3({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q3;
+
   const question = {
     text: '3. Did the review authors explain their selection of the study designs for inclusion in the review?',
     columns: [
@@ -215,7 +220,7 @@ function Question3({ onUpdate, state }) {
 
   function autoToggleYesNo(colIdx, optIdx, value) {
     // Simulate the next state for the first column
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
 
     // Update the clicked checkbox
@@ -235,10 +240,10 @@ function Question3({ onUpdate, state }) {
   function handleYesNo(colIdx, optIdx, value) {
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true); // Yes
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false); // Uncheck No
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false); // Uncheck No
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true); // No
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false); // Uncheck Yes
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false); // Uncheck Yes
     } else {
       onUpdate(colIdx, optIdx, value);
     }
@@ -264,11 +269,11 @@ function Question3({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -283,7 +288,9 @@ function Question3({ onUpdate, state }) {
   );
 }
 
-function Question4({ onUpdate, state }) {
+function Question4({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q4;
+
   const question = {
     text: '4. Did the review authors use a comprehensive literature search strategy? ',
     columns: [
@@ -313,8 +320,8 @@ function Question4({ onUpdate, state }) {
   };
 
   function autoToggleMain(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
-    const col1 = colIdx === 1 ? state[1].map((v, i) => (i === optIdx ? value : v)) : state[1];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
+    const col1 = colIdx === 1 ? state()[1].map((v, i) => (i === optIdx ? value : v)) : state()[1];
 
     const allPartialYes = col0.every(Boolean);
     const allYes = allPartialYes && col1.every(Boolean);
@@ -366,11 +373,11 @@ function Question4({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -385,7 +392,9 @@ function Question4({ onUpdate, state }) {
   );
 }
 
-function Question5({ onUpdate, state }) {
+function Question5({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q5;
+
   const question = {
     text: '5. Did the review authors perform study selection in duplicate?',
     columns: [
@@ -404,7 +413,7 @@ function Question5({ onUpdate, state }) {
   };
 
   function autoToggleYesNo(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
 
     onUpdate(colIdx, optIdx, value);
@@ -421,10 +430,10 @@ function Question5({ onUpdate, state }) {
   function handleYesNo(colIdx, optIdx, value) {
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true);
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false);
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true);
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false);
     } else {
       onUpdate(colIdx, optIdx, value);
     }
@@ -450,11 +459,11 @@ function Question5({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -469,7 +478,9 @@ function Question5({ onUpdate, state }) {
   );
 }
 
-function Question6({ onUpdate, state }) {
+function Question6({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q6;
+
   const question = {
     text: '6. Did the review authors perform data extraction in duplicate?',
     columns: [
@@ -488,7 +499,7 @@ function Question6({ onUpdate, state }) {
   };
 
   function autoToggleYesNo(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
     onUpdate(colIdx, optIdx, value);
     if (anyChecked) {
@@ -503,10 +514,10 @@ function Question6({ onUpdate, state }) {
   function handleYesNo(colIdx, optIdx, value) {
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true);
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false);
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true);
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false);
     } else {
       onUpdate(colIdx, optIdx, value);
     }
@@ -532,11 +543,11 @@ function Question6({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -551,7 +562,9 @@ function Question6({ onUpdate, state }) {
   );
 }
 
-function Question7({ onUpdate, state }) {
+function Question7({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q7;
+
   const question = {
     text: '7. Did the review authors provide a list of excluded studies and justify the exclusions?',
     columns: [
@@ -571,8 +584,8 @@ function Question7({ onUpdate, state }) {
   };
 
   function autoToggleMain(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
-    const col1 = colIdx === 1 ? state[1].map((v, i) => (i === optIdx ? value : v)) : state[1];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
+    const col1 = colIdx === 1 ? state()[1].map((v, i) => (i === optIdx ? value : v)) : state()[1];
     const allPartialYes = col0.every(Boolean);
     const allYes = allPartialYes && col1.every(Boolean);
     onUpdate(colIdx, optIdx, value);
@@ -621,11 +634,11 @@ function Question7({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -640,7 +653,9 @@ function Question7({ onUpdate, state }) {
   );
 }
 
-function Question8({ onUpdate, state }) {
+function Question8({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q8;
+
   const question = {
     text: '8. Did the review authors describe the included studies in adequate detail?',
     columns: [
@@ -671,8 +686,8 @@ function Question8({ onUpdate, state }) {
   };
 
   function autoToggleMain(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
-    const col1 = colIdx === 1 ? state[1].map((v, i) => (i === optIdx ? value : v)) : state[1];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
+    const col1 = colIdx === 1 ? state()[1].map((v, i) => (i === optIdx ? value : v)) : state()[1];
     const allPartialYes = col0.every(Boolean);
     const allYes = allPartialYes && col1.every(Boolean);
     onUpdate(colIdx, optIdx, value);
@@ -719,11 +734,11 @@ function Question8({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -738,7 +753,10 @@ function Question8({ onUpdate, state }) {
   );
 }
 
-function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
+function Question9({ onUpdatea, onUpdateb, checklistState }) {
+  const statea = () => checklistState().state.q9a;
+  const stateb = () => checklistState().state.q9b;
+
   const question = {
     text: '9. Did the review authors use a satisfactory technique for assessing the risk of bias (RoB) in individual studies that were included in the review?',
     subtitle: 'RCTs',
@@ -784,8 +802,8 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
   };
 
   function autoToggleMainA(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? statea[0].map((v, i) => (i === optIdx ? value : v)) : statea[0];
-    const col1 = colIdx === 1 ? statea[1].map((v, i) => (i === optIdx ? value : v)) : statea[1];
+    const col0 = colIdx === 0 ? statea()[0].map((v, i) => (i === optIdx ? value : v)) : statea()[0];
+    const col1 = colIdx === 1 ? statea()[1].map((v, i) => (i === optIdx ? value : v)) : statea()[1];
     const allPartialYes = col0.every(Boolean);
     const allYes = allPartialYes && col1.every(Boolean);
     onUpdatea(colIdx, optIdx, value);
@@ -819,8 +837,8 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
   }
 
   function autoToggleMainB(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? stateb[0].map((v, i) => (i === optIdx ? value : v)) : stateb[0];
-    const col1 = colIdx === 1 ? stateb[1].map((v, i) => (i === optIdx ? value : v)) : stateb[1];
+    const col0 = colIdx === 0 ? stateb()[0].map((v, i) => (i === optIdx ? value : v)) : stateb()[0];
+    const col1 = colIdx === 1 ? stateb()[1].map((v, i) => (i === optIdx ? value : v)) : stateb()[1];
     const allPartialYes = col0.every(Boolean);
     const allYes = allPartialYes && col1.every(Boolean);
     onUpdateb(colIdx, optIdx, value);
@@ -874,11 +892,11 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
                 >
                   <input
                     type="checkbox"
-                    checked={statea[colIdx][optIdx]}
+                    checked={statea()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0 || colIdx === 1
-                        ? autoToggleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
-                        : handleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
+                        ? autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
+                        : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -907,11 +925,11 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
                 >
                   <input
                     type="checkbox"
-                    checked={stateb[colIdx][optIdx]}
+                    checked={stateb()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0 || colIdx === 1
-                        ? autoToggleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
-                        : handleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
+                        ? autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
+                        : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -926,7 +944,9 @@ function Question9({ onUpdatea, statea, onUpdateb, stateb }) {
   );
 }
 
-function Question10({ onUpdate, state }) {
+function Question10({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q10;
+
   const question = {
     text: '10. Did the review authors report on the sources of funding for the studies included in the review?',
     columns: [
@@ -945,7 +965,7 @@ function Question10({ onUpdate, state }) {
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
     onUpdate(colIdx, optIdx, value);
     if (anyChecked) {
@@ -960,10 +980,10 @@ function Question10({ onUpdate, state }) {
   function handleYesNo(colIdx, optIdx, value) {
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true);
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false);
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true);
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false);
     } else {
       onUpdate(colIdx, optIdx, value);
     }
@@ -989,11 +1009,11 @@ function Question10({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1008,7 +1028,10 @@ function Question10({ onUpdate, state }) {
   );
 }
 
-function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
+function Question11({ onUpdatea, onUpdateb, checklistState }) {
+  const statea = () => checklistState().state.q11a;
+  const stateb = () => checklistState().state.q11b;
+
   const question = {
     text: '11. If meta-analysis was performed did the review authors use appropriate methods for statistical combination of results?',
     subtitle: 'RCTs',
@@ -1046,7 +1069,7 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
 
   // RCTs section logic
   function autoToggleMainA(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? statea[0].map((v, i) => (i === optIdx ? value : v)) : statea[0];
+    const col0 = colIdx === 0 ? statea()[0].map((v, i) => (i === optIdx ? value : v)) : statea()[0];
     const allChecked = col0.every(Boolean);
     onUpdatea(colIdx, optIdx, value);
     if (allChecked) {
@@ -1073,7 +1096,7 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
 
   // NRSI section logic
   function autoToggleMainB(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? stateb[0].map((v, i) => (i === optIdx ? value : v)) : stateb[0];
+    const col0 = colIdx === 0 ? stateb()[0].map((v, i) => (i === optIdx ? value : v)) : stateb()[0];
     const allChecked = col0.every(Boolean);
     onUpdateb(colIdx, optIdx, value);
     if (allChecked) {
@@ -1119,11 +1142,11 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
                 >
                   <input
                     type="checkbox"
-                    checked={statea[colIdx][optIdx]}
+                    checked={statea()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
-                        : handleMainA(colIdx, optIdx, !statea[colIdx][optIdx])
+                        ? autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
+                        : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1152,11 +1175,11 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
                 >
                   <input
                     type="checkbox"
-                    checked={stateb[colIdx][optIdx]}
+                    checked={stateb()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
-                        : handleMainB(colIdx, optIdx, !stateb[colIdx][optIdx])
+                        ? autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
+                        : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1171,7 +1194,9 @@ function Question11({ onUpdatea, statea, onUpdateb, stateb }) {
   );
 }
 
-function Question12({ onUpdate, state }) {
+function Question12({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q12;
+
   const question = {
     text: '12. If meta-analysis was performed, did the review authors assess the potential impact of RoB in individual studies on the results of the meta-analysis or other evidence synthesis?',
     columns: [
@@ -1191,7 +1216,7 @@ function Question12({ onUpdate, state }) {
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. 'No meta-analysis conducted' is mutually exclusive.
   function autoToggleMain(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
     onUpdate(colIdx, optIdx, value);
     if (anyChecked) {
@@ -1236,11 +1261,11 @@ function Question12({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1255,7 +1280,9 @@ function Question12({ onUpdate, state }) {
   );
 }
 
-function Question13({ onUpdate, state }) {
+function Question13({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q13;
+
   const question = {
     text: '13. Did the review authors account for RoB in individual studies when interpreting/ discussing the results of the review?',
     columns: [
@@ -1275,7 +1302,7 @@ function Question13({ onUpdate, state }) {
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
     onUpdate(colIdx, optIdx, value);
     if (anyChecked) {
@@ -1290,10 +1317,10 @@ function Question13({ onUpdate, state }) {
   function handleYesNo(colIdx, optIdx, value) {
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true);
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false);
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true);
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false);
     } else {
       onUpdate(colIdx, optIdx, value);
     }
@@ -1319,11 +1346,11 @@ function Question13({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1338,7 +1365,9 @@ function Question13({ onUpdate, state }) {
   );
 }
 
-function Question14({ onUpdate, state }) {
+function Question14({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q14;
+
   const question = {
     text: '14. Did the review authors provide a satisfactory explanation for, and discussion of, any heterogeneity observed in the results of the review?',
     columns: [
@@ -1358,7 +1387,7 @@ function Question14({ onUpdate, state }) {
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
     onUpdate(colIdx, optIdx, value);
     if (anyChecked) {
@@ -1373,10 +1402,10 @@ function Question14({ onUpdate, state }) {
   function handleYesNo(colIdx, optIdx, value) {
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true);
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false);
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true);
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false);
     } else {
       onUpdate(colIdx, optIdx, value);
     }
@@ -1402,11 +1431,11 @@ function Question14({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1421,7 +1450,9 @@ function Question14({ onUpdate, state }) {
   );
 }
 
-function Question15({ onUpdate, state }) {
+function Question15({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q15;
+
   const question = {
     text: '15. If they performed quantitative synthesis did the review authors carry out an adequate investigation of publication bias (small study bias) and discuss its likely impact on the results of the review?',
     columns: [
@@ -1440,7 +1471,7 @@ function Question15({ onUpdate, state }) {
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. 'No meta-analysis conducted' is mutually exclusive.
   function autoToggleMain(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
     onUpdate(colIdx, optIdx, value);
     if (anyChecked) {
@@ -1485,11 +1516,11 @@ function Question15({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleMain(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1504,7 +1535,9 @@ function Question15({ onUpdate, state }) {
   );
 }
 
-function Question16({ onUpdate, state }) {
+function Question16({ onUpdate, checklistState }) {
+  const state = () => checklistState().state.q16;
+
   const question = {
     text: '16. Did the review authors report any potential sources of conflict of interest, including any funding they received for conducting the review?',
     options: ['Yes', 'Partial Yes', 'No'],
@@ -1525,7 +1558,7 @@ function Question16({ onUpdate, state }) {
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
-    const col0 = colIdx === 0 ? state[0].map((v, i) => (i === optIdx ? value : v)) : state[0];
+    const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
     const anyChecked = col0.some(Boolean);
     onUpdate(colIdx, optIdx, value);
     if (anyChecked) {
@@ -1540,10 +1573,10 @@ function Question16({ onUpdate, state }) {
   function handleYesNo(colIdx, optIdx, value) {
     if (optIdx === 0 && value) {
       onUpdate(colIdx, 0, true);
-      if (state[colIdx][1]) onUpdate(colIdx, 1, false);
+      if (state()[colIdx][1]) onUpdate(colIdx, 1, false);
     } else if (optIdx === 1 && value) {
       onUpdate(colIdx, 1, true);
-      if (state[colIdx][0]) onUpdate(colIdx, 0, false);
+      if (state()[colIdx][0]) onUpdate(colIdx, 0, false);
     } else {
       onUpdate(colIdx, optIdx, value);
     }
@@ -1569,11 +1602,11 @@ function Question16({ onUpdate, state }) {
                 >
                   <input
                     type="checkbox"
-                    checked={state[colIdx][optIdx]}
+                    checked={state()[colIdx][optIdx]}
                     onChange={() =>
                       colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state[colIdx][optIdx])
+                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1593,6 +1626,13 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
   const [reviewerName, setReviewerName] = createSignal('');
   const [reviewDate, setReviewDate] = createSignal('');
 
+  createEffect(() => {
+    const state = checklistState().state;
+    setReviewTitle(state.title || '');
+    setReviewerName(state.reviewerName || '');
+    setReviewDate(state.reviewDate || '');
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -1610,8 +1650,8 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
                 value={reviewTitle()}
                 onChange={(e) => {
                   setReviewTitle(e.target.value);
-                  checklistState.state.title = e.target.value;
-                  onChecklistChange({ ...checklistState.state });
+                  checklistState().state.title = e.target.value;
+                  onChecklistChange({ ...checklistState().state });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter review title"
@@ -1624,8 +1664,8 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
                 value={reviewerName()}
                 onChange={(e) => {
                   setReviewerName(e.target.value);
-                  checklistState.state.reviewerName = e.target.value;
-                  onChecklistChange({ ...checklistState.state });
+                  checklistState().state.reviewerName = e.target.value;
+                  onChecklistChange({ ...checklistState().state });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your name"
@@ -1638,8 +1678,8 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
                 value={reviewDate()}
                 onChange={(e) => {
                   setReviewDate(e.target.value);
-                  checklistState.state.reviewDate = e.target.value;
-                  onChecklistChange({ ...checklistState.state });
+                  checklistState().state.reviewDate = e.target.value;
+                  onChecklistChange({ ...checklistState().state });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -1651,147 +1691,143 @@ export default function AMSTAR2Checklist({ checklistState, onChecklistChange }) 
         <div className="space-y-6">
           <Question1
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q1[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ1 = checklistState().state.q1.map((arr) => [...arr]);
+              newQ1[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q1: newQ1 });
             }}
-            state={checklistState.state.q1}
+            checklistState={checklistState}
           />
           <Question2
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q2[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ2 = checklistState().state.q2.map((arr) => [...arr]);
+              newQ2[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q2: newQ2 });
             }}
-            state={checklistState.state.q2}
+            checklistState={checklistState}
           />
           <Question3
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q3[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ3 = checklistState().state.q3.map((arr) => [...arr]);
+              newQ3[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q3: newQ3 });
             }}
-            state={checklistState.state.q3}
+            checklistState={checklistState}
           />
           <Question4
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q4[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ4 = checklistState().state.q4.map((arr) => [...arr]);
+              newQ4[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q4: newQ4 });
             }}
-            state={checklistState.state.q4}
+            checklistState={checklistState}
           />
           <Question5
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q5[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ5 = checklistState().state.q5.map((arr) => [...arr]);
+              newQ5[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q5: newQ5 });
             }}
-            state={checklistState.state.q5}
+            checklistState={checklistState}
           />
           <Question6
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q6[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ6 = checklistState().state.q6.map((arr) => [...arr]);
+              newQ6[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q6: newQ6 });
             }}
-            state={checklistState.state.q6}
+            checklistState={checklistState}
           />
           <Question7
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q7[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ7 = checklistState().state.q7.map((arr) => [...arr]);
+              newQ7[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q7: newQ7 });
             }}
-            state={checklistState.state.q7}
+            checklistState={checklistState}
           />
           <Question8
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q8[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ8 = checklistState().state.q8.map((arr) => [...arr]);
+              newQ8[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q8: newQ8 });
             }}
-            state={checklistState.state.q8}
+            checklistState={checklistState}
           />
           <Question9
             onUpdatea={(colIdx, optIdx, value) => {
-              checklistState.state.q9a[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ9a = checklistState().state.q9a.map((arr) => [...arr]);
+              newQ9a[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q9a: newQ9a });
             }}
-            statea={checklistState.state.q9a}
             onUpdateb={(colIdx, optIdx, value) => {
-              checklistState.state.q9b[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ9b = checklistState().state.q9b.map((arr) => [...arr]);
+              newQ9b[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q9b: newQ9b });
             }}
-            stateb={checklistState.state.q9b}
+            checklistState={checklistState}
           />
           <Question10
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q10[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ10 = checklistState().state.q10.map((arr) => [...arr]);
+              newQ10[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q10: newQ10 });
             }}
-            state={checklistState.state.q10}
+            checklistState={checklistState}
           />
           <Question11
             onUpdatea={(colIdx, optIdx, value) => {
-              checklistState.state.q11a[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ11a = checklistState().state.q11a.map((arr) => [...arr]);
+              newQ11a[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q11a: newQ11a });
             }}
-            statea={checklistState.state.q11a}
             onUpdateb={(colIdx, optIdx, value) => {
-              checklistState.state.q11b[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ11b = checklistState().state.q11b.map((arr) => [...arr]);
+              newQ11b[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q11b: newQ11b });
             }}
-            stateb={checklistState.state.q11b}
+            checklistState={checklistState}
           />
           <Question12
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q12[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ12 = checklistState().state.q12.map((arr) => [...arr]);
+              newQ12[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q12: newQ12 });
             }}
-            state={checklistState.state.q12}
+            checklistState={checklistState}
           />
           <Question13
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q13[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ13 = checklistState().state.q13.map((arr) => [...arr]);
+              newQ13[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q13: newQ13 });
             }}
-            state={checklistState.state.q13}
+            checklistState={checklistState}
           />
           <Question14
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q14[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ14 = checklistState().state.q14.map((arr) => [...arr]);
+              newQ14[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q14: newQ14 });
             }}
-            state={checklistState.state.q14}
+            checklistState={checklistState}
           />
           <Question15
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q15[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ15 = checklistState().state.q15.map((arr) => [...arr]);
+              newQ15[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q15: newQ15 });
             }}
-            state={checklistState.state.q15}
+            checklistState={checklistState}
           />
           <Question16
             onUpdate={(colIdx, optIdx, value) => {
-              checklistState.state.q16[colIdx][optIdx] = value;
-              onChecklistChange({ ...checklistState.state });
+              const newQ16 = checklistState().state.q16.map((arr) => [...arr]);
+              newQ16[colIdx][optIdx] = value;
+              onChecklistChange({ ...checklistState().state, q16: newQ16 });
             }}
-            state={checklistState.state.q16}
+            checklistState={checklistState}
           />
         </div>
-
-        {/* Export Button */}
-        {/* <div className="mt-8 text-center">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-colors duration-200 inline-flex items-center space-x-2">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <span>Export as PDF</span>
-          </button>
-        </div> */}
       </div>
     </div>
   );

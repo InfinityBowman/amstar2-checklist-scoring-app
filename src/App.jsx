@@ -1,9 +1,11 @@
-import { createSignal, createEffect, onCleanup, onMount, Show } from 'solid-js';
+import { createSignal, createEffect, onCleanup, onMount, Show, For, Match } from 'solid-js';
+
 import AMSTAR2Checklist from './AMSTAR2Checklist.jsx';
 import { saveChecklist, getAllChecklists, removeAllChecklists, generateUUID, deleteChecklist } from './db.js';
 import ChecklistState from './ChecklistState.js';
 import { ExportChecklist, ImportChecklist } from './ChecklistIO.js';
 import SharedCheckbox from './Shared.jsx';
+import Sidebar from './Sidebar.jsx';
 
 /**
  * TODO
@@ -16,6 +18,8 @@ export default function App() {
   const [currentId, setCurrentId] = createSignal(null);
   const [currentChecklistState, setCurrentChecklistState] = createSignal(null);
   const [sharedTab, setSharedTab] = createSignal(false);
+  const [sidebarOpen, setSidebarOpen] = createSignal(false);
+
   let autosaveTimeout = null;
 
   // Load all checklists on mount
@@ -33,12 +37,17 @@ export default function App() {
   // Update currentChecklistState when currentId or checklists change
   createEffect(() => {
     const currentChecklistObj = checklists().find((c) => c.id === currentId());
-    setCurrentChecklistState(currentChecklistObj ? new ChecklistState(currentChecklistObj) : null);
+    if (currentChecklistObj) {
+      setCurrentChecklistState(new ChecklistState(currentChecklistObj));
+    } else {
+      setCurrentChecklistState(null);
+    }
   });
 
   // Autosave effect: save whenever currentChecklistState changes
   createEffect(() => {
-    if (!currentChecklistState()) return;
+    const stateObj = currentChecklistState();
+    if (!stateObj || !stateObj.state) return;
 
     // Clear existing timeout
     if (autosaveTimeout) {
@@ -49,11 +58,11 @@ export default function App() {
     autosaveTimeout = setTimeout(async () => {
       try {
         const checklist = {
-          id: currentChecklistState().state.id || generateUUID(),
-          createdAt: currentChecklistState().state.createdAt || Date.now(),
-          ...currentChecklistState().state,
+          id: stateObj.state.id || generateUUID(),
+          createdAt: stateObj.state.createdAt || Date.now(),
+          ...stateObj.state,
         };
-        await saveChecklist(checklist);
+        await saveChecklist(JSON.parse(JSON.stringify(checklist)));
 
         setChecklists((prev) => {
           const idx = prev.findIndex((c) => c.id === checklist.id);
@@ -128,6 +137,7 @@ export default function App() {
 
   // Handler to update checklist state from AMSTAR2Checklist
   const handleChecklistChange = (newState) => {
+    console.log('handleChecklistChange');
     const updatedState = new ChecklistState(newState);
     setCurrentChecklistState(updatedState);
 
@@ -165,9 +175,10 @@ export default function App() {
   };
 
   const handleExportCSV = () => {
-    if (!currentChecklistState()) return;
+    const stateObj = currentChecklistState();
+    if (!stateObj || !stateObj.state) return;
     try {
-      ExportChecklist(currentChecklistState());
+      ExportChecklist(stateObj);
     } catch (error) {
       console.error('Error exporting checklist:', error);
       alert('Error exporting checklist!');
@@ -209,75 +220,66 @@ export default function App() {
   };
 
   return (
-    <div>
-      <div class="flex flex-wrap gap-2 justify-center my-4">
-        <button
-          onClick={handleAddChecklist}
-          class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition"
-        >
-          + New Checklist
-        </button>
-        <button
-          onClick={handleRemoveAll}
-          class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition"
-        >
-          Clear All Data
-        </button>
-        <button
-          onClick={handleDeleteCurrentChecklist}
-          disabled={!currentId()}
-          class="bg-yellow-600 text-white px-4 py-2 rounded shadow hover:bg-yellow-700 transition disabled:opacity-50"
-        >
-          Delete This Checklist
-        </button>
-        <button
-          onClick={handleExportCSV}
-          disabled={!currentChecklistState()}
-          class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition disabled:opacity-50"
-        >
-          Export as CSV
-        </button>
-        <button
-          onClick={() => setSharedTab(!sharedTab())}
-          class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition"
-        >
-          Toggle Shared
-        </button>
-        <label class="bg-blue-100 text-blue-800 px-4 py-2 rounded shadow hover:bg-blue-200 transition cursor-pointer">
-          Import CSV
-          <input
-            type="file"
-            accept=".csv,text/csv"
-            onChange={handleImportCSV}
-            style={{ display: 'none' }}
-          />
-        </label>
+    <div class="flex min-h-screen">
+      <div>
+        <Sidebar
+          open={sidebarOpen()}
+          onClose={() => setSidebarOpen(false)}
+          onAddChecklist={handleAddChecklist}
+          onRemoveAll={handleRemoveAll}
+          onDeleteCurrentChecklist={handleDeleteCurrentChecklist}
+          onExportCSV={handleExportCSV}
+          onToggleShared={() => setSharedTab(!sharedTab())}
+          onImportCSV={handleImportCSV}
+          checklists={checklists()}
+          currentId={currentId()}
+          currentChecklistState={currentChecklistState()}
+          onSelectChecklist={handleSelectChecklist}
+        />
       </div>
-      <div class="flex flex-wrap gap-2 justify-center mb-6">
-        {checklists().map((c, idx) => (
-          <button
-            onClick={() => handleSelectChecklist(c.id)}
-            class={`px-3 py-1 rounded border ${
-              c.id === currentId() ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-blue-700 border-blue-300 hover:bg-blue-50'
-            }`}
-            title={new Date(c.createdAt).toLocaleString()}
+      {/* Improved hamburger menu button */}
+      <Show when={!sidebarOpen()}>
+        <button
+          class="fixed top-4 left-4 z-40 bg-white/90 backdrop-blur-sm text-slate-700 p-3 rounded-xl shadow-lg border border-slate-200 hover:bg-white hover:shadow-xl transition-all duration-200 group"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open menu"
+        >
+          <svg
+            class="w-5 h-5 transition-transform group-hover:scale-110"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            {c.title && c.title.trim() !== '' ? c.title : `Review ${idx + 1}`}{' '}
-          </button>
-        ))}
-      </div>
-      <Show when={sharedTab()}>
-        <SharedCheckbox />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
       </Show>
-      <Show
-        when={currentChecklistState() && !sharedTab()}
-        fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
-      >
-        <AMSTAR2Checklist
-          checklistState={currentChecklistState()}
-          onChecklistChange={handleChecklistChange}
+      {/* Mobile overlay backdrop */}
+      <Show when={sidebarOpen()}>
+        <div
+          class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300"
+          onClick={() => setSidebarOpen(false)}
         />
       </Show>
+      <div class="flex-1 h-screen overflow-y-auto">
+        <Show when={sharedTab()}>
+          <SharedCheckbox />
+        </Show>
+        <Show
+          when={currentChecklistState() && currentChecklistState().state && !sharedTab()}
+          fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
+        >
+          <AMSTAR2Checklist
+            checklistState={currentChecklistState}
+            onChecklistChange={handleChecklistChange}
+          />
+        </Show>
+      </div>
     </div>
   );
 }

@@ -9,7 +9,7 @@ export default class ChecklistState {
       q2: [
         [false, false, false, false],
         [false, false, false],
-        [false, , true],
+        [false, false, true],
       ],
       q3: [
         [false, false, false],
