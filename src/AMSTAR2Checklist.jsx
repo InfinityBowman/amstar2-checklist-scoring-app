@@ -1,24 +1,9 @@
 import { createSignal, createEffect } from 'solid-js';
+import { AMSTAR_CHECKLIST } from './ChecklistMap.js';
 
 function Question1({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q1;
-  const question = {
-    text: '1. Did the research questions and inclusion criteria for the review include the components of PICO?',
-    columns: [
-      {
-        label: 'For Yes:',
-        options: ['Population', 'Intervention', 'Comparator group', 'Outcome'],
-      },
-      {
-        label: 'Optional (recommended):',
-        options: ['Timeframe for follow-up'],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q1;
 
   // Helper to auto-toggle Yes/No in last column based on first column
   function autoToggleYesNo(colIdx, optIdx, value) {
@@ -58,19 +43,13 @@ function Question1({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text} </h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -97,30 +76,7 @@ function Question1({ onUpdate, checklistState }) {
 function Question2({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q2;
 
-  const question = {
-    text: '2. Did the report of the review contain an explicit statement that the review methods were established prior to the conduct of the review and did the report justify any significant deviations from the protocol?',
-    columns: [
-      {
-        label: 'For Partial Yes:',
-        description: 'The authors state that they had a written protocol or guide that included ALL the following:',
-        options: ['review question(s)', 'a search strategy', 'inclusion/exclusion criteria', 'risk of bias assessment'],
-      },
-      {
-        label: 'For Yes:',
-        description: 'As for Partial Yes, plus the protocol should be registered and should also have specified:',
-        options: [
-          'a meta-analysis/synthesis plan, if appropriate, and',
-          'a plan for investigating causes of heterogeneity',
-          'a plan for investigating causes of heterogeneity',
-        ],
-      },
-      {
-        label: '',
-        description: '',
-        options: ['Yes', 'Partial Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q2;
 
   // Helper to auto-toggle Yes/Partial Yes/No in last column based on first two columns
   function autoToggleMain(colIdx, optIdx, value) {
@@ -161,10 +117,7 @@ function Question2({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-6">{col.label}</div>
             {/* Description */}
@@ -172,10 +125,7 @@ function Question2({ onUpdate, checklistState }) {
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -200,23 +150,7 @@ function Question2({ onUpdate, checklistState }) {
 function Question3({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q3;
 
-  const question = {
-    text: '3. Did the review authors explain their selection of the study designs for inclusion in the review?',
-    columns: [
-      {
-        label: 'For Yes, the review should satisfy ONE of the following:',
-        options: [
-          'Explanation for including only RCTs ',
-          'OR Explanation for including only NRSI',
-          'OR Explanation for including both RCTs and NRSI',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q3;
 
   function autoToggleYesNo(colIdx, optIdx, value) {
     // Simulate the next state for the first column
@@ -254,19 +188,13 @@ function Question3({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -291,33 +219,7 @@ function Question3({ onUpdate, checklistState }) {
 function Question4({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q4;
 
-  const question = {
-    text: '4. Did the review authors use a comprehensive literature search strategy? ',
-    columns: [
-      {
-        label: 'For Partial Yes (all the following):',
-        options: [
-          'searched at least 2 databases (relevant to research question)',
-          'provided key word and/or search strategy',
-          'justified publication restrictions (e.g. language)',
-        ],
-      },
-      {
-        label: 'For Yes, should also have (all the following):',
-        options: [
-          'searched the reference lists / bibliographies of included studies',
-          'searched trial/study registries',
-          'included/consulted content experts in the field',
-          'where relevant, searched for grey literature',
-          'conducted search within 24 months of completion of the review',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'Partial Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q4;
 
   function autoToggleMain(colIdx, optIdx, value) {
     const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
@@ -358,19 +260,13 @@ function Question4({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -395,22 +291,7 @@ function Question4({ onUpdate, checklistState }) {
 function Question5({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q5;
 
-  const question = {
-    text: '5. Did the review authors perform study selection in duplicate?',
-    columns: [
-      {
-        label: 'For Yes, either ONE of the following:',
-        options: [
-          'at least two reviewers achieved consensus on which data to extract from included studies',
-          'OR two reviewers extracted data from a sample of eligible studies and achieved good agreement (at least 80 percent), with the remainder extracted by one reviewer.',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q5;
 
   function autoToggleYesNo(colIdx, optIdx, value) {
     const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
@@ -444,19 +325,13 @@ function Question5({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -481,22 +356,7 @@ function Question5({ onUpdate, checklistState }) {
 function Question6({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q6;
 
-  const question = {
-    text: '6. Did the review authors perform data extraction in duplicate?',
-    columns: [
-      {
-        label: 'For Yes, either ONE of the following:',
-        options: [
-          'at least two reviewers achieved consensus on which data to extract from included studies',
-          'OR two reviewers extracted data from a sample of eligible studies and achieved good agreement (at least 80 percent), with the remainder extracted by one reviewer.',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q6;
 
   function autoToggleYesNo(colIdx, optIdx, value) {
     const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
@@ -528,19 +388,13 @@ function Question6({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -565,23 +419,7 @@ function Question6({ onUpdate, checklistState }) {
 function Question7({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q7;
 
-  const question = {
-    text: '7. Did the review authors provide a list of excluded studies and justify the exclusions?',
-    columns: [
-      {
-        label: 'For Partial Yes:',
-        options: ['provided a list of all potentially relevant studies that were read in full-text form but excluded from the review'],
-      },
-      {
-        label: 'For Yes, must also have:',
-        options: ['Justified the exclusion from the review of each potentially relevant study'],
-      },
-      {
-        label: '',
-        options: ['Yes', 'Partial Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q7;
 
   function autoToggleMain(colIdx, optIdx, value) {
     const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
@@ -619,19 +457,13 @@ function Question7({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -656,34 +488,7 @@ function Question7({ onUpdate, checklistState }) {
 function Question8({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q8;
 
-  const question = {
-    text: '8. Did the review authors describe the included studies in adequate detail?',
-    columns: [
-      {
-        label: 'For Partial Yes (ALL the following):',
-        options: [
-          'described populations',
-          'described interventions',
-          'described comparators',
-          'described outcomes',
-          'described research designs',
-        ],
-      },
-      {
-        label: 'For Yes, should also have ALL the following:',
-        options: [
-          'described population in detail',
-          'described comparator in detail (including doses where relevant)',
-          'described study’s setting in detail',
-          'timeframe for follow-up',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'Partial Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q8;
 
   function autoToggleMain(colIdx, optIdx, value) {
     const col0 = colIdx === 0 ? state()[0].map((v, i) => (i === optIdx ? value : v)) : state()[0];
@@ -721,17 +526,11 @@ function Question8({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -757,49 +556,7 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
   const statea = () => checklistState().state.q9a;
   const stateb = () => checklistState().state.q9b;
 
-  const question = {
-    text: '9. Did the review authors use a satisfactory technique for assessing the risk of bias (RoB) in individual studies that were included in the review?',
-    subtitle: 'RCTs',
-    columns: [
-      {
-        label: 'For Partial Yes, must have assessed RoB from',
-        options: [
-          'unconcealed allocation, and',
-          'lack of blinding of patients and assessors when assessing outcomes (unnecessary for objective outcomes such as all-cause mortality)',
-        ],
-      },
-      {
-        label: 'For Yes, must also have assessed RoB from:',
-        options: [
-          'allocation sequence that was not truly random, and',
-          'selection of the reported result from among multiple measurements or analyses of a specified outcome',
-        ],
-      },
-      {
-        label: '',
-        description: '',
-        options: ['Yes', 'Partial Yes', 'No', ' Includes only NRSI'],
-      },
-    ],
-    subtitle2: 'NRSI',
-    columns2: [
-      {
-        label: 'For Partial Yes, must have assessed RoB:',
-        options: ['from confounding, and', 'from selection bias'],
-      },
-      {
-        label: 'For Yes, must also have assessed RoB:',
-        options: [
-          'methods used to ascertain exposures and outcomes, and',
-          'selection of the reported result from among multiple measurements or analyses of a specified outcome',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'Partial Yes', 'No', 'Includes only RCTs'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q9;
 
   function autoToggleMainA(colIdx, optIdx, value) {
     const col0 = colIdx === 0 ? statea()[0].map((v, i) => (i === optIdx ? value : v)) : statea()[0];
@@ -877,19 +634,13 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
       <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle}</div>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={statea()[colIdx][optIdx]}
@@ -910,19 +661,13 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
       <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle2}</div>
       <div className="flex gap-6">
         {question.columns2.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns2.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns2.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={stateb()[colIdx][optIdx]}
@@ -947,21 +692,7 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
 function Question10({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q10;
 
-  const question = {
-    text: '10. Did the review authors report on the sources of funding for the studies included in the review?',
-    columns: [
-      {
-        label: 'For Yes:',
-        options: [
-          'Must have reported on the sources of funding for individual studies included in the review. Note: Reporting that the reviewers looked for this information but it was not reported by study authors also qualifies',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q10;
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
@@ -994,19 +725,13 @@ function Question10({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -1032,40 +757,7 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
   const statea = () => checklistState().state.q11a;
   const stateb = () => checklistState().state.q11b;
 
-  const question = {
-    text: '11. If meta-analysis was performed did the review authors use appropriate methods for statistical combination of results?',
-    subtitle: 'RCTs',
-    columns: [
-      {
-        label: 'For Yes:',
-        options: [
-          'The authors justified combining the data in a meta-analysis',
-          'AND they used an appropriate weighted technique to combine study results and adjusted for heterogeneity if present.',
-          'AND investigated the causes of any heterogeneity',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No', 'No meta-analysis conducted'],
-      },
-    ],
-    subtitle2: 'NRSI',
-    columns2: [
-      {
-        label: 'For Yes:',
-        options: [
-          'The authors justified combining the data in a meta-analysis',
-          'AND they used an appropriate weighted technique to combine study results, adjusting for heterogeneity if present',
-          'AND they statistically combined effect estimates from NRSI that were adjusted for confounding, rather than combining raw data, or justified combining raw data when adjusted effect estimates were not available',
-          'AND they reported separate summary estimates for RCTs and NRSI separately when both were included in the review',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No', 'No meta-analysis conducted'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q11;
 
   // RCTs section logic
   function autoToggleMainA(colIdx, optIdx, value) {
@@ -1127,19 +819,13 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
       <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle}</div>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={statea()[colIdx][optIdx]}
@@ -1160,19 +846,13 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
       <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle2}</div>
       <div className="flex gap-6">
         {question.columns2.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns2.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns2.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={stateb()[colIdx][optIdx]}
@@ -1197,22 +877,7 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
 function Question12({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q12;
 
-  const question = {
-    text: '12. If meta-analysis was performed, did the review authors assess the potential impact of RoB in individual studies on the results of the meta-analysis or other evidence synthesis?',
-    columns: [
-      {
-        label: 'For Yes:',
-        options: [
-          'included only low risk of bias RCTs',
-          'OR, if the pooled estimate was based on RCTs and/or NRSI at variable RoB, the authors performed analyses to investigate possible impact of RoB on summary estimates of effect.',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No', 'No meta-analysis conducted'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q12;
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. 'No meta-analysis conducted' is mutually exclusive.
   function autoToggleMain(colIdx, optIdx, value) {
@@ -1246,19 +911,13 @@ function Question12({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -1283,22 +942,7 @@ function Question12({ onUpdate, checklistState }) {
 function Question13({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q13;
 
-  const question = {
-    text: '13. Did the review authors account for RoB in individual studies when interpreting/ discussing the results of the review?',
-    columns: [
-      {
-        label: 'For Yes:',
-        options: [
-          'included only low risk of bias RCTs',
-          'OR, if RCTs with moderate or high RoB, or NRSI were included the review provided a discussion of the likely impact of RoB on the results',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q13;
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
@@ -1331,19 +975,13 @@ function Question13({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -1368,22 +1006,7 @@ function Question13({ onUpdate, checklistState }) {
 function Question14({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q14;
 
-  const question = {
-    text: '14. Did the review authors provide a satisfactory explanation for, and discussion of, any heterogeneity observed in the results of the review?',
-    columns: [
-      {
-        label: 'For Yes:',
-        options: [
-          'There was no significant heterogeneity in the results',
-          'OR if heterogeneity was present the authors performed an investigation of sources of any heterogeneity in the results and discussed the impact of this on the results of the review',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q14;
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
@@ -1416,19 +1039,13 @@ function Question14({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -1453,21 +1070,7 @@ function Question14({ onUpdate, checklistState }) {
 function Question15({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q15;
 
-  const question = {
-    text: '15. If they performed quantitative synthesis did the review authors carry out an adequate investigation of publication bias (small study bias) and discuss its likely impact on the results of the review?',
-    columns: [
-      {
-        label: 'For Yes:',
-        options: [
-          'performed graphical or statistical tests for publication bias and discussed the likelihood and magnitude of impact of publication bias',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No', 'No meta-analysis conducted'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q15;
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. 'No meta-analysis conducted' is mutually exclusive.
   function autoToggleMain(colIdx, optIdx, value) {
@@ -1501,19 +1104,13 @@ function Question15({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
@@ -1538,23 +1135,7 @@ function Question15({ onUpdate, checklistState }) {
 function Question16({ onUpdate, checklistState }) {
   const state = () => checklistState().state.q16;
 
-  const question = {
-    text: '16. Did the review authors report any potential sources of conflict of interest, including any funding they received for conducting the review?',
-    options: ['Yes', 'Partial Yes', 'No'],
-    columns: [
-      {
-        label: 'For Yes:',
-        options: [
-          'The authors reported no competing interests OR',
-          'The authors described their funding sources and how they managed potential conflicts of interest',
-        ],
-      },
-      {
-        label: '',
-        options: ['Yes', 'No'],
-      },
-    ],
-  };
+  const question = AMSTAR_CHECKLIST.q16;
 
   // Auto-toggling logic: if the first column is checked, set Yes; otherwise, set No. Yes/No are mutually exclusive.
   function autoToggleYesNo(colIdx, optIdx, value) {
@@ -1587,19 +1168,13 @@ function Question16({ onUpdate, checklistState }) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div
-            key={colIdx}
-            className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}
-          >
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             {/* Label */}
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             {/* Options */}
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label
-                  key={optIdx}
-                  className="flex items-center space-x-2"
-                >
+                <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
