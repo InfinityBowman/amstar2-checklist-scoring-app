@@ -20,6 +20,8 @@ This is a web application for interactively filling out and scoring AMSTAR 2 che
 - **Better Mobile Compatibility:** Make it look nice and usable on mobile.
 - **Improved Accessibility:** Make it more accessible.
 - **Collaborate realtime:** Collaborate on checklists in real time.
+- **View Study PDF:** View a study PDF alongside the checklist.
+- **Integration with Reference Managers:** Import studies from Zotero and others.
 
 Stay tuned for updates as these features are developed!
 

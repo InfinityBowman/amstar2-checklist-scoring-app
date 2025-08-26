@@ -1,10 +1,18 @@
-export default class ChecklistState {
-  constructor(initialState = null) {
+export default class AMSTARChecklist {
+  constructor(initialState = null, { title = null, id = null, createdAt = Date.now(), reviewerName = null } = {}) {
     this.state = initialState || this.getDefaultState();
+    this.title = title;
+    this.id = id;
+    this.createdAt = createdAt;
+    this.reviewerName = reviewerName;
   }
 
   getDefaultState() {
     return {
+      title: this.title,
+      id: this.id,
+      createdAt: this.createdAt,
+      reviewerName: this.reviewerName,
       q1: [[false, false, false, false], [false], [false, true]],
       q2: [
         [false, false, false, false],
@@ -132,8 +140,10 @@ export default class ChecklistState {
     this.state = newState;
   }
 
-  // Score checklist using the last column of each question (Yes/Partial Yes/No)
-  scoreChecklist() {
+  // Score checklist using the last column of each question (Yes/Partial Yes/No/No MA)
+  static scoreChecklist(state) {
+    if (!state || typeof state !== 'object') return 'Error';
+
     // Critical items by question key (adjust as needed for your checklist)
     const criticalItems = ['q2', 'q4', 'q7', 'q9a', 'q9b', 'q11a', 'q11b', 'q13', 'q15'];
     let criticalFlaws = 0;
@@ -153,7 +163,7 @@ export default class ChecklistState {
       return null;
     };
 
-    Object.entries(this.state).forEach(([question, arr]) => {
+    Object.entries(state).forEach(([question, arr]) => {
       if (!/^q\d+[a-z]*$/i.test(question)) return;
       const selected = getSelected(arr);
       if (!selected) return;

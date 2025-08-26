@@ -1,17 +1,35 @@
 import { createSignal, createEffect, onCleanup, onMount, Show, For, Match } from 'solid-js';
-
 import AMSTAR2Checklist from './AMSTAR2Checklist.jsx';
-import { saveChecklist, getAllChecklists, removeAllChecklists, generateUUID, deleteChecklist } from './db.js';
-import ChecklistState from './ChecklistState.js';
+import {
+  saveChecklist,
+  getAllChecklists,
+  deleteAllChecklists,
+  generateUUID,
+  deleteChecklist,
+  saveProject,
+  getAllProjects,
+  getProject,
+  deleteProject,
+} from './DB.js';
+import AMSTARChecklist from './AMSTARChecklist.js';
 import { ExportChecklist, ImportChecklist } from './ChecklistIO.js';
-import SharedCheckbox from './Shared.jsx';
+// import SharedCheckbox from './Shared.jsx';
 import Sidebar from './Sidebar.jsx';
+import Dialog from './Dialog.jsx';
+import Resizable from './Resizable.jsx';
+import { createProject } from './Project.js';
+import Dashboard from './Dashboard.jsx';
 
 /**
  * TODO
  * Save review title, name, date for each checklist
- * Initialize all options to 'No' on new checklists
  * Implement my own service worker instead of vite pwa
+ * pdfs might need to be linked to or owned by checklists
+ * ensure scorechecklist is correct
+ * AMSTAR folder for all AMSTAR stuff
+ * black and white export option for d3
+ * finish handling of different projects
+ * search pdf
  */
 export default function App() {
   const [checklists, setChecklists] = createSignal([]);
@@ -19,16 +37,40 @@ export default function App() {
   const [currentChecklistState, setCurrentChecklistState] = createSignal(null);
   const [sharedTab, setSharedTab] = createSignal(false);
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
+  const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
+  const [dialogOpen, setDialogOpen] = createSignal(false);
+  const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
+  const [pdfUrl, setPdfUrl] = createSignal(null);
+  const [project, setProject] = createSignal(null);
+  const [projects, setProjects] = createSignal([]);
 
   let autosaveTimeout = null;
 
-  // Load all checklists on mount
+  const handleSetProject = () => {
+    if (!project()) {
+      setProject({
+        id: 'dummy-project',
+        name: 'All Checklists Project',
+        createdAt: Date.now(),
+        checklists: checklists(),
+      });
+    } else {
+      setProject(null);
+    }
+  };
+
+  // Load all projects and checklists on mount
   onMount(async () => {
     try {
       const all = await getAllChecklists();
       all.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
       setChecklists(all);
       setCurrentId(all.length > 0 ? all[0].id : null);
+
+      const allProjects = await getAllProjects();
+      console.log('All Projects:', allProjects);
+      allProjects.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      setProjects(allProjects);
     } catch (error) {
       console.error('Error loading checklists:', error);
     }
@@ -38,7 +80,7 @@ export default function App() {
   createEffect(() => {
     const currentChecklistObj = checklists().find((c) => c.id === currentId());
     if (currentChecklistObj) {
-      setCurrentChecklistState(new ChecklistState(currentChecklistObj));
+      setCurrentChecklistState(new AMSTARChecklist(currentChecklistObj));
     } else {
       setCurrentChecklistState(null);
     }
@@ -57,11 +99,7 @@ export default function App() {
 
     autosaveTimeout = setTimeout(async () => {
       try {
-        const checklist = {
-          id: stateObj.state.id || generateUUID(),
-          createdAt: stateObj.state.createdAt || Date.now(),
-          ...stateObj.state,
-        };
+        const checklist = stateObj.state;
         await saveChecklist(JSON.parse(JSON.stringify(checklist)));
 
         setChecklists((prev) => {
@@ -96,29 +134,33 @@ export default function App() {
     }
   });
 
-  // Handler to clear all checklists
-  const handleRemoveAll = async () => {
-    if (window.confirm('Are you sure you want to delete all saved checklists?')) {
-      try {
-        await removeAllChecklists();
-        setChecklists([]);
-        setCurrentId(null);
-        setCurrentChecklistState(null);
-        alert('All checklists deleted!');
-      } catch (error) {
-        console.error('Error removing all checklists:', error);
-        alert('Error deleting checklists!');
-      }
+  // Handlers for delete all checklists dialog
+  const handleDeleteAll = () => {
+    setDeleteAllDialogOpen(true);
+  };
+
+  const confirmDeleteAll = async () => {
+    try {
+      await deleteAllChecklists();
+      setChecklists([]);
+      setCurrentId(null);
+      setCurrentChecklistState(null);
+      alert('All checklists deleted!');
+    } catch (error) {
+      console.error('Error removing all checklists:', error);
+      alert('Error deleting checklists!');
+    } finally {
+      setDeleteAllDialogOpen(false);
     }
   };
+
+  const cancelDeleteAll = () => setDeleteAllDialogOpen(false);
 
   // Handler to add a new checklist
   const handleAddChecklist = async () => {
     try {
       const newChecklist = {
-        id: generateUUID(),
-        createdAt: Date.now(),
-        ...new ChecklistState().state,
+        ...new AMSTARChecklist({ id: generateUUID(), createdAt: Date.now() }).state,
       };
       await saveChecklist(newChecklist);
       const updated = await getAllChecklists();
@@ -137,8 +179,7 @@ export default function App() {
 
   // Handler to update checklist state from AMSTAR2Checklist
   const handleChecklistChange = (newState) => {
-    console.log('handleChecklistChange');
-    const updatedState = new ChecklistState(newState);
+    const updatedState = new AMSTARChecklist(newState);
     setCurrentChecklistState(updatedState);
 
     // Update the checklists array with the new state
@@ -153,24 +194,57 @@ export default function App() {
     });
   };
 
-  // Handler to delete the currently selected checklist
-  const handleDeleteCurrentChecklist = async () => {
-    if (!currentId()) return;
-    if (window.confirm('Are you sure you want to delete this checklist?')) {
-      try {
-        await deleteChecklist(currentId());
-        const updated = checklists().filter((c) => c.id !== currentId());
-        setChecklists(updated);
+  // Handler to delete a checklist by id
+  const handleDeleteChecklist = (id) => {
+    setPendingDeleteId(id);
+    setDialogOpen(true);
+  };
+
+  // Handlers for the delete checklist dialog
+  const confirmDelete = async () => {
+    const id = pendingDeleteId();
+    if (!id) return;
+    try {
+      await deleteChecklist(id);
+      const updated = checklists().filter((c) => c.id !== id);
+      setChecklists(updated);
+
+      if (currentId() === id) {
         if (updated.length > 0) {
           setCurrentId(updated[0].id);
         } else {
           setCurrentId(null);
           setCurrentChecklistState(null);
         }
-      } catch (error) {
-        console.error('Error deleting checklist:', error);
-        alert('Error deleting checklist!');
       }
+    } catch (error) {
+      console.error('Error deleting checklist:', error);
+      alert('Error deleting checklist!');
+    } finally {
+      setDialogOpen(false);
+      setPendingDeleteId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDialogOpen(false);
+    setPendingDeleteId(null);
+  };
+
+  // Handler to add a new project
+  const handleAddProject = async () => {
+    try {
+      const newProject = {
+        ...new createProject({ id: generateUUID(), createdAt: Date.now(), checklists: checklists() }),
+      };
+      console.log('saving', newProject);
+      await saveProject(newProject);
+      const updated = await getAllProjects();
+      updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      setProjects(updated);
+      setCurrentId(newProject.id);
+    } catch (error) {
+      console.error('Error adding new project:', error);
     }
   };
 
@@ -193,7 +267,7 @@ export default function App() {
       const text = await file.text();
       const flat = ImportChecklist(text);
       // Create a new ChecklistState and import the flat object
-      const checklistState = new ChecklistState();
+      const checklistState = new AMSTARChecklist();
       checklistState.importFlat(flat);
 
       // Optionally, set title if present
@@ -220,66 +294,107 @@ export default function App() {
   };
 
   return (
-    <div class="flex min-h-screen">
+    <div class="flex h-screen">
       <div>
         <Sidebar
           open={sidebarOpen()}
           onClose={() => setSidebarOpen(false)}
           onAddChecklist={handleAddChecklist}
-          onRemoveAll={handleRemoveAll}
-          onDeleteCurrentChecklist={handleDeleteCurrentChecklist}
+          onDeleteAll={handleDeleteAll}
+          onDeleteChecklist={handleDeleteChecklist}
           onExportCSV={handleExportCSV}
           onToggleShared={() => setSharedTab(!sharedTab())}
           onImportCSV={handleImportCSV}
           checklists={checklists()}
+          projects={projects()}
           currentId={currentId()}
           currentChecklistState={currentChecklistState()}
           onSelectChecklist={handleSelectChecklist}
+          onSetProject={handleSetProject}
+          // onSetProject={handleAddProject}
         />
       </div>
-      {/* Improved hamburger menu button */}
+
+      {/* Open sidebar button */}
       <Show when={!sidebarOpen()}>
         <button
           class="fixed top-4 left-4 z-40 bg-white/90 backdrop-blur-sm text-slate-700 p-3 rounded-xl shadow-lg border border-slate-200 hover:bg-white hover:shadow-xl transition-all duration-200 group"
           onClick={() => setSidebarOpen(true)}
           aria-label="Open menu"
         >
-          <svg
-            class="w-5 h-5 transition-transform group-hover:scale-110"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+          <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </Show>
+
       {/* Mobile overlay backdrop */}
       <Show when={sidebarOpen()}>
-        <div
-          class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300" onClick={() => setSidebarOpen(false)} />
       </Show>
-      <div class="flex-1 h-screen overflow-y-auto">
-        <Show when={sharedTab()}>
-          <SharedCheckbox />
-        </Show>
+
+      {/* Project Dashboard */}
+      <Show when={project()}>
+        <div class="flex-1 h-screen overflow-y-auto">
+          <Dashboard project={project()} />
+        </div>
+      </Show>
+
+      {/* <Show when={sharedTab()}>
+        <SharedCheckbox />
+      </Show> */}
+
+      {/* Checklist */}
+      <Show when={!project()}>
         <Show
           when={currentChecklistState() && currentChecklistState().state && !sharedTab()}
           fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
         >
-          <AMSTAR2Checklist
-            checklistState={currentChecklistState}
-            onChecklistChange={handleChecklistChange}
-          />
+          <div class="flex-1 h-screen overflow-y-auto">
+            <div class="p-4 border-b border-gray-100">
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) setPdfUrl(URL.createObjectURL(file));
+                }}
+              />
+              {/* <input type="text" placeholder="PDF URL" onBlur={e => setPdfUrl(e.target.value)} /> */}
+            </div>
+            <AMSTAR2Checklist checklistState={currentChecklistState} onChecklistChange={handleChecklistChange} />
+          </div>
         </Show>
-      </div>
+      </Show>
+
+      {/* PDF Viewer */}
+      <Show when={pdfUrl()}>
+        <Resizable direction="horizontal" min={250} max={1600} initial={500} position="left">
+          <div class="h-full border-l border-gray-200 bg-white flex flex-col">
+            <iframe src={pdfUrl()} class="w-full h-full" style="min-width:300px;" title="PDF Viewer" />
+          </div>
+        </Resizable>
+      </Show>
+
+      {/* Dialogs */}
+      <Dialog
+        open={dialogOpen()}
+        title="Delete checklist?"
+        description={`Are you sure you want to delete ${
+          checklists().find((c) => c.id === pendingDeleteId()).title
+        }? This action cannot be undone.`}
+        confirmText="Delete"
+        onCancel={cancelDelete}
+        onConfirm={confirmDelete}
+      />
+      <Dialog
+        open={deleteAllDialogOpen()}
+        title="Delete all checklists?"
+        description="Are you sure you want to delete all saved checklists? This action cannot be undone."
+        confirmText="Delete all"
+        onCancel={cancelDeleteAll}
+        onConfirm={confirmDeleteAll}
+      />
     </div>
   );
 }

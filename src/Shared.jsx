@@ -3,16 +3,18 @@ import { createSignal, onCleanup, Show } from 'solid-js';
 /**
  * TODO
  * On join room owner needs to send room state to joiners
+ * Maybe also send a pdf of a study
  */
-const SIGNAL_URL = 'ws://localhost:3000';
-// const SIGNAL_URL = 'wss://amstar2-checklist-scoring-app-server.onrender.com';
+const SIGNAL_URL = import.meta.env.DEV
+  ? 'ws://localhost:3005' // dev server
+  : 'wss://amstar2-checklist-scoring-app-server.onrender.com'; // prod server
 
 export default function SharedCheckbox() {
   const [checked, setChecked] = createSignal(false);
   const [roomInput, setRoomInput] = createSignal('');
   const [room, setRoom] = createSignal('');
   const [joined, setJoined] = createSignal(false);
-  let ws, pc, dc;
+  let ws, pc, dc; // WebSocket, PeerConnection, DataChannel
 
   function setupWebRTC(isOfferer) {
     pc = new RTCPeerConnection();
@@ -155,16 +157,10 @@ export default function SharedCheckbox() {
             onInput={(e) => setRoomInput(e.target.value)}
             class="m-1 bg-blue-100 rounded-md p-1"
           />
-          <button
-            onClick={handleCreateRoom}
-            class="m-2 bg-green-200 p-2 rounded-md"
-          >
+          <button onClick={handleCreateRoom} class="m-2 bg-green-200 p-2 rounded-md">
             Create Room
           </button>
-          <button
-            onClick={handleJoinRoom}
-            class="m-2 bg-blue-200 p-2 rounded-md"
-          >
+          <button onClick={handleJoinRoom} class="m-2 bg-blue-200 p-2 rounded-md">
             Join Room
           </button>
         </div>
@@ -175,11 +171,7 @@ export default function SharedCheckbox() {
             Room: <b>{room()}</b>
           </div>
           <label>
-            <input
-              type="checkbox"
-              checked={checked()}
-              onInput={handleChange}
-            />
+            <input type="checkbox" checked={checked()} onInput={handleChange} />
             Check me!
           </label>
           <div class="m-1">Open this page in two tabs/windows and join the same room to test real-time sync.</div>

@@ -1,6 +1,7 @@
 const DB_NAME = 'amstar2-checklists';
 const STORE_NAME = 'checklists';
-const DB_VERSION = 1;
+const PROJECT_STORE_NAME = 'projects';
+const DB_VERSION = 2;
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -9,6 +10,9 @@ function openDB() {
       const db = request.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(PROJECT_STORE_NAME)) {
+        db.createObjectStore(PROJECT_STORE_NAME, { keyPath: 'id' });
       }
     };
     request.onsuccess = () => resolve(request.result);
@@ -57,7 +61,7 @@ export async function deleteChecklist(id) {
   });
 }
 
-export async function removeAllChecklists() {
+export async function deleteAllChecklists() {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -68,6 +72,48 @@ export async function removeAllChecklists() {
   });
 }
 
+export async function saveProject(project) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PROJECT_STORE_NAME, 'readwrite');
+    tx.objectStore(PROJECT_STORE_NAME).put(project);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+export async function getProject(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PROJECT_STORE_NAME, 'readonly');
+    const req = tx.objectStore(PROJECT_STORE_NAME).get(id);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function getAllProjects() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PROJECT_STORE_NAME, 'readonly');
+    const store = tx.objectStore(PROJECT_STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function deleteProject(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PROJECT_STORE_NAME, 'readwrite');
+    tx.objectStore(PROJECT_STORE_NAME).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+// Collision is super low but not impossible
 export function generateUUID() {
   return crypto.randomUUID();
 }

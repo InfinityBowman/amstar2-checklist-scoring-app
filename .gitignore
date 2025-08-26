@@ -19,3 +19,5 @@ npm-debug.log*
 # Ignore all HTML files except index.html
 *.html
 !index.html
+
+!.env.example 
