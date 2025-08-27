@@ -10,10 +10,9 @@ import {
   getAllProjects,
   getProject,
   deleteProject,
-} from './DB.js';
+} from './LocalDB.js';
 import AMSTARChecklist from './AMSTARChecklist.js';
 import { ExportChecklist, ImportChecklist } from './ChecklistIO.js';
-// import SharedCheckbox from './Shared.jsx';
 import Sidebar from './Sidebar.jsx';
 import Dialog from './Dialog.jsx';
 import Resizable from './Resizable.jsx';
@@ -35,7 +34,6 @@ export default function App() {
   const [checklists, setChecklists] = createSignal([]);
   const [currentId, setCurrentId] = createSignal(null);
   const [currentChecklistState, setCurrentChecklistState] = createSignal(null);
-  const [sharedTab, setSharedTab] = createSignal(false);
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
   const [dialogOpen, setDialogOpen] = createSignal(false);
@@ -303,7 +301,6 @@ export default function App() {
           onDeleteAll={handleDeleteAll}
           onDeleteChecklist={handleDeleteChecklist}
           onExportCSV={handleExportCSV}
-          onToggleShared={() => setSharedTab(!sharedTab())}
           onImportCSV={handleImportCSV}
           checklists={checklists()}
           projects={projects()}
@@ -340,14 +337,10 @@ export default function App() {
         </div>
       </Show>
 
-      {/* <Show when={sharedTab()}>
-        <SharedCheckbox />
-      </Show> */}
-
       {/* Checklist */}
       <Show when={!project()}>
         <Show
-          when={currentChecklistState() && currentChecklistState().state && !sharedTab()}
+          when={currentChecklistState() && currentChecklistState().state}
           fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
         >
           <div class="flex-1 h-screen overflow-y-auto">
