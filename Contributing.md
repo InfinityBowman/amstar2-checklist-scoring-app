@@ -14,11 +14,14 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
    npm install
    ```
 3. **Install dependencies for the server and run it:**
+
    ```sh
    cd server
    npm install
    ```
+
    Run the server
+
    ```sh
    node server.js
    cd ..

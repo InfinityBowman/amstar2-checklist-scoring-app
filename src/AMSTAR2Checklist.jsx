@@ -54,11 +54,9 @@ function Question1({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : colIdx === 2
-                        ? handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : onUpdate(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : colIdx === 2 ? handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : onUpdate(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -130,9 +128,9 @@ function Question2({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 || colIdx === 1 ?
+                        autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -199,9 +197,9 @@ function Question3({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -271,9 +269,9 @@ function Question4({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 || colIdx === 1 ?
+                        autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -336,9 +334,9 @@ function Question5({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -399,9 +397,9 @@ function Question6({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -468,9 +466,9 @@ function Question7({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 || colIdx === 1 ?
+                        autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -535,9 +533,9 @@ function Question8({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0 || colIdx === 1
-                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 || colIdx === 1 ?
+                        autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -645,9 +643,9 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
                     type="checkbox"
                     checked={statea()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0 || colIdx === 1
-                        ? autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
-                        : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
+                      colIdx === 0 || colIdx === 1 ?
+                        autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
+                      : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -672,9 +670,9 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
                     type="checkbox"
                     checked={stateb()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0 || colIdx === 1
-                        ? autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
-                        : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
+                      colIdx === 0 || colIdx === 1 ?
+                        autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
+                      : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -736,9 +734,9 @@ function Question10({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -830,9 +828,9 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
                     type="checkbox"
                     checked={statea()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
-                        : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
+                      : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -857,9 +855,9 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
                     type="checkbox"
                     checked={stateb()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
-                        : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
+                      : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -922,9 +920,9 @@ function Question12({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -986,9 +984,9 @@ function Question13({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1050,9 +1048,9 @@ function Question14({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1115,9 +1113,9 @@ function Question15({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
@@ -1179,9 +1177,9 @@ function Question16({ onUpdate, checklistState }) {
                     type="checkbox"
                     checked={state()[colIdx][optIdx]}
                     onChange={() =>
-                      colIdx === 0
-                        ? autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
-                        : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      colIdx === 0 ?
+                        autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
+                      : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
                     className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />

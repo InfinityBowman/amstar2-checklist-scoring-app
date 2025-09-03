@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt'],
       manifest: {
-        name: 'My Vite App',
-        short_name: 'ViteApp',
+        name: 'CoRATES',
+        short_name: 'CoRATES',
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',

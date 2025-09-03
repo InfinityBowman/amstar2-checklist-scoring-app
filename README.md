@@ -8,8 +8,8 @@ This is a web application for interactively filling out and scoring AMSTAR 2 che
 
 - Fill out the full AMSTAR 2 checklist for a review
 - Save and load your checklists automatically in your browser
-- Works fully offline—no internet connection required after first load
-- All data stays on your device and is never sent to a server
+- Can work fully offline—no internet connection required after first load
+- Sync project with team when internet connection is back
 
 ## Planned Features
 
@@ -21,7 +21,7 @@ This is a web application for interactively filling out and scoring AMSTAR 2 che
 - **Improved Accessibility:** Make it more accessible.
 - **Collaborate realtime:** Collaborate on checklists in real time.
 - **View Study PDF:** View a study PDF alongside the checklist.
-- **Integration with Reference Managers:** Import studies from Zotero and others.
+- **Integration with Reference Managers:** Import studies from Zotero, EndNote, and others.
 
 Stay tuned for updates as these features are developed!
 
