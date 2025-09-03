@@ -17,7 +17,7 @@ import Sidebar from './Sidebar.jsx';
 import Dialog from './Dialog.jsx';
 import Resizable from './Resizable.jsx';
 import { createProject } from './Project.js';
-import Dashboard from './Dashboard.jsx';
+import ProjectDashboard from './ProjectDashboard.jsx';
 
 /**
  * TODO
@@ -43,19 +43,6 @@ export default function App() {
   const [projects, setProjects] = createSignal([]);
 
   let autosaveTimeout = null;
-
-  const handleSetProject = () => {
-    if (!project()) {
-      setProject({
-        id: 'dummy-project',
-        name: 'All Checklists Project',
-        createdAt: Date.now(),
-        checklists: checklists(),
-      });
-    } else {
-      setProject(null);
-    }
-  };
 
   // Load all projects and checklists on mount
   onMount(async () => {
@@ -173,6 +160,7 @@ export default function App() {
   // Handler to switch between checklists
   const handleSelectChecklist = (id) => {
     setCurrentId(id);
+    setProject(null);
   };
 
   // Handler to update checklist state from AMSTAR2Checklist
@@ -233,7 +221,7 @@ export default function App() {
   const handleAddProject = async () => {
     try {
       const newProject = {
-        ...new createProject({ id: generateUUID(), createdAt: Date.now(), checklists: checklists() }),
+        ...new createProject({ name: 'New Project1', id: generateUUID(), createdAt: Date.now(), checklists: checklists() }),
       };
       console.log('saving', newProject);
       await saveProject(newProject);
@@ -244,6 +232,10 @@ export default function App() {
     } catch (error) {
       console.error('Error adding new project:', error);
     }
+  };
+
+  const handleSelectProject = (project) => {
+    setProject(project);
   };
 
   const handleExportCSV = () => {
@@ -307,8 +299,7 @@ export default function App() {
           currentId={currentId()}
           currentChecklistState={currentChecklistState()}
           onSelectChecklist={handleSelectChecklist}
-          onSetProject={handleSetProject}
-          // onSetProject={handleAddProject}
+          onSelectProject={handleSelectProject}
         />
       </div>
 
@@ -333,7 +324,7 @@ export default function App() {
       {/* Project Dashboard */}
       <Show when={project()}>
         <div class="flex-1 h-screen overflow-y-auto">
-          <Dashboard project={project()} />
+          <ProjectDashboard project={project()} />
         </div>
       </Show>
 

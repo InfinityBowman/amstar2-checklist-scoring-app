@@ -6,7 +6,7 @@ import AMSTARDistribution from './charts/AMSTARDistribution.jsx';
  * a project holds many reviews (checklists)
  */
 
-export default function Dashboard({ project }) {
+export default function ProjectDashboard({ project }) {
   if (!project) return <div class="p-8">No project selected.</div>;
 
   let sampleData = [

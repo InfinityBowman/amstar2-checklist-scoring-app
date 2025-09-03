@@ -9,6 +9,9 @@
  * @returns {Object} a project object.
  */
 export function createProject({ id, name, createdAt = Date.now(), checklists = [] } = {}) {
+  if (name === null) {
+    throw new Error('Project name cannot be null');
+  }
   return {
     id,
     name,
