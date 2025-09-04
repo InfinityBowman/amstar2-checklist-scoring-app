@@ -29,7 +29,7 @@ import ProjectDashboard from './ProjectDashboard.jsx';
  * black and white export option for d3
  * finish handling of different projects
  * search pdf
- * 
+ *
  * Change from using checklists in the state to just using projects
  */
 export default function App() {

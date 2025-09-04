@@ -20,4 +20,4 @@ npm-debug.log*
 *.html
 !index.html
 
-!.env.example
+!.env.example 
