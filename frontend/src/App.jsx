@@ -29,6 +29,8 @@ import ProjectDashboard from './ProjectDashboard.jsx';
  * black and white export option for d3
  * finish handling of different projects
  * search pdf
+ * 
+ * Change from using checklists in the state to just using projects
  */
 export default function App() {
   const [checklists, setChecklists] = createSignal([]);
@@ -64,6 +66,7 @@ export default function App() {
   // Update currentChecklistState when currentId or checklists change
   createEffect(() => {
     const currentChecklistObj = checklists().find((c) => c.id === currentId());
+    console.log(currentChecklistObj);
     if (currentChecklistObj) {
       setCurrentChecklistState(new AMSTARChecklist(currentChecklistObj));
     } else {

@@ -13,21 +13,8 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
    ```sh
    npm install
    ```
-3. **Install dependencies for the server and run it:**
 
-   ```sh
-   cd server
-   npm install
-   ```
-
-   Run the server
-
-   ```sh
-   node server.js
-   cd ..
-   ```
-
-4. **Start the development server:**
+3. **Start the development server:**
    ```sh
    npm run dev
    ```

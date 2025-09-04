@@ -30,7 +30,7 @@ export default function TreeView(props) {
           type="button"
         >
           <svg
-            class={`transition-transform duration-200 w-4 h-4 text-gray-500 ${expanded() ? 'rotate-90' : ''}`}
+            class={`transition-transform duration-200 w-5 h-5 text-gray-500 ${expanded() ? 'rotate-90' : ''}`}
             fill="none"
             stroke="currentColor"
             stroke-width="2.2"

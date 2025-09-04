@@ -1,4 +1,4 @@
-# Project Roadmap
+# Frontend Roadmap
 
 - [ ] **Navbar**
   - [ ] Add a top navigation bar to all pages
@@ -36,6 +36,18 @@
 - [ ] **Sidebar**
   - [x] List projects and their checklists (expandable/collapsible)
   - [ ] Updating checklist data should update the sidebar
+
+- [ ] **PDF Viewer**
+  - [ ] View PDFs and search through them
+
+- [ ] **Testing**
+  - [ ] Vitest for testing
+
+- [ ] **Analytics**
+  - [ ] Analytics monitoring, posthog or do it manually and store in supabase?
+
+Use Server-Sent Events (EventSource api) for server driven updates
+Zustand for state management or just solid signals?
 
 ---
 
