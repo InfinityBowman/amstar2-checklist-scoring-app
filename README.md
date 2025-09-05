@@ -1,4 +1,4 @@
-# AMSTAR 2 Checklist Scoring App
+# Collaborative Research Appraisal Tool for Evidence Synthesis (CoRATES)
 
 This is a web application for interactively filling out and scoring AMSTAR 2 checklists for systematic reviews. The app is built with SolidJS and D3 and stores your checklists locally in your browser using IndexedDB. **The app works fully offline and will save your checklists until you delete them in the site or clear your browser's site data.**
 

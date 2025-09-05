@@ -1,8 +1,15 @@
-import { Show, For } from 'solid-js';
+import { Show, For, createEffect } from 'solid-js';
 import ChecklistState from './AMSTARChecklist.js';
 import TreeView from './TreeView.jsx';
+import { useAppState } from './state.jsx';
 
 export default function Sidebar(props) {
+  const { projects, setProjects, currentProject, setCurrentProject } = useAppState();
+
+  createEffect(() => {
+    console.log('Sidebar projects:', projects());
+  });
+
   return (
     <div
       class={`
@@ -51,7 +58,7 @@ export default function Sidebar(props) {
 
             <div class="space-y-2">
               <button
-                onClick={props.onCreateProject}
+                onClick={props.onAddProject}
                 class="w-full bg-gray-900 hover:bg-gray-800 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-3 text-base font-medium"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +67,7 @@ export default function Sidebar(props) {
                 Project
               </button>
               <Show
-                when={props.projects?.length > 0}
+                when={projects()?.length > 0}
                 fallback={
                   <div class="text-center py-12 px-4">
                     <div class="w-12 h-12 bg-gray-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
@@ -73,11 +80,11 @@ export default function Sidebar(props) {
                         />
                       </svg>
                     </div>
-                    <p class="text-base text-gray-500 font-medium">No checklists yet</p>
+                    <p class="text-base text-gray-500 font-medium">No projects yet</p>
                   </div>
                 }
               >
-                <For each={props.projects}>
+                <For each={projects()}>
                   {(project) => (
                     <TreeView
                       data={[
@@ -189,7 +196,7 @@ export default function Sidebar(props) {
             <div class="space-y-1">
               <button
                 onClick={props.onExportCSV}
-                disabled={!props.currentChecklistState}
+                // disabled={!props.currentChecklistState}
                 class="w-full px-4 py-2.5 rounded-lg text-left transition-colors duration-150 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 text-base"
               >
                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

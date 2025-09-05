@@ -1,6 +1,8 @@
 /**
  * Project factory.
  *
+ * TODO: add import/export functions for projects
+ *
  * @param {Object} options - Project properties.
  * @param {string} options.id - Unique project ID.
  * @param {string} options.name - Project name/title.

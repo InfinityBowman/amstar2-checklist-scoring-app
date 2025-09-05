@@ -1,6 +1,4 @@
-# Contributing to AMSTAR 2 Checklist Scoring App
-
-Thank you for your interest in contributing! Your help is welcome and appreciated.
+# Contributing to CoRATES
 
 ## Quick Start
 
@@ -10,6 +8,7 @@ Thank you for your interest in contributing! Your help is welcome and appreciate
    cd amstar2-checklist-scoring-app
    ```
 2. **Install dependencies:**
+
    ```sh
    npm install
    ```

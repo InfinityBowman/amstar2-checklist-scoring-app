@@ -1,10 +1,10 @@
 export default class AMSTARChecklist {
   constructor(initialState = null, { title = null, id = null, createdAt = Date.now(), reviewerName = null } = {}) {
     this.state = initialState || this.getDefaultState();
-    this.title = title;
-    this.id = id;
-    this.createdAt = createdAt;
-    this.reviewerName = reviewerName;
+    this.title = initialState.title || title;
+    this.id = initialState.id || id;
+    this.createdAt = initialState.createdAt || createdAt;
+    this.reviewerName = initialState.reviewerName || reviewerName;
   }
 
   getDefaultState() {

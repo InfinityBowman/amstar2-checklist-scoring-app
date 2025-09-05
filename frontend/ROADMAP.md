@@ -25,13 +25,15 @@
 - [ ] **User Profile/Settings Page**
   - [ ] Change name/settings etc.
 
-- [ ] **Checklist Merge Editor**
+- [ ] **Checklists**
   - [ ] Compare two checklists in a merge editor
   - [ ] Optionally make merge editor collaborative
+  - [ ] Import/Export checklists to/from CSV
 
 - [ ] **Project Dashboard**
   - [ ] Export data visualization in color or greyscale
   - [ ] Data visualizations for all checklists in a project
+  - [ ] Import/Export project to/from CSV
 
 - [ ] **Sidebar**
   - [x] List projects and their checklists (expandable/collapsible)
@@ -46,9 +48,9 @@
 - [ ] **Analytics**
   - [ ] Analytics monitoring, posthog or do it manually and store in supabase?
 
-Use Server-Sent Events (EventSource api) for server driven updates
-Zustand for state management or just solid signals?
-
----
+- [ ] **Misc**
+- [ ] Use Server-Sent Events (EventSource api) for server driven updates
+- [ ] Use solid router to control navigation between checklists, projects, etc.
+  - makes it so back and forward buttons work properly
 
 _This roadmap is a living document and will be updated as the project evolves._

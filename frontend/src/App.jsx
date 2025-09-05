@@ -1,5 +1,5 @@
 import { createSignal, createEffect, onCleanup, onMount, Show, For, Match } from 'solid-js';
-import AMSTAR2Checklist from './AMSTAR2Checklist.jsx';
+import AMSTAR2Checklist from './routes/AMSTAR2Checklist.jsx';
 import {
   saveChecklist,
   getAllChecklists,
@@ -10,14 +10,15 @@ import {
   getAllProjects,
   getProject,
   deleteProject,
-} from './LocalDB.js';
+} from './offline/LocalDB.js';
 import AMSTARChecklist from './AMSTARChecklist.js';
-import { ExportChecklist, ImportChecklist } from './ChecklistIO.js';
+// import { ExportChecklist, ImportChecklist } from './offline/ChecklistIO.js';
 import Sidebar from './Sidebar.jsx';
 import Dialog from './Dialog.jsx';
 import Resizable from './Resizable.jsx';
 import { createProject } from './Project.js';
-import ProjectDashboard from './ProjectDashboard.jsx';
+import ProjectDashboard from './routes/ProjectDashboard.jsx';
+import { useAppState } from './state.jsx';
 
 /**
  * TODO
@@ -35,14 +36,12 @@ import ProjectDashboard from './ProjectDashboard.jsx';
 export default function App() {
   const [checklists, setChecklists] = createSignal([]);
   const [currentId, setCurrentId] = createSignal(null);
-  const [currentChecklistState, setCurrentChecklistState] = createSignal(null);
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
-  const [project, setProject] = createSignal(null);
-  const [projects, setProjects] = createSignal([]);
+  const { projects, setProjects, currentProject, setCurrentProject, currentChecklist, setCurrentChecklist } = useAppState();
 
   let autosaveTimeout = null;
 
@@ -55,7 +54,7 @@ export default function App() {
       setCurrentId(all.length > 0 ? all[0].id : null);
 
       const allProjects = await getAllProjects();
-      console.log('All Projects:', allProjects);
+      // console.log('All Projects:', allProjects);
       allProjects.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
       setProjects(allProjects);
     } catch (error) {
@@ -68,15 +67,15 @@ export default function App() {
     const currentChecklistObj = checklists().find((c) => c.id === currentId());
     console.log(currentChecklistObj);
     if (currentChecklistObj) {
-      setCurrentChecklistState(new AMSTARChecklist(currentChecklistObj));
+      setCurrentChecklist(new AMSTARChecklist(currentChecklistObj));
     } else {
-      setCurrentChecklistState(null);
+      setCurrentChecklist(null);
     }
   });
 
-  // Autosave effect: save whenever currentChecklistState changes
+  // Autosave effect: save whenever currentChecklist changes
   createEffect(() => {
-    const stateObj = currentChecklistState();
+    const stateObj = currentChecklist();
     if (!stateObj || !stateObj.state) return;
 
     // Clear existing timeout
@@ -132,7 +131,7 @@ export default function App() {
       await deleteAllChecklists();
       setChecklists([]);
       setCurrentId(null);
-      setCurrentChecklistState(null);
+      setCurrentChecklist(null);
       alert('All checklists deleted!');
     } catch (error) {
       console.error('Error removing all checklists:', error);
@@ -145,42 +144,26 @@ export default function App() {
   const cancelDeleteAll = () => setDeleteAllDialogOpen(false);
 
   // Handler to add a new checklist
-  const handleAddChecklist = async () => {
-    try {
-      const newChecklist = {
-        ...new AMSTARChecklist({ id: generateUUID(), createdAt: Date.now() }).state,
-      };
-      await saveChecklist(newChecklist);
-      const updated = await getAllChecklists();
-      updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-      setChecklists(updated);
-      setCurrentId(newChecklist.id);
-    } catch (error) {
-      console.error('Error adding new checklist:', error);
-    }
-  };
+  // const handleAddChecklist = async () => {
+  //   try {
+  //     const newChecklist = {
+  //       ...new AMSTARChecklist({ id: generateUUID(), createdAt: Date.now() }).state,
+  //     };
+  //     await saveChecklist(newChecklist);
+  //     const updated = await getAllChecklists();
+  //     updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  //     setChecklists(updated);
+  //     setCurrentId(newChecklist.id);
+  //   } catch (error) {
+  //     console.error('Error adding new checklist:', error);
+  //   }
+  // };
 
   // Handler to switch between checklists
   const handleSelectChecklist = (id) => {
     setCurrentId(id);
-    setProject(null);
-  };
-
-  // Handler to update checklist state from AMSTAR2Checklist
-  const handleChecklistChange = (newState) => {
-    const updatedState = new AMSTARChecklist(newState);
-    setCurrentChecklistState(updatedState);
-
-    // Update the checklists array with the new state
-    setChecklists((prev) => {
-      const idx = prev.findIndex((c) => c.id === updatedState.state.id);
-      if (idx !== -1) {
-        const updated = [...prev];
-        updated[idx] = { ...updated[idx], ...updatedState.state };
-        return updated;
-      }
-      return prev;
-    });
+    setCurrentChecklist(null);
+    setCurrentProject(null);
   };
 
   // Handler to delete a checklist by id
@@ -203,7 +186,7 @@ export default function App() {
           setCurrentId(updated[0].id);
         } else {
           setCurrentId(null);
-          setCurrentChecklistState(null);
+          setCurrentChecklist(null);
         }
       }
     } catch (error) {
@@ -224,7 +207,7 @@ export default function App() {
   const handleAddProject = async () => {
     try {
       const newProject = {
-        ...new createProject({ name: 'New Project1', id: generateUUID(), createdAt: Date.now(), checklists: checklists() }),
+        ...new createProject({ name: 'New Project1', id: generateUUID(), createdAt: Date.now(), checklists: [] }),
       };
       console.log('saving', newProject);
       await saveProject(newProject);
@@ -237,54 +220,70 @@ export default function App() {
     }
   };
 
+  // Handler to delete a project
+  const handleDeleteProject = async (id) => {
+    try {
+      await deleteProject(id);
+      const updated = projects().filter((p) => p.id !== id);
+      setProjects(updated);
+
+      if (currentId() === id) {
+        setCurrentId(null);
+        setCurrentProject(null);
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    }
+  };
+
   const handleSelectProject = (project) => {
-    setProject(project);
+    setCurrentProject(project);
   };
 
-  const handleExportCSV = () => {
-    const stateObj = currentChecklistState();
-    if (!stateObj || !stateObj.state) return;
-    try {
-      ExportChecklist(stateObj);
-    } catch (error) {
-      console.error('Error exporting checklist:', error);
-      alert('Error exporting checklist!');
-    }
-  };
+  // const handleExportCSV = () => {
+  //   const stateObj = currentChecklistState();
+  //   if (!stateObj || !stateObj.state) return;
+  //   try {
+  //     ExportChecklist(stateObj);
+  //   } catch (error) {
+  //     console.error('Error exporting checklist:', error);
+  //     alert('Error exporting checklist!');
+  //   }
+  // };
 
-  const handleImportCSV = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  // const handleImportCSV = async (event) => {
+  //   const file = event.target.files[0];
+  //   if (!file) return;
 
-    try {
-      const text = await file.text();
-      const flat = ImportChecklist(text);
-      // Create a new ChecklistState and import the flat object
-      const checklistState = new AMSTARChecklist();
-      checklistState.importFlat(flat);
+  //   try {
+  //     const text = await file.text();
+  //     const flat = ImportChecklist(text);
+  //     // Create a new ChecklistState and import the flat object
+  //     const checklistState = new AMSTARChecklist();
+  //     checklistState.importFlat(flat);
 
-      // Optionally, set title if present
-      if (flat.title) checklistState.state.title = flat.title;
+  //     // Optionally, set title if present
+  //     if (flat.title) checklistState.state.title = flat.title;
 
-      // Save as a new checklist
-      const newChecklist = {
-        id: generateUUID(),
-        createdAt: Date.now(),
-        ...checklistState.state,
-      };
-      await saveChecklist(newChecklist);
-      const updated = await getAllChecklists();
-      updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-      setChecklists(updated);
-      setCurrentId(newChecklist.id);
-    } catch (error) {
-      console.error('Error importing checklist:', error);
-      alert('Error importing checklist!');
-    } finally {
-      // Reset file input value so the same file can be imported again if needed
-      event.target.value = '';
-    }
-  };
+  //     // Save as a new checklist
+  //     const newChecklist = {
+  //       id: generateUUID(),
+  //       createdAt: Date.now(),
+  //       ...checklistState.state,
+  //     };
+  //     await saveChecklist(newChecklist);
+  //     const updated = await getAllChecklists();
+  //     updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  //     setChecklists(updated);
+  //     setCurrentId(newChecklist.id);
+  //   } catch (error) {
+  //     console.error('Error importing checklist:', error);
+  //     alert('Error importing checklist!');
+  //   } finally {
+  //     // Reset file input value so the same file can be imported again if needed
+  //     event.target.value = '';
+  //   }
+  // };
 
   return (
     <div class="flex h-screen">
@@ -292,17 +291,15 @@ export default function App() {
         <Sidebar
           open={sidebarOpen()}
           onClose={() => setSidebarOpen(false)}
-          onAddChecklist={handleAddChecklist}
           onDeleteAll={handleDeleteAll}
           onDeleteChecklist={handleDeleteChecklist}
-          onExportCSV={handleExportCSV}
-          onImportCSV={handleImportCSV}
-          checklists={checklists()}
+          // onExportCSV={handleExportCSV}
+          // onImportCSV={handleImportCSV}
           projects={projects()}
           currentId={currentId()}
-          currentChecklistState={currentChecklistState()}
           onSelectChecklist={handleSelectChecklist}
           onSelectProject={handleSelectProject}
+          onAddProject={handleAddProject}
         />
       </div>
 
@@ -325,33 +322,31 @@ export default function App() {
       </Show>
 
       {/* Project Dashboard */}
-      <Show when={project()}>
+      <Show when={currentProject() && !currentChecklist()}>
         <div class="flex-1 h-screen overflow-y-auto">
-          <ProjectDashboard project={project()} />
+          <ProjectDashboard project={currentProject()} onDeleteProject={handleDeleteProject} />
         </div>
       </Show>
 
       {/* Checklist */}
-      <Show when={!project()}>
-        <Show
-          when={currentChecklistState() && currentChecklistState().state}
-          fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
-        >
-          <div class="flex-1 h-screen overflow-y-auto">
-            <div class="p-4 border-b border-gray-100">
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) setPdfUrl(URL.createObjectURL(file));
-                }}
-              />
-              {/* <input type="text" placeholder="PDF URL" onBlur={e => setPdfUrl(e.target.value)} /> */}
-            </div>
-            <AMSTAR2Checklist checklistState={currentChecklistState} onChecklistChange={handleChecklistChange} />
+      <Show
+        when={currentChecklist() && currentChecklist().state}
+        fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
+      >
+        <div class="flex-1 h-screen overflow-y-auto">
+          <div class="p-4 border-b border-gray-100">
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) setPdfUrl(URL.createObjectURL(file));
+              }}
+            />
+            {/* <input type="text" placeholder="PDF URL" onBlur={e => setPdfUrl(e.target.value)} /> */}
           </div>
-        </Show>
+          <AMSTAR2Checklist />
+        </div>
       </Show>
 
       {/* PDF Viewer */}

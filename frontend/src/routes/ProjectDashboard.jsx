@@ -1,12 +1,12 @@
-import AMSTARRobvis from './charts/AMSTARRobvis.jsx';
-import AMSTARDistribution from './charts/AMSTARDistribution.jsx';
+import AMSTARRobvis from '../charts/AMSTARRobvis.jsx';
+import AMSTARDistribution from '../charts/AMSTARDistribution.jsx';
 
 /**
  * This will be a dashboard for a project
  * a project holds many reviews (checklists)
  */
 
-export default function ProjectDashboard({ project }) {
+export default function ProjectDashboard({ project, onDeleteProject }) {
   if (!project) return <div class="p-8">No project selected.</div>;
 
   let sampleData = [
@@ -141,6 +141,9 @@ export default function ProjectDashboard({ project }) {
   return (
     <div class="p-8">
       <h2 class="text-2xl font-bold mb-4">{project.name} Dashboard</h2>
+      <button onClick={() => onDeleteProject(project.id)} class="bg-red-500 text-white px-4 py-2 rounded">
+        Delete Project
+      </button>
       <div class="mb-4 text-gray-600">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
       <div class="mb-6">
         <strong>Total Checklists:</strong> {project.checklists?.length || 0}
