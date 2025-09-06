@@ -60,7 +60,7 @@ function Question1({ onUpdate, checklistState }) {
                       : colIdx === 2 ? handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : onUpdate(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -134,7 +134,7 @@ function Question2({ onUpdate, checklistState }) {
                         autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -203,7 +203,7 @@ function Question3({ onUpdate, checklistState }) {
                         autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -275,7 +275,7 @@ function Question4({ onUpdate, checklistState }) {
                         autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -340,7 +340,7 @@ function Question5({ onUpdate, checklistState }) {
                         autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -403,7 +403,7 @@ function Question6({ onUpdate, checklistState }) {
                         autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -472,7 +472,7 @@ function Question7({ onUpdate, checklistState }) {
                         autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -539,7 +539,7 @@ function Question8({ onUpdate, checklistState }) {
                         autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -649,7 +649,7 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
                         autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                       : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -676,7 +676,7 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
                         autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                       : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -740,7 +740,7 @@ function Question10({ onUpdate, checklistState }) {
                         autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -834,7 +834,7 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
                         autoToggleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                       : handleMainA(colIdx, optIdx, !statea()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -861,7 +861,7 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
                         autoToggleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                       : handleMainB(colIdx, optIdx, !stateb()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -926,7 +926,7 @@ function Question12({ onUpdate, checklistState }) {
                         autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -990,7 +990,7 @@ function Question13({ onUpdate, checklistState }) {
                         autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -1054,7 +1054,7 @@ function Question14({ onUpdate, checklistState }) {
                         autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -1119,7 +1119,7 @@ function Question15({ onUpdate, checklistState }) {
                         autoToggleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleMain(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -1183,7 +1183,7 @@ function Question16({ onUpdate, checklistState }) {
                         autoToggleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                       : handleYesNo(colIdx, optIdx, !state()[colIdx][optIdx])
                     }
-                    className="w-4 h-4 flex-shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
                 </label>
@@ -1217,7 +1217,7 @@ export default function AMSTAR2Checklist({ onChecklistChange }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">

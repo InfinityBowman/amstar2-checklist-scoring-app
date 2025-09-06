@@ -15,14 +15,15 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "@solidjs/router": "^0.15.3",
     "d3": "^7.9.0",
     "solid-js": "^1.9.9"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.11",
+    "@tailwindcss/vite": "^4.1.13",
     "gh-pages": "^6.3.0",
     "prettier": "3.6.2",
-    "tailwindcss": "^4.1.11",
+    "tailwindcss": "^4.1.13",
     "vite": "^7.0.6",
     "vite-plugin-pwa": "^1.0.2",
     "vite-plugin-solid": "^2.11.8"
