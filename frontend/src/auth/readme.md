@@ -1,5 +1,6 @@
 Auth Flows:
 See full-stack-fastapi-template
+
 - src/client
 - useauth src/hooks
 - email pattern and password rules from src/utils.ts

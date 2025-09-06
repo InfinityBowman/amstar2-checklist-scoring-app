@@ -1,11 +1,12 @@
 import { render } from 'solid-js/web';
-import App from './App.jsx';
+import AppRoutes from './Routes.jsx';
 import { StateProvider } from './state.jsx';
+import { Router } from '@solidjs/router';
 
 render(
   () => (
     <StateProvider>
-      <App />
+      <AppRoutes />
     </StateProvider>
   ),
   document.getElementById('root'),

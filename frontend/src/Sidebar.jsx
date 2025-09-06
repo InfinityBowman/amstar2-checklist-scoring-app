@@ -1,14 +1,12 @@
-import { Show, For, createEffect } from 'solid-js';
+import { Show, For } from 'solid-js';
 import ChecklistState from './AMSTARChecklist.js';
 import TreeView from './TreeView.jsx';
 import { useAppState } from './state.jsx';
+import { useNavigate } from '@solidjs/router';
 
 export default function Sidebar(props) {
-  const { projects, setProjects, currentProject, setCurrentProject } = useAppState();
-
-  createEffect(() => {
-    console.log('Sidebar projects:', projects());
-  });
+  const { projects, currentChecklist } = useAppState();
+  const navigate = useNavigate();
 
   return (
     <div
@@ -16,7 +14,7 @@ export default function Sidebar(props) {
         transition-all duration-200 ease-in-out
         bg-white border-r border-gray-200 h-screen overflow-x-hidden
         ${props.open ? 'w-90' : 'w-0'}
-        ∆
+        
         /* Mobile: Fixed overlay */
         md:relative
         ${props.open ? '' : 'md:w-0'}
@@ -35,7 +33,7 @@ export default function Sidebar(props) {
         `}
       >
         {/* Header */}
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        {/* <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
           <span class="font-semibold text-xl text-gray-900">Sidebar</span>
           <button
             class="w-10 h-10 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors"
@@ -46,7 +44,7 @@ export default function Sidebar(props) {
               <path d="M3.5 3C3.77614 3 4 3.22386 4 3.5V16.5L3.99023 16.6006C3.94371 16.8286 3.74171 17 3.5 17C3.25829 17 3.05629 16.8286 3.00977 16.6006L3 16.5V3.5C3 3.22386 3.22386 3 3.5 3ZM11.2471 5.06836C11.4476 4.95058 11.7104 4.98547 11.8721 5.16504C12.0338 5.34471 12.0407 5.60979 11.9023 5.79688L11.835 5.87207L7.80371 9.5H16.5C16.7761 9.5 17 9.72386 17 10C17 10.2761 16.7761 10.5 16.5 10.5H7.80371L11.835 14.1279C12.0402 14.3127 12.0568 14.6297 11.8721 14.835C11.6873 15.0402 11.3703 15.0568 11.165 14.8721L6.16504 10.3721L6.09473 10.2939C6.03333 10.2093 6 10.1063 6 10C6 9.85828 6.05972 9.72275 6.16504 9.62793L11.165 5.12793L11.2471 5.06836Z"></path>
             </svg>
           </button>
-        </div>
+        </div> */}
 
         {/* Main Content */}
         <div class="flex-1 overflow-y-auto sidebar-scrollbar">
@@ -64,7 +62,7 @@ export default function Sidebar(props) {
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Project
+                New Project
               </button>
               <Show
                 when={projects()?.length > 0}
@@ -87,35 +85,23 @@ export default function Sidebar(props) {
                 <For each={projects()}>
                   {(project) => (
                     <TreeView
-                      data={[
-                        {
-                          id: project.id,
-                          label: project.name || project.id,
-                          children: (project.checklists || []).map((cl) => ({
-                            id: cl.id,
-                            label: cl.title || cl.name || cl.id,
-                            checklist: cl,
-                            projectId: project.id,
-                          })),
-                          project,
-                        },
-                      ]}
-                      onSelect={(node) => {
-                        if (node.project) props.onSelectProject?.(node.project);
+                      projectId={project.id}
+                      onSelect={() => {
+                        navigate(`/project/${project.id}`);
                       }}
                     >
-                      {(node) => (
+                      {(checklist) => (
                         <div
                           class={`
             flex items-center group rounded-lg transition-colors
-            ${node.id === props.currentId ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}
+            ${currentChecklist() && checklist.id === currentChecklist().id ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}
           `}
                           style="flex: 1"
                         >
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              props.onSelectChecklist(node.id, node.projectId);
+                              navigate(`/checklist/${checklist.id}`);
                             }}
                             class="flex-1 flex items-center gap-3 px-3 py-2.5 text-left focus:outline-none"
                             tabIndex={0}
@@ -131,12 +117,12 @@ export default function Sidebar(props) {
                             </svg>
                             <div class="flex-1 min-w-0">
                               <div class="flex gap-3 items-center">
-                                <div class="text-base font-medium truncate">{node.label}</div>
+                                <div class="text-base font-medium truncate">{checklist.title}</div>
                                 <span
                                   class={`
                                 text-xs font-semibold px-2 py-0.5 rounded
                                 ${(() => {
-                                  const score = ChecklistState.scoreChecklist(node.checklist);
+                                  const score = ChecklistState.scoreChecklist(checklist);
                                   if (score === 'High') return 'bg-green-100 text-green-800';
                                   if (score === 'Moderate') return 'bg-yellow-100 text-yellow-800';
                                   if (score === 'Low') return 'bg-orange-100 text-orange-800';
@@ -146,9 +132,11 @@ export default function Sidebar(props) {
                               `}
                                 >
                                   {(() => {
-                                    const score = ChecklistState.scoreChecklist(node.checklist);
+                                    if (!checklist) return 'Unknown';
+
+                                    const score = ChecklistState.scoreChecklist(checklist);
                                     // Show text only if it's long enough, otherwise show a colored dot
-                                    if (score.length + node.label.length < 30) {
+                                    if (score.length + (checklist.title?.length || 0) < 30) {
                                       return score;
                                     } else {
                                       return <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
@@ -156,17 +144,17 @@ export default function Sidebar(props) {
                                   })()}
                                 </span>
                               </div>
-                              <div class="text-sm text-gray-500 mt-1">{new Date(node.checklist.createdAt).toLocaleDateString()}</div>
+                              <div class="text-sm text-gray-500 mt-1">{new Date(checklist.createdAt).toLocaleDateString()}</div>
                             </div>
                           </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              props.onDeleteChecklist(node.checklist.id);
+                              props.onDeleteChecklist(checklist.id);
                             }}
                             class={`
                           p-2 mr-2 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
-                          ${node.id !== props.currentId ? 'opacity-0 group-hover:opacity-100' : ''}
+                          ${currentChecklist() && checklist.id !== currentChecklist().id ? 'opacity-0 group-hover:opacity-100' : ''}
                         `}
                             aria-label="Delete checklist"
                             tabIndex={-1}

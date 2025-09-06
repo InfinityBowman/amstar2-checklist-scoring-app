@@ -1,24 +1,13 @@
 import { createSignal, createEffect, onCleanup, onMount, Show, For, Match } from 'solid-js';
-import AMSTAR2Checklist from './routes/AMSTAR2Checklist.jsx';
-import {
-  saveChecklist,
-  getAllChecklists,
-  deleteAllChecklists,
-  generateUUID,
-  deleteChecklist,
-  saveProject,
-  getAllProjects,
-  getProject,
-  deleteProject,
-} from './offline/LocalDB.js';
-import AMSTARChecklist from './AMSTARChecklist.js';
+import { deleteAllChecklists, generateUUID } from './offline/LocalDB.js';
+
 // import { ExportChecklist, ImportChecklist } from './offline/ChecklistIO.js';
 import Sidebar from './Sidebar.jsx';
 import Dialog from './Dialog.jsx';
 import Resizable from './Resizable.jsx';
 import { createProject } from './Project.js';
-import ProjectDashboard from './routes/ProjectDashboard.jsx';
 import { useAppState } from './state.jsx';
+import Navbar from './Navbar.jsx';
 
 /**
  * TODO
@@ -33,91 +22,32 @@ import { useAppState } from './state.jsx';
  *
  * Change from using checklists in the state to just using projects
  */
-export default function App() {
-  const [checklists, setChecklists] = createSignal([]);
-  const [currentId, setCurrentId] = createSignal(null);
+export default function App(props) {
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
-  const { projects, setProjects, currentProject, setCurrentProject, currentChecklist, setCurrentChecklist } = useAppState();
 
-  let autosaveTimeout = null;
+  const {
+    projects,
+    loading,
+    loadProjects,
+    setProjects,
+    currentProject,
+    addProject,
+    removeChecklist,
+    currentChecklist,
+    setCurrentChecklist,
+    updateChecklist,
+  } = useAppState();
 
   // Load all projects and checklists on mount
   onMount(async () => {
     try {
-      const all = await getAllChecklists();
-      all.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-      setChecklists(all);
-      setCurrentId(all.length > 0 ? all[0].id : null);
-
-      const allProjects = await getAllProjects();
-      // console.log('All Projects:', allProjects);
-      allProjects.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-      setProjects(allProjects);
+      await loadProjects();
     } catch (error) {
-      console.error('Error loading checklists:', error);
-    }
-  });
-
-  // Update currentChecklistState when currentId or checklists change
-  createEffect(() => {
-    const currentChecklistObj = checklists().find((c) => c.id === currentId());
-    console.log(currentChecklistObj);
-    if (currentChecklistObj) {
-      setCurrentChecklist(new AMSTARChecklist(currentChecklistObj));
-    } else {
-      setCurrentChecklist(null);
-    }
-  });
-
-  // Autosave effect: save whenever currentChecklist changes
-  createEffect(() => {
-    const stateObj = currentChecklist();
-    if (!stateObj || !stateObj.state) return;
-
-    // Clear existing timeout
-    if (autosaveTimeout) {
-      clearTimeout(autosaveTimeout);
-      autosaveTimeout = null;
-    }
-
-    autosaveTimeout = setTimeout(async () => {
-      try {
-        const checklist = stateObj.state;
-        await saveChecklist(JSON.parse(JSON.stringify(checklist)));
-
-        setChecklists((prev) => {
-          const idx = prev.findIndex((c) => c.id === checklist.id);
-          if (idx === -1) {
-            // New checklist
-            const updated = [...prev, checklist];
-            updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-            return updated;
-          } else if (JSON.stringify(prev[idx]) !== JSON.stringify(checklist)) {
-            // Changed checklist
-            const updated = [...prev];
-            updated[idx] = checklist;
-            return updated;
-          }
-          // No change
-          return prev;
-        });
-
-        setCurrentId((prevId) => prevId || checklist.id);
-      } catch (error) {
-        console.error('Error saving checklist:', error);
-      }
-      autosaveTimeout = null;
-    }, 400);
-  });
-
-  // Cleanup timeout on component unmount
-  onCleanup(() => {
-    if (autosaveTimeout) {
-      clearTimeout(autosaveTimeout);
+      console.error('Error loading projects:', error);
     }
   });
 
@@ -129,8 +59,6 @@ export default function App() {
   const confirmDeleteAll = async () => {
     try {
       await deleteAllChecklists();
-      setChecklists([]);
-      setCurrentId(null);
       setCurrentChecklist(null);
       alert('All checklists deleted!');
     } catch (error) {
@@ -141,30 +69,19 @@ export default function App() {
     }
   };
 
-  const cancelDeleteAll = () => setDeleteAllDialogOpen(false);
-
-  // Handler to add a new checklist
-  // const handleAddChecklist = async () => {
-  //   try {
-  //     const newChecklist = {
-  //       ...new AMSTARChecklist({ id: generateUUID(), createdAt: Date.now() }).state,
-  //     };
-  //     await saveChecklist(newChecklist);
-  //     const updated = await getAllChecklists();
-  //     updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-  //     setChecklists(updated);
-  //     setCurrentId(newChecklist.id);
-  //   } catch (error) {
-  //     console.error('Error adding new checklist:', error);
-  //   }
-  // };
-
-  // Handler to switch between checklists
-  const handleSelectChecklist = (id) => {
-    setCurrentId(id);
-    setCurrentChecklist(null);
-    setCurrentProject(null);
+  const deleteChecklistMessage = () => {
+    let checklistName = 'this checklist';
+    const project = projects().find((p) => p.checklists.some((c) => c.id === pendingDeleteId()));
+    if (project) {
+      const checklist = project.checklists.find((c) => c.id === pendingDeleteId());
+      if (checklist) {
+        checklistName = checklist.title || 'Untitled Checklist';
+      }
+    }
+    return `Are you sure you want to delete ${checklistName}? This action cannot be undone.`;
   };
+
+  const cancelDeleteAll = () => setDeleteAllDialogOpen(false);
 
   // Handler to delete a checklist by id
   const handleDeleteChecklist = (id) => {
@@ -177,18 +94,8 @@ export default function App() {
     const id = pendingDeleteId();
     if (!id) return;
     try {
-      await deleteChecklist(id);
-      const updated = checklists().filter((c) => c.id !== id);
-      setChecklists(updated);
-
-      if (currentId() === id) {
-        if (updated.length > 0) {
-          setCurrentId(updated[0].id);
-        } else {
-          setCurrentId(null);
-          setCurrentChecklist(null);
-        }
-      }
+      console.log('Deleting checklist id:', id);
+      await removeChecklist(currentProject().id, id);
     } catch (error) {
       console.error('Error deleting checklist:', error);
       alert('Error deleting checklist!');
@@ -210,34 +117,11 @@ export default function App() {
         ...new createProject({ name: 'New Project1', id: generateUUID(), createdAt: Date.now(), checklists: [] }),
       };
       console.log('saving', newProject);
-      await saveProject(newProject);
-      const updated = await getAllProjects();
-      updated.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-      setProjects(updated);
-      setCurrentId(newProject.id);
+      await addProject(newProject);
+      // setCurrentId(newProject.id);
     } catch (error) {
       console.error('Error adding new project:', error);
     }
-  };
-
-  // Handler to delete a project
-  const handleDeleteProject = async (id) => {
-    try {
-      await deleteProject(id);
-      const updated = projects().filter((p) => p.id !== id);
-      setProjects(updated);
-
-      if (currentId() === id) {
-        setCurrentId(null);
-        setCurrentProject(null);
-      }
-    } catch (error) {
-      console.error('Error deleting project:', error);
-    }
-  };
-
-  const handleSelectProject = (project) => {
-    setCurrentProject(project);
   };
 
   // const handleExportCSV = () => {
@@ -286,85 +170,47 @@ export default function App() {
   // };
 
   return (
-    <div class="flex h-screen">
-      <div>
-        <Sidebar
-          open={sidebarOpen()}
-          onClose={() => setSidebarOpen(false)}
-          onDeleteAll={handleDeleteAll}
-          onDeleteChecklist={handleDeleteChecklist}
-          // onExportCSV={handleExportCSV}
-          // onImportCSV={handleImportCSV}
-          projects={projects()}
-          currentId={currentId()}
-          onSelectChecklist={handleSelectChecklist}
-          onSelectProject={handleSelectProject}
-          onAddProject={handleAddProject}
-        />
+    <div class="flex flex-col h-screen">
+      {/* Navbar at the top */}
+      <Navbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} open={sidebarOpen()} />
+
+      <div class="flex flex-1 h-full">
+        <div>
+          <Sidebar
+            open={sidebarOpen()}
+            onClose={() => setSidebarOpen(false)}
+            // onDeleteAll={handleDeleteAll}
+            // onDeleteChecklist={handleDeleteChecklist}
+            // onAddProject={handleAddProject}
+          />
+        </div>
+
+        <div class="flex-1 h-full overflow-y-auto">
+          <Show when={!loading()} fallback={<div class="p-8 text-center">Loading projects...</div>}>
+            {props.children}
+          </Show>
+        </div>
+
+        {/* Mobile overlay backdrop */}
+        <Show when={sidebarOpen()}>
+          <div class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300" onClick={() => setSidebarOpen(false)} />
+        </Show>
+
+        {/* PDF Viewer */}
+        <Show when={pdfUrl()}>
+          <Resizable direction="horizontal" min={250} max={1600} initial={500} position="left">
+            <div class="h-full border-l border-gray-200 bg-white flex flex-col">
+              <iframe src={pdfUrl()} class="w-full h-full" style="min-width:300px;" title="PDF Viewer" />
+            </div>
+          </Resizable>
+        </Show>
       </div>
-
-      {/* Open sidebar button */}
-      <Show when={!sidebarOpen()}>
-        <button
-          class="fixed top-4 left-4 z-40 bg-white/90 backdrop-blur-sm text-slate-700 p-3 rounded-xl shadow-lg border border-slate-200 hover:bg-white hover:shadow-xl transition-all duration-200 group"
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open menu"
-        >
-          <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </Show>
-
-      {/* Mobile overlay backdrop */}
-      <Show when={sidebarOpen()}>
-        <div class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300" onClick={() => setSidebarOpen(false)} />
-      </Show>
-
-      {/* Project Dashboard */}
-      <Show when={currentProject() && !currentChecklist()}>
-        <div class="flex-1 h-screen overflow-y-auto">
-          <ProjectDashboard project={currentProject()} onDeleteProject={handleDeleteProject} />
-        </div>
-      </Show>
-
-      {/* Checklist */}
-      <Show
-        when={currentChecklist() && currentChecklist().state}
-        fallback={<div class="p-8 text-center text-gray-600">No checklist selected.</div>}
-      >
-        <div class="flex-1 h-screen overflow-y-auto">
-          <div class="p-4 border-b border-gray-100">
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) setPdfUrl(URL.createObjectURL(file));
-              }}
-            />
-            {/* <input type="text" placeholder="PDF URL" onBlur={e => setPdfUrl(e.target.value)} /> */}
-          </div>
-          <AMSTAR2Checklist />
-        </div>
-      </Show>
-
-      {/* PDF Viewer */}
-      <Show when={pdfUrl()}>
-        <Resizable direction="horizontal" min={250} max={1600} initial={500} position="left">
-          <div class="h-full border-l border-gray-200 bg-white flex flex-col">
-            <iframe src={pdfUrl()} class="w-full h-full" style="min-width:300px;" title="PDF Viewer" />
-          </div>
-        </Resizable>
-      </Show>
 
       {/* Dialogs */}
       <Dialog
         open={dialogOpen()}
         title="Delete checklist?"
-        description={`Are you sure you want to delete ${
-          checklists().find((c) => c.id === pendingDeleteId()).title
-        }? This action cannot be undone.`}
+        description={deleteChecklistMessage()}
         confirmText="Delete"
         onCancel={cancelDelete}
         onConfirm={confirmDelete}

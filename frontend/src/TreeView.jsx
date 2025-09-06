@@ -1,11 +1,21 @@
-import { createSignal, Show, For } from 'solid-js';
+import { createSignal, Show, For, createEffect } from 'solid-js';
+import { useAppState } from './state.jsx';
 
 export default function TreeView(props) {
-  const [expanded, setExpanded] = createSignal(false);
+  // Store expanded state with project ID as key for persistence
+  const [expandedMap, setExpandedMap] = createSignal({});
+  const { projects } = useAppState();
+  const project = () => projects().find((p) => p.id === props.projectId);
 
-  const project = props.data[0]; // Only one node per TreeView
-
-  if (!project) return null;
+  // Helper to get/set expanded state for current project
+  const isExpanded = () => project() && expandedMap()[project().id];
+  const toggleExpanded = (e) => {
+    e.stopPropagation();
+    setExpandedMap((prev) => ({
+      ...prev,
+      [project().id]: !prev[project().id],
+    }));
+  };
 
   return (
     <div class="mb-2">
@@ -14,23 +24,20 @@ export default function TreeView(props) {
           flex items-center justify-between cursor-pointer select-none rounded-lg transition-colors
           px-2 py-2 font-semibold text-gray-800 hover:bg-gray-100
         `}
-        onClick={() => props.onSelect?.(project)}
+        onClick={() => props.onSelect?.({ project: project() })}
         tabIndex={0}
         role="button"
       >
-        <span class="truncate">{project.label}</span>
+        <span class="truncate">{project().name || project().id}</span>
         <button
           class="ml-2 flex items-center justify-center w-8 h-8 rounded hover:bg-gray-200 transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpanded((e) => !e);
-          }}
+          onClick={toggleExpanded}
           tabIndex={0}
-          aria-label={expanded() ? 'Collapse project' : 'Expand project'}
+          aria-label={isExpanded() ? 'Collapse project' : 'Expand project'}
           type="button"
         >
           <svg
-            class={`transition-transform duration-200 w-5 h-5 text-gray-500 ${expanded() ? 'rotate-90' : ''}`}
+            class={`transition-transform duration-200 w-5 h-5 text-gray-500 ${isExpanded() ? 'rotate-90' : ''}`}
             fill="none"
             stroke="currentColor"
             stroke-width="2.2"
@@ -40,17 +47,17 @@ export default function TreeView(props) {
           </svg>
         </button>
       </div>
-      <Show when={expanded()}>
+      <Show when={isExpanded() && project().checklists?.length > 0}>
         <div class="ml-1 border-l border-gray-100 pl-2 mt-1 space-y-1">
-          <For each={project.children}>
-            {(child) =>
+          <For each={project().checklists}>
+            {(checklist) =>
               props.children ?
-                props.children(child)
+                props.children(checklist)
               : <div
                   class="flex items-center px-2 py-2 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-50 transition-colors"
-                  onClick={() => props.onSelect?.(child)}
+                  onClick={() => props.onSelect?.({ checklist, projectId: props.project.id })}
                 >
-                  {child.label}
+                  {checklist.title || checklist.name || checklist.id}
                 </div>
             }
           </For>

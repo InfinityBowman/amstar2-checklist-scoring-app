@@ -9,10 +9,6 @@ export default class AMSTARChecklist {
 
   getDefaultState() {
     return {
-      title: this.title,
-      id: this.id,
-      createdAt: this.createdAt,
-      reviewerName: this.reviewerName,
       q1: [[false, false, false, false], [false], [false, true]],
       q2: [
         [false, false, false, false],

@@ -2,9 +2,10 @@ import { createSignal, createEffect } from 'solid-js';
 import { AMSTAR_CHECKLIST } from '../offline/ChecklistMap.js';
 import { useAppState } from '../state.jsx';
 import AMSTARChecklist from '../AMSTARChecklist.js';
+import { useParams } from '@solidjs/router';
 
 function Question1({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q1;
+  const state = () => checklistState().q1;
   const question = AMSTAR_CHECKLIST.q1;
 
   // Helper to auto-toggle Yes/No in last column based on first column
@@ -74,7 +75,7 @@ function Question1({ onUpdate, checklistState }) {
 }
 
 function Question2({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q2;
+  const state = () => checklistState().q2;
 
   const question = AMSTAR_CHECKLIST.q2;
 
@@ -148,7 +149,7 @@ function Question2({ onUpdate, checklistState }) {
 }
 
 function Question3({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q3;
+  const state = () => checklistState().q3;
 
   const question = AMSTAR_CHECKLIST.q3;
 
@@ -217,7 +218,7 @@ function Question3({ onUpdate, checklistState }) {
 }
 
 function Question4({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q4;
+  const state = () => checklistState().q4;
 
   const question = AMSTAR_CHECKLIST.q4;
 
@@ -289,7 +290,7 @@ function Question4({ onUpdate, checklistState }) {
 }
 
 function Question5({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q5;
+  const state = () => checklistState().q5;
 
   const question = AMSTAR_CHECKLIST.q5;
 
@@ -354,7 +355,7 @@ function Question5({ onUpdate, checklistState }) {
 }
 
 function Question6({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q6;
+  const state = () => checklistState().q6;
 
   const question = AMSTAR_CHECKLIST.q6;
 
@@ -417,7 +418,7 @@ function Question6({ onUpdate, checklistState }) {
 }
 
 function Question7({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q7;
+  const state = () => checklistState().q7;
 
   const question = AMSTAR_CHECKLIST.q7;
 
@@ -486,7 +487,7 @@ function Question7({ onUpdate, checklistState }) {
 }
 
 function Question8({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q8;
+  const state = () => checklistState().q8;
 
   const question = AMSTAR_CHECKLIST.q8;
 
@@ -553,8 +554,8 @@ function Question8({ onUpdate, checklistState }) {
 }
 
 function Question9({ onUpdatea, onUpdateb, checklistState }) {
-  const statea = () => checklistState().state.q9a;
-  const stateb = () => checklistState().state.q9b;
+  const statea = () => checklistState().q9a;
+  const stateb = () => checklistState().q9b;
 
   const question = AMSTAR_CHECKLIST.q9;
 
@@ -690,7 +691,7 @@ function Question9({ onUpdatea, onUpdateb, checklistState }) {
 }
 
 function Question10({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q10;
+  const state = () => checklistState().q10;
 
   const question = AMSTAR_CHECKLIST.q10;
 
@@ -754,8 +755,8 @@ function Question10({ onUpdate, checklistState }) {
 }
 
 function Question11({ onUpdatea, onUpdateb, checklistState }) {
-  const statea = () => checklistState().state.q11a;
-  const stateb = () => checklistState().state.q11b;
+  const statea = () => checklistState().q11a;
+  const stateb = () => checklistState().q11b;
 
   const question = AMSTAR_CHECKLIST.q11;
 
@@ -875,7 +876,7 @@ function Question11({ onUpdatea, onUpdateb, checklistState }) {
 }
 
 function Question12({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q12;
+  const state = () => checklistState().q12;
 
   const question = AMSTAR_CHECKLIST.q12;
 
@@ -940,7 +941,7 @@ function Question12({ onUpdate, checklistState }) {
 }
 
 function Question13({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q13;
+  const state = () => checklistState().q13;
 
   const question = AMSTAR_CHECKLIST.q13;
 
@@ -1004,7 +1005,7 @@ function Question13({ onUpdate, checklistState }) {
 }
 
 function Question14({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q14;
+  const state = () => checklistState().q14;
 
   const question = AMSTAR_CHECKLIST.q14;
 
@@ -1068,7 +1069,7 @@ function Question14({ onUpdate, checklistState }) {
 }
 
 function Question15({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q15;
+  const state = () => checklistState().q15;
 
   const question = AMSTAR_CHECKLIST.q15;
 
@@ -1133,7 +1134,7 @@ function Question15({ onUpdate, checklistState }) {
 }
 
 function Question16({ onUpdate, checklistState }) {
-  const state = () => checklistState().state.q16;
+  const state = () => checklistState().q16;
 
   const question = AMSTAR_CHECKLIST.q16;
 
@@ -1196,24 +1197,38 @@ function Question16({ onUpdate, checklistState }) {
   );
 }
 
-export default function AMSTAR2Checklist({ onChecklistChange }) {
+export default function AMSTAR2Checklist() {
   const [reviewTitle, setReviewTitle] = createSignal('');
   const [reviewerName, setReviewerName] = createSignal('');
   const [reviewDate, setReviewDate] = createSignal('');
-  const { currentChecklist, setCurrentChecklist } = useAppState();
+  const { currentChecklist, setCurrentChecklist, updateChecklist, loading, projects } = useAppState();
+  const params = useParams();
 
   createEffect(() => {
-    const state = currentChecklist().state;
-    setReviewTitle(state.title || '');
-    setReviewerName(state.reviewerName || '');
-    setReviewDate(state.reviewDate || '');
+    if (params.id) {
+      setCurrentChecklist(params.id);
+    }
+    if (!currentChecklist()) {
+      console.warn('AMSTAR2Checklist: No current checklist found for id', params.id);
+      // Go back to dashboard
+      navigate(`/dashboard`);
+    }
   });
 
-  // Handler to update checklist state from AMSTAR2Checklist
+  createEffect(() => {
+    // Update local state when currentChecklist changes
+    if (currentChecklist()) {
+      setReviewTitle(currentChecklist().title || '');
+      setReviewerName(currentChecklist().reviewerName || '');
+      setReviewDate(currentChecklist().reviewDate || '');
+    }
+  });
+
+  // Handler to update checklist state
   const handleChecklistChange = (newState) => {
-    const updatedState = new AMSTARChecklist(newState);
-    console.log('Checklist state updated:', updatedState);
-    setCurrentChecklist(updatedState);
+    // Get a copy of the current checklist and update it
+    const updatedChecklist = { ...currentChecklist(), ...newState };
+    updateChecklist(updatedChecklist);
   };
 
   return (
@@ -1233,8 +1248,8 @@ export default function AMSTAR2Checklist({ onChecklistChange }) {
                 value={reviewTitle()}
                 onChange={(e) => {
                   setReviewTitle(e.target.value);
-                  currentChecklist().state.title = e.target.value;
-                  handleChecklistChange({ ...currentChecklist().state });
+                  // currentChecklist().title = e.target.value;
+                  handleChecklistChange({ title: e.target.value });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter review title"
@@ -1247,8 +1262,8 @@ export default function AMSTAR2Checklist({ onChecklistChange }) {
                 value={reviewerName()}
                 onChange={(e) => {
                   setReviewerName(e.target.value);
-                  currentChecklist().state.reviewerName = e.target.value;
-                  handleChecklistChange({ ...currentChecklist().state });
+                  // currentChecklist().reviewerName = e.target.value;
+                  handleChecklistChange({ reviewerName: e.target.value });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your name"
@@ -1261,8 +1276,8 @@ export default function AMSTAR2Checklist({ onChecklistChange }) {
                 value={reviewDate()}
                 onChange={(e) => {
                   setReviewDate(e.target.value);
-                  currentChecklist().state.reviewDate = e.target.value;
-                  handleChecklistChange({ ...currentChecklist().state });
+                  // currentChecklist().state.reviewDate = e.target.value;
+                  handleChecklistChange({ reviewDate: e.target.value });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -1271,146 +1286,148 @@ export default function AMSTAR2Checklist({ onChecklistChange }) {
         </div>
 
         {/* Questions */}
-        <div className="space-y-6">
-          <Question1
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ1 = currentChecklist().state.q1.map((arr) => [...arr]);
-              newQ1[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q1: newQ1 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question2
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ2 = currentChecklist().state.q2.map((arr) => [...arr]);
-              newQ2[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q2: newQ2 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question3
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ3 = currentChecklist().state.q3.map((arr) => [...arr]);
-              newQ3[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q3: newQ3 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question4
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ4 = currentChecklist().state.q4.map((arr) => [...arr]);
-              newQ4[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q4: newQ4 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question5
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ5 = currentChecklist().state.q5.map((arr) => [...arr]);
-              newQ5[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q5: newQ5 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question6
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ6 = currentChecklist().state.q6.map((arr) => [...arr]);
-              newQ6[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q6: newQ6 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question7
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ7 = currentChecklist().state.q7.map((arr) => [...arr]);
-              newQ7[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q7: newQ7 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question8
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ8 = currentChecklist().state.q8.map((arr) => [...arr]);
-              newQ8[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q8: newQ8 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question9
-            onUpdatea={(colIdx, optIdx, value) => {
-              const newQ9a = currentChecklist().state.q9a.map((arr) => [...arr]);
-              newQ9a[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q9a: newQ9a });
-            }}
-            onUpdateb={(colIdx, optIdx, value) => {
-              const newQ9b = currentChecklist().state.q9b.map((arr) => [...arr]);
-              newQ9b[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q9b: newQ9b });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question10
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ10 = currentChecklist().state.q10.map((arr) => [...arr]);
-              newQ10[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q10: newQ10 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question11
-            onUpdatea={(colIdx, optIdx, value) => {
-              const newQ11a = currentChecklist().state.q11a.map((arr) => [...arr]);
-              newQ11a[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q11a: newQ11a });
-            }}
-            onUpdateb={(colIdx, optIdx, value) => {
-              const newQ11b = currentChecklist().state.q11b.map((arr) => [...arr]);
-              newQ11b[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q11b: newQ11b });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question12
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ12 = currentChecklist().state.q12.map((arr) => [...arr]);
-              newQ12[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q12: newQ12 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question13
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ13 = currentChecklist().state.q13.map((arr) => [...arr]);
-              newQ13[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q13: newQ13 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question14
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ14 = currentChecklist().state.q14.map((arr) => [...arr]);
-              newQ14[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q14: newQ14 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question15
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ15 = currentChecklist().state.q15.map((arr) => [...arr]);
-              newQ15[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q15: newQ15 });
-            }}
-            checklistState={currentChecklist}
-          />
-          <Question16
-            onUpdate={(colIdx, optIdx, value) => {
-              const newQ16 = currentChecklist().state.q16.map((arr) => [...arr]);
-              newQ16[colIdx][optIdx] = value;
-              handleChecklistChange({ ...currentChecklist().state, q16: newQ16 });
-            }}
-            checklistState={currentChecklist}
-          />
-        </div>
+        <Show when={!loading() && currentChecklist()} fallback={<div>Loading...</div>}>
+          <div className="space-y-6">
+            <Question1
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ1 = currentChecklist().q1.map((arr) => [...arr]);
+                newQ1[colIdx][optIdx] = value;
+                handleChecklistChange({ q1: newQ1 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question2
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ2 = currentChecklist().q2.map((arr) => [...arr]);
+                newQ2[colIdx][optIdx] = value;
+                handleChecklistChange({ q2: newQ2 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question3
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ3 = currentChecklist().q3.map((arr) => [...arr]);
+                newQ3[colIdx][optIdx] = value;
+                handleChecklistChange({ q3: newQ3 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question4
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ4 = currentChecklist().q4.map((arr) => [...arr]);
+                newQ4[colIdx][optIdx] = value;
+                handleChecklistChange({ q4: newQ4 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question5
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ5 = currentChecklist().q5.map((arr) => [...arr]);
+                newQ5[colIdx][optIdx] = value;
+                handleChecklistChange({ q5: newQ5 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question6
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ6 = currentChecklist().q6.map((arr) => [...arr]);
+                newQ6[colIdx][optIdx] = value;
+                handleChecklistChange({ q6: newQ6 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question7
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ7 = currentChecklist().q7.map((arr) => [...arr]);
+                newQ7[colIdx][optIdx] = value;
+                handleChecklistChange({ q7: newQ7 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question8
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ8 = currentChecklist().q8.map((arr) => [...arr]);
+                newQ8[colIdx][optIdx] = value;
+                handleChecklistChange({ q8: newQ8 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question9
+              onUpdatea={(colIdx, optIdx, value) => {
+                const newQ9a = currentChecklist().q9a.map((arr) => [...arr]);
+                newQ9a[colIdx][optIdx] = value;
+                handleChecklistChange({ q9a: newQ9a });
+              }}
+              onUpdateb={(colIdx, optIdx, value) => {
+                const newQ9b = currentChecklist().q9b.map((arr) => [...arr]);
+                newQ9b[colIdx][optIdx] = value;
+                handleChecklistChange({ q9b: newQ9b });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question10
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ10 = currentChecklist().q10.map((arr) => [...arr]);
+                newQ10[colIdx][optIdx] = value;
+                handleChecklistChange({ q10: newQ10 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question11
+              onUpdatea={(colIdx, optIdx, value) => {
+                const newQ11a = currentChecklist().q11a.map((arr) => [...arr]);
+                newQ11a[colIdx][optIdx] = value;
+                handleChecklistChange({ q11a: newQ11a });
+              }}
+              onUpdateb={(colIdx, optIdx, value) => {
+                const newQ11b = currentChecklist().q11b.map((arr) => [...arr]);
+                newQ11b[colIdx][optIdx] = value;
+                handleChecklistChange({ q11b: newQ11b });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question12
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ12 = currentChecklist().q12.map((arr) => [...arr]);
+                newQ12[colIdx][optIdx] = value;
+                handleChecklistChange({ q12: newQ12 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question13
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ13 = currentChecklist().q13.map((arr) => [...arr]);
+                newQ13[colIdx][optIdx] = value;
+                handleChecklistChange({ q13: newQ13 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question14
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ14 = currentChecklist().q14.map((arr) => [...arr]);
+                newQ14[colIdx][optIdx] = value;
+                handleChecklistChange({ q14: newQ14 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question15
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ15 = currentChecklist().q15.map((arr) => [...arr]);
+                newQ15[colIdx][optIdx] = value;
+                handleChecklistChange({ q15: newQ15 });
+              }}
+              checklistState={currentChecklist}
+            />
+            <Question16
+              onUpdate={(colIdx, optIdx, value) => {
+                const newQ16 = currentChecklist().q16.map((arr) => [...arr]);
+                newQ16[colIdx][optIdx] = value;
+                handleChecklistChange({ q16: newQ16 });
+              }}
+              checklistState={currentChecklist}
+            />
+          </div>
+        </Show>
       </div>
     </div>
   );

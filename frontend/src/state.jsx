@@ -1,60 +1,227 @@
-import { createSignal, createContext, useContext } from 'solid-js';
+import { createStore } from 'solid-js/store';
+import { createContext, useContext } from 'solid-js';
+import {
+  saveChecklist,
+  getAllChecklists,
+  deleteChecklist,
+  saveProject,
+  getAllProjects,
+  getProject,
+  deleteProject,
+  deleteChecklistFromProject,
+  saveChecklistToProject,
+} from './offline/LocalDB.js';
 
 const StateContext = createContext();
 
 export function StateProvider(props) {
-  const [projects, setProjects] = createSignal([]);
-  const [currentProject, setCurrentProject] = createSignal(null);
-  const [currentChecklist, setCurrentChecklist] = createSignal(null);
+  const [state, setState] = createStore({
+    projects: [],
+    currentProject: null,
+    currentChecklist: null,
+    loading: true,
+  });
 
-  // Helper: set current checklist and update project data
-  function setChecklistAndUpdateProject(checklist) {
-    // console.log('Setting current checklist:', checklist);
-    setCurrentChecklist(checklist);
-
-    if (!currentProject()) {
-      projects().find((proj) => proj.checklists.some((c) => c.id === checklist.id)) &&
-        setCurrentProject(projects().find((proj) => proj.checklists.some((c) => c.id === checklist.id))); // Update current project if not already
-    }
-
-    // If currentProject exists, update its checklists
-    if (currentProject() && currentProject().id) {
-      console.log('Updating project checklists for:', currentProject());
-      setProjects((prev) =>
-        prev.map((proj) =>
-          proj.id === currentProject().id ?
-            { ...proj, checklists: proj.checklists.map((c) => (c.id === checklist.id ? checklist : c)) }
-          : proj,
-        ),
-      );
-      // setCurrentProject((prev) =>
-      //   prev ? { ...prev, checklists: prev.checklists.map((c) => (c.id === checklist.id ? checklist : c)) } : prev,
-      // );
+  // Load all projects from IndexedDB
+  async function loadProjects() {
+    try {
+      setState('loading', true);
+      const allProjects = await getAllProjects();
+      allProjects.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      setState('projects', allProjects);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+      throw error;
+    } finally {
+      setState('loading', false);
     }
   }
 
-  // Helper: set current project and update current checklist
-  function setProjectAndUpdateChecklist(project) {
-    // console.log('Setting current project:', project);
-    setCurrentProject(project);
-    // Set currentChecklist to first checklist in project
-    if (project && project.checklists && project.checklists.length > 0) {
-      setCurrentChecklist(project.checklists[0]);
+  // Add a new project to both state and IndexedDB
+  async function addProject(project) {
+    try {
+      await saveProject(project);
+      setState('projects', (prev) => [...prev, project]);
+      return project;
+    } catch (error) {
+      console.error('Error adding project:', error);
+      throw error;
+    }
+  }
+
+  // Delete a project from both state and IndexedDB
+  async function removeProject(projectId) {
+    try {
+      await deleteProject(projectId);
+      setState('projects', (prev) => prev.filter((p) => p.id !== projectId));
+
+      // If current project was deleted, reset current selections
+      if (state.currentProject?.id === projectId) {
+        setState('currentProject', null);
+        setState('currentChecklist', null);
+      }
+      return true;
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      throw error;
+    }
+  }
+
+  function setProjects(newProjects) {
+    setState('projects', newProjects);
+  }
+
+  function setCurrentProject(projectOrId) {
+    let project = projectOrId;
+    if (typeof projectOrId === 'string') {
+      project = state.projects.find((p) => p.id === projectOrId);
+    }
+    setState('currentProject', project);
+    setState('currentChecklist', project?.checklists?.[0] ?? null);
+  }
+
+  function setCurrentChecklist(checklistOrId) {
+    let checklist = null;
+    let foundProject = null;
+
+    if (typeof checklistOrId === 'string') {
+      // Find the checklist by ID across all projects
+      for (const project of state.projects) {
+        const found = project.checklists.find((c) => c.id === checklistOrId);
+        if (found) {
+          checklist = { ...found }; // Create a new object to avoid reference issues
+          foundProject = { ...project };
+          break;
+        }
+      }
+
+      if (!checklist) {
+        console.warn(`setCurrentChecklist: Checklist with ID "${checklistOrId}" not found.`);
+        setState('currentChecklist', null);
+        return;
+      }
+    } else if (typeof checklistOrId === 'object') {
+      // If object was passed directly, create a copy to avoid reference issues
+      checklist = { ...checklistOrId };
     } else {
-      setCurrentChecklist(null);
+      // Handle null/undefined case
+      setState('currentChecklist', null);
+      return;
+    }
+
+    setState('currentChecklist', checklist);
+  }
+
+  // Add a new checklist to a project in both state and IndexedDB
+  async function addChecklist(projectId, checklist) {
+    try {
+      // Use the new saveChecklistToProject function
+      const updatedProject = await saveChecklistToProject(projectId, checklist);
+
+      // Find the project to update in state
+      const projectIndex = state.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex !== -1) {
+        // Update the project in state
+        setState('projects', projectIndex, updatedProject);
+      }
+
+      return checklist;
+    } catch (error) {
+      console.error('Error adding checklist:', error);
+      throw error;
     }
   }
 
-  const state = {
-    projects,
-    setProjects,
-    currentProject,
-    setCurrentProject: setProjectAndUpdateChecklist,
-    currentChecklist,
-    setCurrentChecklist: setChecklistAndUpdateProject,
-  };
+  // Update a checklist in both state and IndexedDB
+  async function updateChecklist(updatedChecklist) {
+    try {
+      // Find the project index that contains this checklist
+      const projectIndex = state.projects.findIndex((p) => p.checklists.some((c) => c.id === updatedChecklist.id));
 
-  return <StateContext.Provider value={state}>{props.children}</StateContext.Provider>;
+      if (projectIndex >= 0) {
+        // Get the project ID
+        const projectId = state.projects[projectIndex].id;
+
+        // Save to IndexedDB (both checklist store and in the project)
+        await saveChecklistToProject(projectId, updatedChecklist);
+
+        // Update the checklist in the project in state
+        setState('projects', projectIndex, 'checklists', (checklists) => {
+          const checklistIndex = checklists.findIndex((c) => c.id === updatedChecklist.id);
+
+          if (checklistIndex >= 0) {
+            return [...checklists.slice(0, checklistIndex), { ...updatedChecklist }, ...checklists.slice(checklistIndex + 1)];
+          }
+          return checklists;
+        });
+
+        // Update currentChecklist if it's the same one
+        if (state.currentChecklist?.id === updatedChecklist.id) {
+          setState('currentChecklist', { ...updatedChecklist });
+        }
+
+        console.log('Checklist updated successfully', updatedChecklist);
+        return updatedChecklist;
+      } else {
+        console.warn('Could not find project containing checklist:', updatedChecklist.id);
+        throw new Error(`Could not find project containing checklist: ${updatedChecklist.id}`);
+      }
+    } catch (error) {
+      console.error('Error updating checklist:', error);
+      throw error;
+    }
+  }
+
+  // Delete a checklist from both state and IndexedDB
+  async function removeChecklist(projectId, checklistId) {
+    try {
+      // Delete from IndexedDB
+      await deleteChecklistFromProject(projectId, checklistId);
+
+      // Find project index
+      const projectIndex = state.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex >= 0) {
+        // Update project's checklists in state
+        setState('projects', projectIndex, 'checklists', (checklists) => checklists.filter((c) => c.id !== checklistId));
+
+        // Reset current checklist if it was deleted
+        if (state.currentChecklist?.id === checklistId) {
+          const project = state.projects[projectIndex];
+          setState('currentChecklist', project.checklists.length > 0 ? project.checklists[0] : null);
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error removing checklist:', error);
+      throw error;
+    }
+  }
+
+  return (
+    <StateContext.Provider
+      value={{
+        // State access
+        projects: () => state.projects,
+        currentProject: () => state.currentProject,
+        currentChecklist: () => state.currentChecklist,
+        loading: () => state.loading,
+
+        // State operations
+        loadProjects,
+        setProjects,
+        addProject,
+        removeProject,
+        setCurrentProject,
+        setCurrentChecklist,
+        addChecklist,
+        updateChecklist,
+        removeChecklist,
+      }}
+    >
+      {props.children}
+    </StateContext.Provider>
+  );
 }
 
 export function useAppState() {
