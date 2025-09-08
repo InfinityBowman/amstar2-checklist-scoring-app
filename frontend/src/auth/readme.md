@@ -6,6 +6,15 @@ See full-stack-fastapi-template
 - email pattern and password rules from src/utils.ts
 - Real email pattern and password rules must be set up server side
 
+* Look at google autofill attributes
+* https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete
+* https://www.chromium.org/developers/design-documents/create-amazing-password-forms/
+* current-password
+* new-password
+* email
+* username
+* name
+
 1. **Sign Up Flow**
    - User opens the Sign Up form.
    - User enters email, password, and confirms password.
