@@ -1,5 +1,5 @@
-import { createSignal, Show, For, createEffect } from 'solid-js';
-import { useAppState } from './state.jsx';
+import { createSignal, Show, For } from 'solid-js';
+import { useAppState } from './AppState.jsx';
 
 export default function TreeView(props) {
   // Store expanded state with project ID as key for persistence
@@ -49,18 +49,7 @@ export default function TreeView(props) {
       </div>
       <Show when={isExpanded() && project().checklists?.length > 0}>
         <div class="ml-1 border-l border-gray-100 pl-2 mt-1 space-y-1">
-          <For each={project().checklists}>
-            {(checklist) =>
-              props.children ?
-                props.children(checklist)
-              : <div
-                  class="flex items-center px-2 py-2 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-50 transition-colors"
-                  onClick={() => props.onSelect?.({ checklist, projectId: props.project.id })}
-                >
-                  {checklist.title || checklist.name || checklist.id}
-                </div>
-            }
-          </For>
+          <For each={project().checklists}>{(checklist) => props.children(checklist)}</For>
         </div>
       </Show>
     </div>

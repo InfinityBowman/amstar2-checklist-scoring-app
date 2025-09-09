@@ -1,12 +1,29 @@
 import { Show, For } from 'solid-js';
-import ChecklistState from './AMSTARChecklist.js';
+import ChecklistState from './AMSTAR2Checklist.js';
 import TreeView from './TreeView.jsx';
-import { useAppState } from './state.jsx';
+import { useAppState } from './AppState.jsx';
 import { useNavigate } from '@solidjs/router';
 
 export default function Sidebar(props) {
   const { projects, currentChecklist } = useAppState();
   const navigate = useNavigate();
+
+  function handleSetPdfUrl() {
+    const url = window.prompt('Enter PDF URL:');
+    if (url) {
+      props.setPdfUrl(url);
+    }
+  }
+
+  function handleSetPdfFile(event) {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      const url = URL.createObjectURL(file);
+      props.setPdfUrl(url);
+    } else {
+      alert('Please select a valid PDF file.');
+    }
+  }
 
   return (
     <div
@@ -32,7 +49,7 @@ export default function Sidebar(props) {
           ${props.open ? 'duration-500 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
         `}
       >
-        {/* Header */}
+        {/* Header - keep this here because I may want to use that icon later */}
         {/* <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
           <span class="font-semibold text-xl text-gray-900">Sidebar</span>
           <button
@@ -117,7 +134,7 @@ export default function Sidebar(props) {
                             </svg>
                             <div class="flex-1 min-w-0">
                               <div class="flex gap-3 items-center">
-                                <div class="text-base font-medium truncate">{checklist.title}</div>
+                                <div class="text-base font-medium truncate">{checklist.name}</div>
                                 <span
                                   class={`
                                 text-xs font-semibold px-2 py-0.5 rounded
@@ -136,7 +153,7 @@ export default function Sidebar(props) {
 
                                     const score = ChecklistState.scoreChecklist(checklist);
                                     // Show text only if it's long enough, otherwise show a colored dot
-                                    if (score.length + (checklist.title?.length || 0) < 30) {
+                                    if (score.length + (checklist.name?.length || 0) < 30) {
                                       return score;
                                     } else {
                                       return <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
@@ -150,7 +167,7 @@ export default function Sidebar(props) {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              props.onDeleteChecklist(checklist.id);
+                              props.onDeleteChecklist(project.id, checklist.id);
                             }}
                             class={`
                           p-2 mr-2 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
@@ -209,6 +226,34 @@ export default function Sidebar(props) {
                 </svg>
                 Import CSV
                 <input type="file" accept=".csv,text/csv" onChange={props.onImportCSV} class="hidden" />
+              </label>
+
+              <button
+                onClick={handleSetPdfUrl}
+                class="w-full px-4 py-2.5 rounded-lg text-left transition-colors duration-150 text-blue-700 hover:bg-blue-50 flex items-center gap-3 text-base"
+              >
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 10l4.553-2.276A2 2 0 0020 6.382V5a2 2 0 00-2-2H6a2 2 0 00-2 2v1.382a2 2 0 00.447 1.342L9 10m6 0v10m-6-10v10"
+                  />
+                </svg>
+                Set PDF URL
+              </button>
+
+              <label class="w-full px-4 py-2.5 rounded-lg text-left transition-colors duration-150 text-blue-700 hover:bg-blue-50 flex items-center gap-3 text-base cursor-pointer">
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 10l4.553-2.276A2 2 0 0020 6.382V5a2 2 0 00-2-2H6a2 2 0 00-2 2v1.382a2 2 0 00.447 1.342L9 10m6 0v10m-6-10v10"
+                  />
+                </svg>
+                Set PDF File
+                <input type="file" accept="application/pdf" onChange={handleSetPdfFile} class="hidden" />
               </label>
             </div>
           </div>

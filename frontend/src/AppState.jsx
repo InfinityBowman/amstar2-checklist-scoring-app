@@ -1,13 +1,10 @@
 import { createStore } from 'solid-js/store';
 import { createContext, useContext } from 'solid-js';
 import {
-  saveChecklist,
-  getAllChecklists,
-  deleteChecklist,
-  saveProject,
+  saveProject as saveProjectToDB,
   getAllProjects,
   getProject,
-  deleteProject,
+  deleteProject as deleteProjectFromDB,
   deleteChecklistFromProject,
   saveChecklistToProject,
 } from './offline/LocalDB.js';
@@ -40,7 +37,7 @@ export function StateProvider(props) {
   // Add a new project to both state and IndexedDB
   async function addProject(project) {
     try {
-      await saveProject(project);
+      await saveProjectToDB(project);
       setState('projects', (prev) => [...prev, project]);
       return project;
     } catch (error) {
@@ -50,9 +47,9 @@ export function StateProvider(props) {
   }
 
   // Delete a project from both state and IndexedDB
-  async function removeProject(projectId) {
+  async function deleteProject(projectId) {
     try {
-      await deleteProject(projectId);
+      await deleteProjectFromDB(projectId);
       setState('projects', (prev) => prev.filter((p) => p.id !== projectId));
 
       // If current project was deleted, reset current selections
@@ -76,13 +73,13 @@ export function StateProvider(props) {
     if (typeof projectOrId === 'string') {
       project = state.projects.find((p) => p.id === projectOrId);
     }
+    project = project ? { ...project } : null; // Create a new object to avoid reference issues
     setState('currentProject', project);
-    setState('currentChecklist', project?.checklists?.[0] ?? null);
+    setState('currentChecklist', { ...(project?.checklists?.[0] ?? null) });
   }
 
   function setCurrentChecklist(checklistOrId) {
     let checklist = null;
-    let foundProject = null;
 
     if (typeof checklistOrId === 'string') {
       // Find the checklist by ID across all projects
@@ -90,7 +87,6 @@ export function StateProvider(props) {
         const found = project.checklists.find((c) => c.id === checklistOrId);
         if (found) {
           checklist = { ...found }; // Create a new object to avoid reference issues
-          foundProject = { ...project };
           break;
         }
       }
@@ -160,7 +156,7 @@ export function StateProvider(props) {
           setState('currentChecklist', { ...updatedChecklist });
         }
 
-        console.log('Checklist updated successfully', updatedChecklist);
+        // console.log('Checklist updated successfully', updatedChecklist);
         return updatedChecklist;
       } else {
         console.warn('Could not find project containing checklist:', updatedChecklist.id);
@@ -173,7 +169,7 @@ export function StateProvider(props) {
   }
 
   // Delete a checklist from both state and IndexedDB
-  async function removeChecklist(projectId, checklistId) {
+  async function deleteChecklist(projectId, checklistId) {
     try {
       // Delete from IndexedDB
       await deleteChecklistFromProject(projectId, checklistId);
@@ -211,12 +207,12 @@ export function StateProvider(props) {
         loadProjects,
         setProjects,
         addProject,
-        removeProject,
+        deleteProject,
         setCurrentProject,
         setCurrentChecklist,
         addChecklist,
         updateChecklist,
-        removeChecklist,
+        deleteChecklist,
       }}
     >
       {props.children}

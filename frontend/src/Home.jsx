@@ -10,7 +10,7 @@ export default function Home() {
         <p class="mb-8 text-gray-600">
           Interactively fill out and score AMSTAR 2 checklists for systematic reviews.
           <br />
-          Works fully offline, saves your work automatically, and helps you visualize results across projects.
+          Works fully offline, saves your work automatically, and helps you visualize results.
         </p>
         <div class="flex flex-col gap-4">
           <A href="/dashboard" class="bg-blue-600 text-white py-3 px-6 rounded shadow hover:bg-blue-700 transition">

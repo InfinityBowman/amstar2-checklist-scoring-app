@@ -144,6 +144,7 @@ export async function saveChecklistToProject(projectId, checklist) {
       // Update existing checklist
       project.checklists[checklistIndex] = deepClone(checklist);
     } else {
+      console.log('Adding new checklist to project', deepClone(checklist));
       // Add new checklist to project
       project.checklists.push(deepClone(checklist));
     }
