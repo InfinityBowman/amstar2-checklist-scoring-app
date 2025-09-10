@@ -136,7 +136,6 @@ export default class AMSTAR2Checklist {
       if (!/^q\d+[a-z]*$/i.test(question)) return;
       if (!obj || !Array.isArray(obj.answers)) return;
       const selected = AMSTAR2Checklist.getSelectedAnswer(obj.answers, question);
-      console.log(`Question ${question} selected answer:`, selected);
       if (selected !== 'Yes') {
         if (obj.critical) {
           criticalFlaws++;

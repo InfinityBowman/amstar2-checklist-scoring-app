@@ -1,4 +1,4 @@
-import { onCleanup, createEffect } from 'solid-js';
+import { onCleanup, createEffect, createSignal } from 'solid-js';
 import * as d3 from 'd3';
 
 /**
@@ -10,10 +10,29 @@ import * as d3 from 'd3';
  */
 export default function AMSTARRobvis(props) {
   let ref;
+  const [containerSize, setContainerSize] = createSignal({ width: 900, height: 600 });
+
+  // Responsive: observe parent container size
+  createEffect(() => {
+    function updateSize() {
+      if (ref && ref.parentElement) {
+        const rect = ref.parentElement.getBoundingClientRect();
+        setContainerSize({
+          // Minimum size to avoid too small charts (600, 400)
+          width: Math.max(rect.width, 600),
+          height: Math.max(rect.height, 400),
+        });
+      }
+    }
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    onCleanup(() => window.removeEventListener('resize', updateSize));
+  });
+
   const data = () => props.data ?? [];
   const nQuestions = 16;
-  const width = () => props.width ?? 900;
-  const height = () => props.height ?? 600;
+  const width = () => props.width ?? containerSize().width;
+  const height = () => props.height ?? containerSize().height;
   const title = () => props.title ?? 'AMSTAR-2 Quality Assessment';
 
   const margin = { top: 60, right: 170, bottom: 60, left: 120 };
@@ -49,45 +68,8 @@ export default function AMSTARRobvis(props) {
     // Add subtle background grid
     const gridGroup = svg.append('g').attr('class', 'grid');
 
-    // // Vertical grid lines
-    // for (let i = 0; i <= nQuestions; i++) {
-    //   gridGroup
-    //     .append('line')
-    //     .attr('x1', margin.left + i * cellSize)
-    //     .attr('x2', margin.left + i * cellSize)
-    //     .attr('y1', margin.top)
-    //     .attr('y2', margin.top + chartHeight)
-    //     .attr('stroke', '#f3f4f6')
-    //     .attr('stroke-width', 1);
-    // }
-
-    // // Horizontal grid lines
-    // for (let i = 0; i <= data.length; i++) {
-    //   gridGroup
-    //     .append('line')
-    //     .attr('x1', margin.left)
-    //     .attr('x2', margin.left + nQuestions * cellSize)
-    //     .attr('y1', margin.top + i * cellSize)
-    //     .attr('y2', margin.top + i * cellSize)
-    //     .attr('stroke', '#f3f4f6')
-    //     .attr('stroke-width', 1);
-    // }
-
     // Column headers at bottom
     const footerGroup = svg.append('g').attr('class', 'footer');
-
-    // footerGroup
-    //   .selectAll('rect')
-    //   .data(d3.range(1, nQuestions + 1))
-    //   .enter()
-    //   .append('rect')
-    //   .attr('x', (d, i) => margin.left + i * cellSize)
-    //   .attr('y', margin.top + chartHeight)
-    //   .attr('width', cellSize)
-    //   .attr('height', margin.bottom - 20)
-    //   .attr('fill', '#f9fafb')
-    //   .attr('stroke', '#e5e7eb')
-    //   .attr('stroke-width', 1);
 
     footerGroup
       .selectAll('text')
@@ -104,19 +86,6 @@ export default function AMSTARRobvis(props) {
 
     // Row labels with alternating background
     const rowGroup = svg.append('g').attr('class', 'rows');
-
-    // rowGroup
-    //   .selectAll('rect')
-    //   .data(data)
-    //   .enter()
-    //   .append('rect')
-    //   .attr('x', 0)
-    //   .attr('y', (_, i) => margin.top + i * cellSize)
-    //   .attr('width', margin.left)
-    //   .attr('height', cellSize)
-    //   .attr('fill', (_, i) => (i % 2 === 0 ? '#ffffff' : '#f9fafb'))
-    //   .attr('stroke', '#e5e7eb')
-    //   .attr('stroke-width', 1);
 
     rowGroup
       .selectAll('text')

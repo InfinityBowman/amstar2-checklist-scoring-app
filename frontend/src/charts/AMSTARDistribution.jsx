@@ -1,4 +1,4 @@
-import { onCleanup, createEffect } from 'solid-js';
+import { onCleanup, createEffect, createSignal, onMount } from 'solid-js';
 import * as d3 from 'd3';
 
 /**
@@ -9,16 +9,44 @@ import * as d3 from 'd3';
  * - title: string (default: "Distribution of AMSTAR Ratings on Each Item Across Included Reviews")
  */
 export default function AMSTARDistribution(props) {
-  let ref;
+  let ref, containerRef;
   const data = () => props.data ?? [];
-  const width = () => props.width ?? 900;
-  const height = () => props.height ?? 600;
+  const [containerSize, setContainerSize] = createSignal({ width: 900, height: 600 });
+
+  // Observe parent container size
+  onMount(() => {
+    const resize = () => {
+      if (containerRef) {
+        const rect = containerRef.getBoundingClientRect();
+        setContainerSize({
+          width: Math.max(rect.width, 400),
+          height: Math.max(rect.height, 400),
+        });
+      }
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    onCleanup(() => window.removeEventListener('resize', resize));
+  });
+
+  // Optionally, trigger resize when data changes (for SSR/hydration edge cases)
+  createEffect(() => {
+    if (containerRef) {
+      const rect = containerRef.getBoundingClientRect();
+      setContainerSize({
+        width: Math.max(rect.width, 400),
+        height: Math.max(rect.height, 400),
+      });
+    }
+  });
+
+  const width = () => props.width ?? containerSize().width;
+  const height = () => props.height ?? containerSize().width / 1.5;
   const title = () => props.title ?? 'Distribution of AMSTAR Ratings on Each Item Across Included Reviews';
 
-  const margin = { top: 50, right: 10, bottom: 10, left: 80 };
+  const margin = { top: 50, right: 150, bottom: 60, left: 80 };
   const chartWidth = () => width() - margin.left - margin.right;
   const chartHeight = () => height() - margin.top - margin.bottom;
-  const svgHeight = () => margin.top + height() + margin.bottom;
 
   const colorMap = {
     yes: '#10b981',
@@ -236,8 +264,11 @@ export default function AMSTARDistribution(props) {
   });
 
   return (
-    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 16px; margin: 16px 0;">
-      <svg ref={ref} style={`width: 100%; height: ${svgHeight()}px; max-width: 100%; display: block;`} />
+    <div
+      ref={containerRef}
+      style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 16px; margin: 16px 0;"
+    >
+      <svg ref={ref} style={`width: 100%; height: ${height()}px; max-width: 100%; display: block;`} />
     </div>
   );
 }

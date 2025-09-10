@@ -113,11 +113,11 @@ export default function App(props) {
   };
 
   return (
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen overflow-y-hidden">
       {/* Navbar at the top */}
       <Navbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} open={sidebarOpen()} />
 
-      <div class="flex flex-1 h-full">
+      <div class="flex flex-1 h-0 min-h-0">
         <div>
           <Sidebar
             open={sidebarOpen()}
@@ -127,7 +127,7 @@ export default function App(props) {
           />
         </div>
 
-        <div class="flex-1 h-full overflow-y-auto">
+        <div class="flex-1 min-h-0 overflow-y-auto">
           <Show when={!loading()} fallback={<div class="p-8 text-center">Loading projects...</div>}>
             {props.children}
           </Show>
