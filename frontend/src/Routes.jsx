@@ -5,17 +5,12 @@ import ProjectDashboard from './routes/ProjectDashboard.jsx';
 import AppDashboard from './AppDashboard.jsx';
 import SignIn from './auth/SignIn.jsx';
 import SignUp from './auth/SignUp.jsx';
+import VerifyEmail from './auth/VerifyEmail.jsx';
+import ResetPassword from './auth/ResetPassword.jsx';
 import App from './App.jsx';
 
 export default function AppRoutes() {
   return (
-    // <Router>
-    //   <Route path="/" component={Home} />
-    //   <Route path="/dashboard" component={ProjectDashboard} />
-    //   <Route path="/checklist" component={AMSTAR2Checklist} />
-    //   <Route path="/signin" component={SignIn} />
-    //   <Route path="/signup" component={SignUp} />
-    // </Router>
     <Router base={'/amstar2-checklist-scoring-app'}>
       <Route path="/" component={Home} />
       <Route path="/" component={App}>
@@ -27,6 +22,8 @@ export default function AppRoutes() {
       </Route>
       <Route path="/signin" component={SignIn} />
       <Route path="/signup" component={SignUp} />
+      <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/reset-password" component={ResetPassword} />
     </Router>
   );
 }

@@ -36,11 +36,18 @@ export default function SignIn({ onSignIn }) {
       <h2 class="text-xl mb-4">Sign In</h2>
       <div class="mb-2">
         <label class="block mb-1">Email</label>
-        <input type="email" value={email()} onInput={(e) => setEmail(e.target.value)} class="w-full p-2 border rounded" required />
+        <input
+          type="email"
+          autoComplete="email"
+          value={email()}
+          onInput={(e) => setEmail(e.target.value)}
+          class="w-full p-2 border rounded"
+          required
+        />
       </div>
       <div class="mb-2">
         <label class="block mb-1">Password</label>
-        <input type="password" value={password()} onInput={(e) => setPassword(e.target.value)} class="w-full p-2 border rounded" required />
+        <input type="password" autoComplete="current-password" value={password()} onInput={(e) => setPassword(e.target.value)} class="w-full p-2 border rounded" required />
       </div>
       {error() && <div class="text-red-600 mb-2">{error()}</div>}
       <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">

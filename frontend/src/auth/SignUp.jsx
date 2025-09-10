@@ -43,16 +43,31 @@ export default function SignUp({ onSignUp }) {
       <h2 class="text-xl mb-4">Sign Up</h2>
       <div class="mb-2">
         <label class="block mb-1">Email</label>
-        <input type="email" value={email()} onInput={(e) => setEmail(e.target.value)} class="w-full p-2 border rounded" required />
+        <input
+          type="email"
+          autoComplete="email"
+          value={email()}
+          onInput={(e) => setEmail(e.target.value)}
+          class="w-full p-2 border rounded"
+          required
+        />
       </div>
       <div class="mb-2">
         <label class="block mb-1">Password</label>
-        <input type="password" value={password()} onInput={(e) => setPassword(e.target.value)} class="w-full p-2 border rounded" required />
+        <input
+          type="password"
+          autoComplete="new-password"
+          value={password()}
+          onInput={(e) => setPassword(e.target.value)}
+          class="w-full p-2 border rounded"
+          required
+        />
       </div>
       <div class="mb-2">
         <label class="block mb-1">Confirm Password</label>
         <input
           type="password"
+          autoComplete="new-password"
           value={confirmPassword()}
           onInput={(e) => setConfirmPassword(e.target.value)}
           class="w-full p-2 border rounded"

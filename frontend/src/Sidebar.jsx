@@ -123,7 +123,7 @@ export default function Sidebar(props) {
                             class="flex-1 flex items-center gap-3 px-3 py-2.5 text-left focus:outline-none"
                             tabIndex={0}
                           >
-                            {/* Page Icon */}
+                            {/* P age Icon */}
                             <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path
                                 stroke-linecap="round"

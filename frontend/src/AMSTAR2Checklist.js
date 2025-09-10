@@ -1,9 +1,7 @@
 import { AMSTAR_CHECKLIST } from './offline/ChecklistMap.js';
 
 export default class AMSTAR2Checklist {
-  constructor(initialState = null, { title = null, id = null, createdAt = Date.now(), reviewerName = '' } = {}) {}
-
-  // New method to programmatically create a checklist
+  // Checklist generator with default empty answers
   static CreateChecklist({ name = null, id = null, createdAt = Date.now(), reviewerName = '' } = {}) {
     if (!id || typeof id !== 'string' || !id.trim()) {
       throw new Error('AMSTAR2Checklist requires a non-empty string id.');
@@ -127,31 +125,18 @@ export default class AMSTAR2Checklist {
     };
   }
 
-  // Score checklist using the last column of each question (Yes/Partial Yes/No/No MA)
+  // Score checklist using the last column of each question taking into account critical vs non-critical
   static scoreChecklist(state) {
     if (!state || typeof state !== 'object') return 'Error';
 
     let criticalFlaws = 0;
     let nonCriticalFlaws = 0;
 
-    // Helper to get the selected answer from the last column of a question
-    const getSelected = (answers) => {
-      if (!Array.isArray(answers) || answers.length === 0) return null;
-      const lastCol = answers[answers.length - 1];
-      if (!Array.isArray(lastCol)) return null;
-      const idx = lastCol.findIndex((v) => v === true);
-      if (idx === -1) return null;
-      if (lastCol.length === 2) return idx === 0 ? 'Yes' : 'No';
-      if (lastCol.length === 3) return ['Yes', 'Partial Yes', 'No'][idx] || null;
-      if (lastCol.length === 4) return ['Yes', 'Partial Yes', 'No', 'No MA'][idx] || null;
-      return null;
-    };
-
     Object.entries(state).forEach(([question, obj]) => {
       if (!/^q\d+[a-z]*$/i.test(question)) return;
       if (!obj || !Array.isArray(obj.answers)) return;
-      const selected = getSelected(obj.answers);
-      if (!selected) return;
+      const selected = AMSTAR2Checklist.getSelectedAnswer(obj.answers, question);
+      console.log(`Question ${question} selected answer:`, selected);
       if (selected !== 'Yes') {
         if (obj.critical) {
           criticalFlaws++;
@@ -160,7 +145,6 @@ export default class AMSTAR2Checklist {
         }
       }
     });
-    console.log(`Scoring checklist ${state.name || state.id}: ${criticalFlaws} critical flaws, ${nonCriticalFlaws} non-critical flaws`);
 
     if (criticalFlaws > 1) return 'Critically Low';
     if (criticalFlaws === 1) return 'Low';
@@ -168,38 +152,36 @@ export default class AMSTAR2Checklist {
     return 'High';
   }
 
+  // Helper to get the selected answer from the last column of a question
+  static getSelectedAnswer(answers, question) {
+    // Question patterns
+    const customPatternQuestions = ['q11a', 'q11b', 'q12', 'q15'];
+    const defaultLabels = ['Yes', 'Partial Yes', 'No', 'No MA'];
+    const customLabels = ['Yes', 'No', 'No MA'];
+
+    if (!Array.isArray(answers) || answers.length === 0) return null;
+    const lastCol = answers[answers.length - 1];
+    if (!Array.isArray(lastCol)) return null;
+    const idx = lastCol.findIndex((v) => v === true);
+    if (idx === -1) return null;
+    if (customPatternQuestions.includes(question)) return customLabels[idx] || null;
+    if (lastCol.length === 2) return idx === 0 ? 'Yes' : 'No';
+    if (lastCol.length >= 3) return defaultLabels[idx] || null;
+    return null;
+  }
+
   static getAnswers(checklist) {
     if (!checklist || typeof checklist !== 'object') return null;
     const result = {};
-
-    // Questions with custom answer pattern
-    const customPatternQuestions = ['q11a', 'q11b', 'q12', 'q13'];
-
-    // Default labels
-    const defaultLabels = ['Yes', 'Partial Yes', 'No', 'No MA'];
-    const customLabels = ['Yes', 'No', 'No MA'];
 
     Object.entries(checklist).forEach(([key, value]) => {
       if (!/^q\d+[a-z]*$/i.test(key)) return;
       if (!value || !Array.isArray(value.answers)) return;
 
-      const lastCol = value.answers[value.answers.length - 1];
-      if (!Array.isArray(lastCol)) return;
-
-      let labels;
-      if (lastCol.length === 2) {
-        labels = ['Yes', 'No'];
-      } else if (customPatternQuestions.includes(key)) {
-        labels = customLabels;
-      } else {
-        labels = defaultLabels;
-      }
-
-      // Find selected answer
-      const idx = lastCol.findIndex((v) => v === true);
-      result[key] = labels[idx] || null;
+      // Use the same logic as scoreChecklist for consistency
+      const selected = AMSTAR2Checklist.getSelectedAnswer(value.answers, key);
+      result[key] = selected;
     });
-
     return result;
   }
 

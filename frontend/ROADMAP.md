@@ -53,12 +53,16 @@
   - [ ] Vitest for testing
 
 - [ ] **Analytics**
-  - [ ] Analytics monitoring, posthog or do it manually and store in supabase?
+  - [ ] Analytics monitoring, posthog or do it manually and store in db?
 
 - [ ] **Helper Popover**
   - [ ] ? icon that we can place to give users tips/info about things
   - [ ] Make these hide-able in settings
   - [ ] Ex: What does it mean for something to be a critical item
+
+- [ ] **Quick Checklist**
+  - [ ] Let a user quickly score a checklist with pdf without creating a project
+  - [ ] Allow import/export to do this
 
 - [ ] **Misc**
 - [ ] Use Server-Sent Events (EventSource api) for server driven updates
