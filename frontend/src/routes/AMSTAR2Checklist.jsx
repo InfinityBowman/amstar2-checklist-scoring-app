@@ -6,7 +6,6 @@ import { useParams } from '@solidjs/router';
 function Question1(props) {
   const state = () => props.checklistState().q1.answers;
   const question = AMSTAR_CHECKLIST.q1;
-  console.log(props.checklistState());
 
   function handleChange(colIdx, optIdx) {
     const newAnswers = state().map((arr) => [...arr]);
@@ -972,7 +971,6 @@ export default function AMSTAR2Checklist() {
   // Handler to update checklist state
   const handleChecklistChange = (newState) => {
     // Get a copy of the current checklist and update it
-    console.log('handleChecklistChange called');
     const updatedChecklist = { ...currentChecklist(), ...newState };
     updateChecklist(updatedChecklist);
   };

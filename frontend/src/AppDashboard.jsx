@@ -11,7 +11,10 @@ export default function AppDashboard() {
   const [projectName, setProjectName] = createSignal('');
 
   const handleProjectClick = (project) => {
-    navigate(`/project/${project.id}`);
+    // navigate(`/project/${project.id}`);
+    const matches = projects().filter((p) => p.name === project.name);
+    const index = matches.findIndex((p) => p.id === project.id);
+    navigate(`/project/${encodeURIComponent(project.name)}/${index}`);
   };
 
   const handleAddProject = async () => {

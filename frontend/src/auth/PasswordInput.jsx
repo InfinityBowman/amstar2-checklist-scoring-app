@@ -1,0 +1,26 @@
+import * as passwordInput from '@zag-js/password-input';
+import { useMachine, normalizeProps } from '@zag-js/solid';
+import { createMemo, createUniqueId } from 'solid-js';
+import { FiEyeOff, FiEye } from 'solid-icons/fi';
+
+export default function PasswordInput(props) {
+  const service = useMachine(passwordInput.machine, { id: createUniqueId(), autoComplete: props.autoComplete || 'new-password' });
+
+  const api = createMemo(() => passwordInput.connect(service, normalizeProps));
+
+  return (
+    <div {...api().getRootProps()}>
+      <label {...api().getLabelProps()}>Password</label>
+      <div {...api().getControlProps()}>
+        <input {...api().getInputProps()} />
+        <button {...api().getVisibilityTriggerProps()}>
+          <span {...api().getIndicatorProps()}>
+            <Show when={api().visible} fallback={<FiEyeOff />}>
+              <FiEye />
+            </Show>
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}

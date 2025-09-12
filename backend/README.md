@@ -7,6 +7,70 @@
 - Refresh token should have a longer lifetime (like 7 days), actual token should be like 15min
 - The FastAPI JWT examples in the FastAPI docs do not use HttpOnly cookies for refresh tokens, which we want to implement to improve security.
 
+**Endpoints**
+
+**POST /auth/signup**
+
+Description: Create a new user.
+Request Body:
+{
+"email": "test@test.com",
+"password": "Test123",
+"name": "Test User"
+}
+
+Responses:
+201 Created – user successfully created
+400 Bad Request – missing username/password
+409 Conflict – email already exists
+
+**POST /auth/signin**
+Description: Log in user, set refresh cookie, return access token.
+Request Body:
+{
+"email": "test@test.com",
+"password": "Test123"
+}
+
+Responses:
+200 OK
+{
+"accessToken": "<jwt>"
+}
+Sets Set-Cookie: refresh=<token>; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800
+401 Unauthorized – invalid credentials
+
+**POST /auth/refresh**
+
+Description: Issue new access token using refresh cookie.
+Request: No body required, but must include cookie.
+Responses:
+200 OK
+{
+"accessToken": "<new-jwt>"
+}
+401 Unauthorized – missing cookie
+403 Forbidden – invalid/expired refresh token
+
+**POST /auth/signout**
+
+Description: Clear refresh cookie.
+Response:
+200 OK – cookie cleared (Set-Cookie: refresh=; Max-Age=0)
+
+**GET /users/me**
+
+Description: Fetch the current logged-in user (protected).
+Headers: Authorization: Bearer <accessToken>
+Responses:
+200 OK
+{
+"id": "alice",
+"name": "Alice Example"
+}
+401 Unauthorized – missing/invalid token
+403 Forbidden – expired token
+
 ---
 
 ## Server-Sent Events (SSE)

@@ -5,7 +5,7 @@ import { useAppState } from './AppState.jsx';
 import { useNavigate } from '@solidjs/router';
 
 export default function Sidebar(props) {
-  const { projects, currentChecklist } = useAppState();
+  const { projects, currentChecklist, checklists } = useAppState();
   const navigate = useNavigate();
 
   function handleSetPdfUrl() {
@@ -104,7 +104,11 @@ export default function Sidebar(props) {
                     <TreeView
                       projectId={project.id}
                       onSelect={() => {
-                        navigate(`/project/${project.id}`);
+                        const matches = projects().filter((p) => p.name === project.name);
+                        const index = matches.findIndex((p) => p.id === project.id);
+                        navigate(`/project/${encodeURIComponent(project.name)}/${index}`);
+
+                        // navigate(`/project/${project.id}`);
                       }}
                     >
                       {(checklist) => (
@@ -190,6 +194,11 @@ export default function Sidebar(props) {
                   )}
                 </For>
               </Show>
+            </div>
+          </div>
+          <div class="px-4">
+            <div class="mb-4">
+              <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider px-1">Checklists</h3>
             </div>
           </div>
 

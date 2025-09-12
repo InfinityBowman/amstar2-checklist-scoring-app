@@ -1,5 +1,7 @@
 import { createSignal } from 'solid-js';
 
+// Currently does not work or do anything: unused component
+
 export default function VerifyEmail({ onVerify }) {
   const [code, setCode] = createSignal('');
   const [error, setError] = createSignal('');

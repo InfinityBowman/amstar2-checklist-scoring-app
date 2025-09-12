@@ -1,6 +1,9 @@
 import { A } from '@solidjs/router';
+import { useAuth } from './auth/AuthProvider.jsx';
 
 export default function Navbar(props) {
+  const { user, signout } = useAuth();
+
   return (
     <nav class="flex items-center justify-between bg-gradient-to-r from-blue-700 to-blue-500 text-white px-8 py-4 shadow-lg">
       <div class="flex items-center space-x-4">
@@ -26,12 +29,29 @@ export default function Navbar(props) {
         <A href="/dashboard" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
           Dashboard
         </A>
-        <A href="/signin" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
-          Sign In
-        </A>
-        <A href="/signup" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
-          Sign Up
-        </A>
+        {user() && (
+          <>
+            <span class="font-medium">Hello, {user().name}</span>
+            <button
+              onClick={async () => {
+                await signout();
+              }}
+              class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium"
+            >
+              Sign Out
+            </button>
+          </>
+        )}
+        {!user() && (
+          <>
+            <A href="/signin" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
+              Sign In
+            </A>
+            <A href="/signup" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
+              Sign Up
+            </A>
+          </>
+        )}
       </div>
     </nav>
   );

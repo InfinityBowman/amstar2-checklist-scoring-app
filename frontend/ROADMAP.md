@@ -18,7 +18,7 @@
   - [ ] This page should be statically rendered and function perfectly if JavaScript is disabled
 
 - [ ] **Create Project Page**
-  - [ ] Form to create a new project (name, description, etc.)
+  - [ ] Form or dialog to create a new project (name, description, etc.)
   - [ ] Optionally make the project collaborative (must be logged in)
   - [ ] Optionally add collaborators (must be a collaborative project and logged in)
   - [ ] Need some way to search for existing users
@@ -33,6 +33,7 @@
   - [ ] Customize critical/noncritical items for scoring
   - [x] Automatic saving
   - [x] Automatic yes/partial yes/no based on answers
+  - [ ] Checklist state could be encoded into url
 
   - [ ] **Merge Editor**
   - [ ] Compare two checklists in a merge editor

@@ -1,7 +1,8 @@
-const DB_NAME = 'amstar2-checklists';
+// const DB_NAME = 'amstar2-checklists';
+const DB_NAME = 'corates-app-db';
 const STORE_NAME = 'checklists';
 const PROJECT_STORE_NAME = 'projects';
-const DB_VERSION = 2;
+const DB_VERSION = 1;
 
 function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));

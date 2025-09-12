@@ -20,11 +20,13 @@ export default function ProjectDashboard() {
   const [checklistData, setChecklistData] = createSignal([]);
 
   createEffect(() => {
-    if (params.id) {
-      setCurrentProject(params.id);
+    if (params.name && params.index !== undefined) {
+      const projectName = decodeURIComponent(params.name);
+      const projectIndex = Number(params.index);
+      setCurrentProject({ name: projectName, index: projectIndex });
     }
     if (!currentProject()) {
-      console.warn('ProjectDashboard: No current project found for id', params.id);
+      console.warn('ProjectDashboard: No current project found for', params.name, params.index);
       // Go back to dashboard
       navigate(`/dashboard`);
     }
@@ -55,7 +57,7 @@ export default function ProjectDashboard() {
         questions: Object.values(answersObj || {}),
       };
     });
-    console.log('Checklist data for charts:', data, currentProject()?.checklists);
+    // console.log('Checklist data for charts:', data, currentProject()?.checklists);
     setChecklistData(data);
   });
 

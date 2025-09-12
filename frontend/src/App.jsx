@@ -30,7 +30,7 @@ export default function App(props) {
   const {
     projects,
     loading,
-    loadProjects,
+    loadData,
     setProjects,
     currentProject,
     addProject,
@@ -43,7 +43,7 @@ export default function App(props) {
   // Load all projects and checklists on mount
   onMount(async () => {
     try {
-      await loadProjects();
+      await loadData();
     } catch (error) {
       console.error('Error loading projects:', error);
     }

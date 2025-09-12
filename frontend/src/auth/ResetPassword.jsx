@@ -1,5 +1,7 @@
 import { createSignal } from 'solid-js';
 
+// Currently does not work or do anything: unused component
+
 export default function ResetPassword({ onReset }) {
   const [email, setEmail] = createSignal('');
   const [newPassword, setNewPassword] = createSignal('');
