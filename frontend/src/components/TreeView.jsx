@@ -1,5 +1,5 @@
 import { createSignal, Show, For } from 'solid-js';
-import { useAppState } from './AppState.jsx';
+import { useAppState } from '../AppState.jsx';
 
 export default function TreeView(props) {
   // Store expanded state with project ID as key for persistence

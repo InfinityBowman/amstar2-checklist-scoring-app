@@ -2,7 +2,7 @@ import { createSignal } from 'solid-js';
 import { useAppState } from './AppState.jsx';
 import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from './offline/CreateExampleProject.js';
-import { createProject } from './Project.js';
+import { createProject } from './offline/Project.js';
 import { generateUUID } from './offline/LocalDB.js';
 
 export default function AppDashboard() {

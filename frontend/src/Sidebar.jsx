@@ -1,6 +1,6 @@
 import { Show, For } from 'solid-js';
-import ChecklistState from './AMSTAR2Checklist.js';
-import TreeView from './TreeView.jsx';
+import ChecklistState from './offline/AMSTAR2Checklist.js';
+import TreeView from './components/TreeView.jsx';
 import { useAppState } from './AppState.jsx';
 import { useNavigate } from '@solidjs/router';
 

@@ -19,9 +19,9 @@ export default function AppRoutes() {
         <Route path="/project/:name/:index" component={ProjectDashboard}></Route>
         <Route path="/checklist/:id" component={AMSTAR2Checklist} />
         {/* <Route path="/checklist/compare/:idA/:idB" component={ChecklistCompare} /> */}
+        <Route path="/signin" component={SignIn} />
+        <Route path="/signup" component={SignUp} />
       </Route>
-      <Route path="/signin" component={SignIn} />
-      <Route path="/signup" component={SignUp} />
       <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/reset-password" component={ResetPassword} />
     </Router>

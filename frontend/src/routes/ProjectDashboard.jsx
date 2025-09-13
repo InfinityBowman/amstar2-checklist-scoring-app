@@ -3,7 +3,7 @@ import AMSTARDistribution from '../charts/AMSTARDistribution.jsx';
 import { useAppState } from '../AppState.jsx';
 import { createEffect, Show, createSignal } from 'solid-js';
 import { useNavigate, useParams } from '@solidjs/router';
-import AMSTAR2Checklist from '../AMSTAR2Checklist.js';
+import AMSTAR2Checklist from '../offline/AMSTAR2Checklist.js';
 
 /**
  * This will be a dashboard for a project

@@ -2,8 +2,8 @@ import { createSignal, createEffect, onCleanup, onMount, Show, For, Match } from
 import { deleteAllChecklists } from './offline/LocalDB.js';
 
 import Sidebar from './Sidebar.jsx';
-import Dialog from './Dialog.jsx';
-import Resizable from './Resizable.jsx';
+import Dialog from './components/Dialog.jsx';
+import Resizable from './components/Resizable.jsx';
 import { useAppState } from './AppState.jsx';
 import Navbar from './Navbar.jsx';
 
