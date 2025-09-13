@@ -30,3 +30,11 @@
 .animate-fade-in {
   animation: fade-in 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.big-placeholder::placeholder {
+  font-size: 1.45em;
+  font-weight: 800;
+  transform: translateY(0.1em);
+  letter-spacing: -0.04em;
+  color: #a3a3a3;
+}

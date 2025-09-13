@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from 'solid-js';
+import { onCleanup, createEffect, createSignal, onMount } from 'solid-js';
 import * as d3 from 'd3';
 
 /**
@@ -9,16 +9,44 @@ import * as d3 from 'd3';
  * - title: string (default: "Distribution of AMSTAR Ratings on Each Item Across Included Reviews")
  */
 export default function AMSTARDistribution(props) {
-  let ref;
-  const data = props.data ?? [];
-  const width = props.width ?? 900;
-  const height = props.height ?? 600;
-  const title = props.title ?? 'Distribution of AMSTAR Ratings on Each Item Across Included Reviews';
+  let ref, containerRef;
+  const data = () => props.data ?? [];
+  const [containerSize, setContainerSize] = createSignal({ width: 900, height: 600 });
 
-  const margin = { top: 50, right: 10, bottom: 10, left: 80 };
-  const chartWidth = width - margin.left - margin.right;
-  const chartHeight = height - margin.top - margin.bottom;
-  const svgHeight = margin.top + height + margin.bottom;
+  // Observe parent container size
+  onMount(() => {
+    const resize = () => {
+      if (containerRef) {
+        const rect = containerRef.getBoundingClientRect();
+        setContainerSize({
+          width: Math.max(rect.width, 400),
+          height: Math.max(rect.height, 400),
+        });
+      }
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    onCleanup(() => window.removeEventListener('resize', resize));
+  });
+
+  // Optionally, trigger resize when data changes (for SSR/hydration edge cases)
+  createEffect(() => {
+    if (containerRef) {
+      const rect = containerRef.getBoundingClientRect();
+      setContainerSize({
+        width: Math.max(rect.width, 400),
+        height: Math.max(rect.height, 400),
+      });
+    }
+  });
+
+  const width = () => props.width ?? containerSize().width;
+  const height = () => props.height ?? containerSize().width / 1.5;
+  const title = () => props.title ?? 'Distribution of AMSTAR Ratings on Each Item Across Included Reviews';
+
+  const margin = { top: 50, right: 150, bottom: 60, left: 80 };
+  const chartWidth = () => width() - margin.left - margin.right;
+  const chartHeight = () => height() - margin.top - margin.bottom;
 
   const colorMap = {
     yes: '#10b981',
@@ -27,13 +55,13 @@ export default function AMSTARDistribution(props) {
     'no ma': '#9ca3af',
   };
 
-  onMount(() => {
-    if (!data.length) return;
+  createEffect(() => {
+    if (!data().length) return;
 
     const svg = d3
       .select(ref)
-      .attr('width', width)
-      .attr('height', height)
+      .attr('width', width())
+      .attr('height', height())
       .style('background', '#ffffff')
       .style('font-family', '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif');
 
@@ -41,8 +69,8 @@ export default function AMSTARDistribution(props) {
 
     // Process data to calculate percentages for each question
     const processedData = [];
-    const nQuestions = Math.max(...data.map((d) => d.questions?.length || 0));
-    const totalStudies = data.length;
+    const nQuestions = Math.max(...data().map((d) => d.questions?.length || 0));
+    const totalStudies = data().length;
 
     for (let q = 0; q < nQuestions; q++) {
       const questionData = {
@@ -52,7 +80,7 @@ export default function AMSTARDistribution(props) {
       };
 
       // Count responses for this question
-      data.forEach((study) => {
+      data().forEach((study) => {
         const response = study.questions[q]?.toLowerCase?.() ?? 'no ma';
         if (questionData.counts.hasOwnProperty(response)) {
           questionData.counts[response]++;
@@ -72,10 +100,10 @@ export default function AMSTARDistribution(props) {
     const yScale = d3
       .scaleBand()
       .domain(processedData.map((d) => d.label))
-      .range([0, chartHeight])
+      .range([0, chartHeight()])
       .padding(0.1);
 
-    const xScale = d3.scaleLinear().domain([0, 100]).range([0, chartWidth]);
+    const xScale = d3.scaleLinear().domain([0, 100]).range([0, chartWidth()]);
 
     // Create main chart group
     const chartGroup = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
@@ -83,13 +111,13 @@ export default function AMSTARDistribution(props) {
     // Add title
     svg
       .append('text')
-      .attr('x', width / 2)
+      .attr('x', width() / 2)
       .attr('y', 30)
       .attr('text-anchor', 'middle')
       .attr('font-size', '18px')
       .attr('font-weight', '600')
       .attr('fill', '#111827')
-      .text(title);
+      .text(title());
 
     // Create stacked bars
     processedData.forEach((d) => {
@@ -158,7 +186,7 @@ export default function AMSTARDistribution(props) {
     chartGroup
       .append('g')
       .attr('class', 'x-axis')
-      .attr('transform', `translate(0, ${chartHeight})`)
+      .attr('transform', `translate(0, ${chartHeight()})`)
       .call(xAxis)
       .selectAll('text')
       .attr('font-size', '12px')
@@ -167,8 +195,8 @@ export default function AMSTARDistribution(props) {
     // Add X-axis label
     chartGroup
       .append('text')
-      .attr('x', chartWidth / 2)
-      .attr('y', chartHeight + 50)
+      .attr('x', chartWidth() / 2)
+      .attr('y', chartHeight() + 50)
       .attr('text-anchor', 'middle')
       .attr('font-size', '14px')
       .attr('font-weight', '500')
@@ -179,7 +207,7 @@ export default function AMSTARDistribution(props) {
     svg
       .append('text')
       .attr('transform', `rotate(-90)`)
-      .attr('x', -height / 2)
+      .attr('x', -height() / 2)
       .attr('y', 20)
       .attr('text-anchor', 'middle')
       .attr('font-size', '14px')
@@ -191,7 +219,7 @@ export default function AMSTARDistribution(props) {
     const legend = svg
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', `translate(${width - margin.right + 20}, ${margin.top + 20})`);
+      .attr('transform', `translate(${width() - margin.right + 20}, ${margin.top + 20})`);
 
     const legendData = [
       { key: 'yes', label: 'Yes' },
@@ -236,8 +264,11 @@ export default function AMSTARDistribution(props) {
   });
 
   return (
-    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 16px; margin: 16px 0;">
-      <svg ref={ref} style={`width: 100%; height: ${svgHeight}px; max-width: 100%; display: block;`} />
+    <div
+      ref={containerRef}
+      style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 16px; margin: 16px 0;"
+    >
+      <svg ref={ref} style={`width: 100%; height: ${height()}px; max-width: 100%; display: block;`} />
     </div>
   );
 }

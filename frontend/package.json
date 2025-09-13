@@ -1,5 +1,5 @@
 {
-  "name": "amstar2-checklist-scoring-app",
+  "name": "corates",
   "version": "0.0.1",
   "description": "",
   "homepage": "https://InfinityBowman.github.io/amstar2-checklist-scoring-app",
@@ -12,17 +12,21 @@
   },
   "keywords": [],
   "author": "Jacob Maynard",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
+    "@solidjs/router": "^0.15.3",
+    "@zag-js/password-input": "^1.22.1",
+    "@zag-js/solid": "^1.22.1",
     "d3": "^7.9.0",
+    "solid-icons": "^1.1.0",
     "solid-js": "^1.9.9"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.11",
+    "@tailwindcss/vite": "^4.1.13",
     "gh-pages": "^6.3.0",
     "prettier": "3.6.2",
-    "tailwindcss": "^4.1.11",
+    "tailwindcss": "^4.1.13",
     "vite": "^7.0.6",
     "vite-plugin-pwa": "^1.0.2",
     "vite-plugin-solid": "^2.11.8"

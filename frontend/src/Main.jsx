@@ -1,4 +1,15 @@
 import { render } from 'solid-js/web';
-import App from './App.jsx';
+import AppRoutes from './Routes.jsx';
+import { StateProvider } from './AppState.jsx';
+import { AuthProvider } from './auth/AuthProvider.jsx';
 
-render(() => <App />, document.getElementById('root'));
+render(
+  () => (
+    <StateProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </StateProvider>
+  ),
+  document.getElementById('root'),
+);
