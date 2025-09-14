@@ -1,4 +1,4 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, Show, createEffect } from 'solid-js';
 import StrengthIndicator from './StrengthIndicator.jsx';
 import PasswordInput from './PasswordInput.jsx';
 import { useNavigate } from '@solidjs/router';
@@ -12,7 +12,6 @@ export default function SignUp() {
   const [password, setPassword] = createSignal('');
   const [confirmPassword, setConfirmPassword] = createSignal('');
   const [error, setError] = createSignal('');
-  const [success, setSuccess] = createSignal('');
   const [submitted, setSubmitted] = createSignal(false);
   const [unmetRequirements, setUnmetRequirements] = createSignal([]);
   const [loading, setLoading] = createSignal(false);
@@ -24,7 +23,6 @@ export default function SignUp() {
     e.preventDefault();
     setSubmitted(true);
     setError('');
-    setSuccess('');
     if (!name() || !email() || !password() || !confirmPassword()) {
       setError('Please fill out all fields');
       return;
@@ -36,18 +34,25 @@ export default function SignUp() {
     if (unmetRequirements().length > 0) {
       return;
     }
-    setLoading(true);
 
+    setLoading(true);
     try {
       await signup(email(), password(), name());
-      setSuccess('Account created! You can now sign in.');
-      setTimeout(() => navigate('/signin', { replace: true }), 1200);
+      setTimeout(() => navigate('/verifyemail', { replace: true }), 1200);
     } catch (err) {
-      setError(err.message || 'Sign up failed');
+      console.error('Signup error:', err);
+      // TODO more specific error messages based on error code
+      setError('Sign up failed');
     } finally {
       setLoading(false);
     }
   }
+
+  createEffect(() => {
+    if (password() === confirmPassword()) {
+      setError('');
+    }
+  });
 
   return (
     <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-2 sm:px-4 py-6 sm:py-12">
@@ -135,9 +140,9 @@ export default function SignUp() {
           class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
           disabled={loading()}
         >
-          <AnimatedShow when={loading()}>
+          <Show when={loading()}>
             <AiOutlineLoading3Quarters class="animate-spin mr-2" size={22} />
-          </AnimatedShow>
+          </Show>
           {loading() ? 'Signing Up...' : 'Sign Up'}
         </button>
         <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">

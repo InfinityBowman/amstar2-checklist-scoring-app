@@ -71,6 +71,76 @@ Responses:
 401 Unauthorized – missing/invalid token
 403 Forbidden – expired token
 
+**POST /auth/send-verification**
+
+Description: Send a verification code to the user's email after signup.
+Request Body:
+
+```json
+{
+  "email": "test@test.com"
+}
+```
+
+Responses:
+
+- 200 OK – verification email sent
+- 400 Bad Request – missing email
+- 404 Not Found – user not found
+
+**POST /auth/verify-email**
+
+Description: Verify the user's email using the code sent.
+Request Body:
+
+```json
+{
+  "email": "test@test.com",
+  "code": "123456"
+}
+```
+
+Responses:
+
+- 200 OK – email verified
+- 400 Bad Request – missing email/code
+- 401 Unauthorized – invalid code
+- 404 Not Found – user not found
+
+**POST /auth/request-password-reset**
+
+Description: Request a password reset email.
+Request Body:
+
+```json
+{ "email": "test@test.com" }
+```
+
+Responses:
+
+- 200 OK – reset email sent
+- 400 Bad Request – missing email
+
+**POST /auth/reset-password**
+
+Description: Reset password using code sent to email.
+Request Body:
+
+```json
+{
+  "email": "test@test.com",
+  "code": "123456",
+  "new_password": "NewPassword123"
+}
+```
+
+Responses:
+
+- 200 OK – password reset successful
+- 400 Bad Request – missing fields
+- 401 Unauthorized – invalid code
+- 404 Not Found – user not found
+
 ---
 
 ## Server-Sent Events (SSE)

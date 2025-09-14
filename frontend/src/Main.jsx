@@ -1,5 +1,5 @@
 import { render } from 'solid-js/web';
-import AppRoutes from './Routes.jsx';
+import AppRoutes from './routes/Routes.jsx';
 import { StateProvider } from './AppState.jsx';
 import { AuthProvider } from './auth/AuthProvider.jsx';
 

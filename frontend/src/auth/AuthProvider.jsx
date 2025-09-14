@@ -12,6 +12,14 @@ export function AuthProvider(props) {
     // We do not auto login because we want email verification first
   }
 
+  async function sendEmailVerification(email) {
+    await authService.sendVerificationEmail(email);
+  }
+
+  async function verifyEmail(email, code) {
+    await authService.verifyEmail(email, code);
+  }
+
   async function signin(email, password) {
     await authService.signin(email, password);
     setIsLoggedIn(true);
