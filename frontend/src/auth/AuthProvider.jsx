@@ -13,7 +13,7 @@ export function AuthProvider(props) {
   }
 
   async function sendEmailVerification(email) {
-    await authService.sendVerificationEmail(email);
+    await authService.sendEmailVerification(email);
   }
 
   async function verifyEmail(email, code) {
