@@ -1,6 +1,6 @@
 import { createStore } from 'solid-js/store';
 import { createContext, useContext } from 'solid-js';
-import * as localDB from './offline/LocalDB.js';
+import * as localDB from './offline/localDB.js';
 
 // TODO use produce or batch for updates to store
 

@@ -1,5 +1,4 @@
 import { createSignal, createEffect, onCleanup, onMount, Show, For, Match } from 'solid-js';
-import { deleteAllChecklists } from './offline/LocalDB.js';
 
 import Sidebar from './Sidebar.jsx';
 import Dialog from './components/Dialog.jsx';
@@ -56,7 +55,7 @@ export default function App(props) {
 
   const confirmDeleteAll = async () => {
     try {
-      await deleteAllChecklists();
+      // await deleteAllChecklists();
       setCurrentChecklist(null);
       alert('All checklists deleted!');
     } catch (error) {

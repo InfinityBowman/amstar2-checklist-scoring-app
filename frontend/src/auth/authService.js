@@ -152,6 +152,42 @@ export async function resetPassword(email, code, newPassword) {
   }
 }
 
+export async function checkHealth() {
+  const res = await fetch('http://localhost:8000/healthz', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (res.status === 200) {
+    const data = await res.json();
+    console.log('Health check response data:', data);
+  }
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('Reset password error:', errorText);
+    throw new Error(errorText || 'Failed to reset password');
+  }
+}
+
+export async function checkHealthDb() {
+  const res = await fetch('http://localhost:8000/healthz/db', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (res.status === 200) {
+    const data = await res.json();
+    console.log('Health DB check response data:', data);
+  }
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('Reset password error:', errorText);
+    throw new Error(errorText || 'Failed to reset password');
+  }
+}
+
 // THIS SHOULD CORRECTLY TEST THE FULL AUTH FLOW INCLUDING TOKEN REFRESH
 // Uncomment this "run" function in ./SignUp.jsx to run the demo
 export async function runTestAuth() {
