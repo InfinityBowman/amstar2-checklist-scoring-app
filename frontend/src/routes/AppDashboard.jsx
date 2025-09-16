@@ -1,9 +1,10 @@
 import { createSignal } from 'solid-js';
-import { useAppState } from './AppState.jsx';
+import { useAppState } from '../AppState.jsx';
 import { useNavigate } from '@solidjs/router';
-import { createExampleProject } from './offline/CreateExampleProject.js';
-import { createProject } from './offline/Project.js';
-import { generateUUID } from './offline/LocalDB.js';
+import { createExampleProject } from '../offline/createExampleProject.js';
+import { createProject } from '../offline/project.js';
+import { generateUUID } from '../offline/localDB.js';
+import { checkHealth, checkHealthDb } from '../auth/authService.js';
 
 export default function AppDashboard() {
   const { projects, currentProject, addProject, deleteProject } = useAppState();
@@ -11,7 +12,6 @@ export default function AppDashboard() {
   const [projectName, setProjectName] = createSignal('');
 
   const handleProjectClick = (project) => {
-    // navigate(`/project/${project.id}`);
     const matches = projects().filter((p) => p.name === project.name);
     const index = matches.findIndex((p) => p.id === project.id);
     navigate(`/project/${encodeURIComponent(project.name)}/${index}`);
@@ -28,7 +28,8 @@ export default function AppDashboard() {
       }),
     );
     setProjectName('');
-    navigate(`/project/${newProject.id}`);
+    // Navigate to the new project
+    handleProjectClick(newProject);
   };
 
   const handleDeleteProject = async (projectId) => {
@@ -90,6 +91,12 @@ export default function AppDashboard() {
           }}
         >
           Load Example Project
+        </button>
+        <button onClick={checkHealth} class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+          Check Health
+        </button>
+        <button onClick={checkHealthDb} class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+          Check Health DB
         </button>
       </div>
     </div>

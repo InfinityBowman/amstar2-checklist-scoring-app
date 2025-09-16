@@ -1,15 +1,8 @@
 import { createStore } from 'solid-js/store';
 import { createContext, useContext } from 'solid-js';
-import {
-  saveProject as saveProjectToDB,
-  getAllProjects,
-  getAllChecklists,
-  saveChecklist,
-  deleteChecklist as deleteChecklistFromDB,
-  deleteProject as deleteProjectFromDB,
-  deleteChecklistFromProject,
-  saveChecklistToProject,
-} from './offline/LocalDB.js';
+import * as localDB from './offline/localDB.js';
+
+// TODO use produce or batch for updates to store
 
 const StateContext = createContext();
 
@@ -26,11 +19,11 @@ export function StateProvider(props) {
   async function loadData() {
     try {
       setState('loading', true);
-      const allProjects = await getAllProjects();
+      const allProjects = await localDB.getAllProjects();
       allProjects.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
       setState('projects', allProjects);
 
-      const allChecklists = await getAllChecklists();
+      const allChecklists = await localDB.getAllChecklists();
       setState('checklists', allChecklists);
     } catch (error) {
       console.error('Error loading IndexedDB data:', error);
@@ -43,7 +36,7 @@ export function StateProvider(props) {
   // Add a new project to both state and IndexedDB
   async function addProject(project) {
     try {
-      await saveProjectToDB(project);
+      await localDB.saveProject(project);
       setState('projects', (prev) => [...prev, project]);
       return project;
     } catch (error) {
@@ -55,7 +48,7 @@ export function StateProvider(props) {
   // Delete a project from both state and IndexedDB
   async function deleteProject(projectId) {
     try {
-      await deleteProjectFromDB(projectId);
+      await localDB.deleteProject(projectId);
       setState('projects', (prev) => prev.filter((p) => p.id !== projectId));
 
       // If current project was deleted, reset current selections
@@ -174,7 +167,7 @@ export function StateProvider(props) {
     if (projectId === null) {
       try {
         // Save checklist independently if no projectId is provided
-        await saveChecklist(checklist);
+        await localDB.saveChecklist(checklist);
         setState('checklists', (prev) => [...prev, checklist]);
 
         return checklist;
@@ -185,7 +178,7 @@ export function StateProvider(props) {
     }
     try {
       // Use the saveChecklistToProject function
-      const updatedProject = await saveChecklistToProject(projectId, checklist);
+      const updatedProject = await localDB.saveChecklistToProject(projectId, checklist);
 
       // Find the project to update in state
       const projectIndex = state.projects.findIndex((p) => p.id === projectId);
@@ -211,7 +204,7 @@ export function StateProvider(props) {
         const projectId = state.projects[projectIndex].id;
 
         // Save to IndexedDB
-        await saveChecklistToProject(projectId, updatedChecklist);
+        await localDB.saveChecklistToProject(projectId, updatedChecklist);
 
         // Update the checklist in the project in state
         setState('projects', projectIndex, 'checklists', (checklists) => {
@@ -235,7 +228,7 @@ export function StateProvider(props) {
         const checklistIndex = state.checklists.findIndex((c) => c.id === updatedChecklist.id);
         if (checklistIndex >= 0) {
           // Save to IndexedDB
-          await saveChecklist(updatedChecklist);
+          await localDB.saveChecklist(updatedChecklist);
 
           // Update in state
           setState('checklists', checklistIndex, { ...updatedChecklist });
@@ -263,7 +256,7 @@ export function StateProvider(props) {
     if (projectId === null) {
       try {
         // Delete checklist independently if no projectId is provided
-        await deleteChecklistFromDB(checklistId);
+        await localDB.deleteChecklist(checklistId);
         setState('checklists', (prev) => prev.filter((c) => c.id !== checklistId));
 
         // Reset current checklist if it was deleted
@@ -279,7 +272,7 @@ export function StateProvider(props) {
     }
     try {
       // Delete from IndexedDB
-      await deleteChecklistFromProject(projectId, checklistId);
+      await localDB.deleteChecklistFromProject(projectId, checklistId);
 
       // Find project index
       const projectIndex = state.projects.findIndex((p) => p.id === projectId);

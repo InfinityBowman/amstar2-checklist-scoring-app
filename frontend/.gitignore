@@ -13,11 +13,16 @@ npm-debug.log*
 # Mac system files
 .DS_Store
 
+# metabase testing
+metabase/
+
 # Editor directories and files
 .vscode/
 
 # Ignore all HTML files except index.html
 *.html
 !index.html
+
+.env*
 
 !.env.example 

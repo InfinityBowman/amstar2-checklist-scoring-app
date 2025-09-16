@@ -1,0 +1,6 @@
+This directory contains Alembic migration scripts.
+
+- Configure your database URL in `.env` (DATABASE_URL)
+- Create initial migration: `alembic -c backend/alembic.ini revision --autogenerate -m "init"`
+- Apply migrations: `alembic -c backend/alembic.ini upgrade head`
+

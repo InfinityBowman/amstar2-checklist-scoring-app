@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { useAuth } from './AuthProvider.jsx';
 import { AnimatedShow } from '../components/AnimatedShow.jsx';
@@ -25,7 +25,7 @@ export default function SignIn() {
       await signin(email(), password());
       navigate('/dashboard', { replace: true });
     } catch (err) {
-      setError('Invalid credentials');
+      setError('Incorrect email or password');
     } finally {
       setLoading(false);
     }
@@ -73,9 +73,9 @@ export default function SignIn() {
           class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
           disabled={loading()}
         >
-          <AnimatedShow when={loading()}>
+          <Show when={loading()}>
             <AiOutlineLoading3Quarters class="animate-spin mr-2" size={22} />
-          </AnimatedShow>
+          </Show>
           {loading() ? 'Signing In...' : 'Sign In'}
         </button>
         <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">

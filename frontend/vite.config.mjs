@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import solid from 'vite-plugin-solid';
 
 export default defineConfig({
-  base: '/amstar2-checklist-scoring-app/',
+  base: '/amstar2-checklist-scoring-app',
   plugins: [
     tailwindcss(),
     solid(),
@@ -27,4 +27,12 @@ export default defineConfig({
       },
     }),
   ],
+  test: {
+    // environment: 'jsdom',
+    setupFiles: ['./src/test/vitest.setup.js'],
+    globals: true,
+    // transformMode: {
+    //   web: [/\.[jt]sx$/],
+    // },
+  },
 });

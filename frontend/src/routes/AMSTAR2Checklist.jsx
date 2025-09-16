@@ -1,5 +1,5 @@
 import { createSignal, createEffect } from 'solid-js';
-import { AMSTAR_CHECKLIST } from '../offline/ChecklistMap.js';
+import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
 import { useAppState } from '../AppState.jsx';
 import { useParams } from '@solidjs/router';
 

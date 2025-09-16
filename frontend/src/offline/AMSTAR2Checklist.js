@@ -1,4 +1,4 @@
-import { AMSTAR_CHECKLIST } from './ChecklistMap.js';
+import { AMSTAR_CHECKLIST } from './checklistMap.js';
 
 export default class AMSTAR2Checklist {
   // Checklist generator with default empty answers
