@@ -1,13 +1,13 @@
-name: Prettier Check
+name: Prettier Write (non-main)
 
 on:
-  pull_request:
-    branches: [main, frontend]
   push:
-    branches: [main, frontend]
+    branches-ignore: [main]
+  pull_request:
+    branches-ignore: [main]
 
 jobs:
-  prettier:
+  prettier-write:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,22 +18,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
         working-directory: frontend
-
-      # Run prettier --check on main branch
-      - name: Run Prettier Check (main branch)
-        if: github.ref == 'refs/heads/main'
-        run: npx prettier --check .
-        working-directory: frontend
-
-      # Run prettier --write on frontend branch
-      - name: Run Prettier Write (frontend branch)
-        if: github.ref == 'refs/heads/frontend'
+      - name: Run Prettier Write
         run: npx prettier --write .
         working-directory: frontend
-
-      # Commit changes if any were made by prettier on frontend branch
       - name: Commit changes
-        if: github.ref == 'refs/heads/frontend'
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
