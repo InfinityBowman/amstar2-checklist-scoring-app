@@ -10,13 +10,11 @@ export async function signup(email, password, name) {
     console.error('Signup error:', errorText);
     throw new Error(errorText || 'Signup failed');
   }
-  // console.log('User created');
 }
 
 let accessToken = null;
 
 export async function signin(email, password) {
-  // console.log('Signing in user:', email);
   const res = await fetch('http://localhost:8000/auth/signin', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -32,7 +30,6 @@ export async function signin(email, password) {
 
   const data = await res.json();
   accessToken = data.accessToken;
-  // console.log('Access token:', accessToken);
 }
 
 export async function getCurrentUser() {
@@ -186,30 +183,4 @@ export async function checkHealthDb() {
     console.error('Reset password error:', errorText);
     throw new Error(errorText || 'Failed to reset password');
   }
-}
-
-// THIS SHOULD CORRECTLY TEST THE FULL AUTH FLOW INCLUDING TOKEN REFRESH
-// Uncomment this "run" function in ./SignUp.jsx to run the demo
-export async function runTestAuth() {
-  console.log('Running auth test');
-  await signup('test@test.com', 'Test111!', 'Test User');
-  console.log('Signed up');
-  await signin('test@test.com', 'Test111!');
-  console.log('Signed in');
-
-  let user = await getCurrentUser();
-  console.log('Got user:', user);
-
-  console.log('Test token expiry and refresh');
-  accessToken = 'bad-token';
-  user = await getCurrentUser(); // should fail
-  if (!user) {
-    console.log('Token invalid, refreshing token');
-    await refreshAccessToken();
-    user = await getCurrentUser();
-    console.log('After refresh:', user);
-  }
-
-  await signout();
-  console.log('Signed out');
 }
