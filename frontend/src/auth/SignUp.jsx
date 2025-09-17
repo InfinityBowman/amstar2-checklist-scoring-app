@@ -38,7 +38,7 @@ export default function SignUp() {
     setLoading(true);
     try {
       await signup(email(), password(), name());
-      setTimeout(() => navigate('/verify-email', { replace: true }), 1200);
+      navigate('/verify-email', { replace: true });
     } catch (err) {
       console.error('Signup error:', err);
       // TODO more specific error messages based on error code

@@ -9,9 +9,11 @@ import VerifyEmail from '../auth/VerifyEmail.jsx';
 import ResetPassword from '../auth/ResetPassword.jsx';
 import App from '../App.jsx';
 
+export const BASEPATH = '/amstar2-checklist-scoring-app';
+
 export default function AppRoutes() {
   return (
-    <Router base={'/amstar2-checklist-scoring-app'}>
+    <Router base={BASEPATH}>
       <Route path="/" component={App}>
         <Route path="/" component={Home} />
         <Route path="/dashboard" component={AppDashboard} />

@@ -3,7 +3,11 @@ import { useNavigate } from '@solidjs/router';
 import { useAuth } from './AuthProvider.jsx';
 import { AnimatedShow } from '../components/AnimatedShow.jsx';
 import { AiOutlineLoading3Quarters } from 'solid-icons/ai';
+import { useSearchParams } from '@solidjs/router';
 
+// TODO
+// Use query param mode to determine where to redirect after verification
+// Can also give user a link with the code in the URL and go straight to reset password/signin
 export default function VerifyEmail() {
   const [code, setCode] = createSignal('');
   const [error, setError] = createSignal('');
