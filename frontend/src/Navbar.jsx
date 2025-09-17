@@ -1,15 +1,22 @@
-import { A } from '@solidjs/router';
+import { A, useLocation } from '@solidjs/router';
 import { Show } from 'solid-js';
 import { useAuth } from './auth/AuthProvider.jsx';
+import { BASEPATH } from './routes/Routes.jsx';
+
+function normalizePath(path) {
+  return path.endsWith('/') ? path.slice(0, -1) : path;
+}
 
 export default function Navbar(props) {
   const { user, signout } = useAuth();
+  const location = useLocation();
+  const isHome = () => normalizePath(location.pathname) === normalizePath(BASEPATH);
 
   return (
     <nav class="flex items-center justify-between bg-gradient-to-r from-blue-700 to-blue-500 text-white px-8 py-4 shadow-lg">
       <div class="flex items-center space-x-4">
         {/* Sidebar open button */}
-        <Show when={user()}>
+        <Show when={!isHome()}>
           <button
             class="ml-[-12px] bg-white/80 text-blue-700 p-2 rounded-full shadow hover:bg-white hover:scale-105 transition-all duration-150 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             onClick={props.toggleSidebar}
