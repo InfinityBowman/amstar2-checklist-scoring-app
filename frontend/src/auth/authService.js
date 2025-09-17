@@ -1,8 +1,10 @@
 export async function signup(email, password, name) {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const locale = navigator.language;
   const res = await fetch('http://localhost:8000/auth/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, name }),
+    body: JSON.stringify({ email, password, name, timezone, locale }),
   });
 
   if (!res.ok) {
@@ -15,11 +17,13 @@ export async function signup(email, password, name) {
 let accessToken = null;
 
 export async function signin(email, password) {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const locale = navigator.language;
   const res = await fetch('http://localhost:8000/auth/signin', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', // important for refresh cookie
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, timezone, locale }),
   });
 
   if (!res.ok) {
