@@ -8,6 +8,7 @@ import SignUp from '../auth/SignUp.jsx';
 import VerifyEmail from '../auth/VerifyEmail.jsx';
 import ResetPassword from '../auth/ResetPassword.jsx';
 import App from '../App.jsx';
+import NotFound from './NotFound.jsx';
 
 export default function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ export default function AppRoutes() {
         <Route path="/signup" component={SignUp} />
         <Route path="/verify-email" component={VerifyEmail} />
         <Route path="/reset-password" component={ResetPassword} />
+        <Route path="*" component={NotFound} />
       </Route>
     </Router>
   );

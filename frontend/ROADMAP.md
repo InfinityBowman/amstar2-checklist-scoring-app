@@ -3,18 +3,21 @@
 - [ ] **Navbar**
   - [x] Add a top navigation bar to all pages
   - [x] Show app name/logo
-  - [ ] Add login/logout button (integrate with authentication)
+  - [x] Add login/logout button (integrate with authentication)
+  - [ ] Make it look pretty
 
 - [ ] **Authentication**
   - [ ] Integrate login/logout flow
   - [ ] Use HttpOnly cookies and refresh token
   - [ ] Show/hide features based on authentication state
+  - [ ] Email verification
+  - [ ] Password reset
 
 - [ ] **Landing Page**
   - [ ] Create a welcoming landing page
   - [ ] Show app description
-  - [ ] Show login/register prompt
-  - [ ] Maybe link to an about page
+  - [x] Show login/register prompt
+  - [ ] Maybe also have statically rendered about page
   - [ ] This page should be statically rendered and function perfectly if JavaScript is disabled
 
 - [ ] **Create Project Page**
@@ -24,24 +27,38 @@
   - [ ] Need some way to search for existing users
   - [ ] Add project to user’s project list
 
+- [ ] **App Dashboard**
+  - [ ] Main dashboard for the app, shows all projects/checklists etc.
+  - [ ] Lets you make new projects and checklists (maybe quick checklist goes here)
+
 - [ ] **User Profile/Settings Page**
   - [ ] Change name/settings etc.
+  - [ ] Delete account
 
 - [ ] **AMSTAR 2 Checklists**
-  - [ ] Optionally make merge editor collaborative
   - [ ] Import/Export checklists to/from CSV
   - [ ] Customize critical/noncritical items for scoring
   - [x] Automatic saving
   - [x] Automatic yes/partial yes/no based on answers
   - [ ] Checklist state could be encoded into url
+  - [ ] Make it way prettier
+  - [ ] Checklists-name based URLs
 
   - [ ] **Merge Editor**
   - [ ] Compare two checklists in a merge editor
 
 - [ ] **Project Dashboard**
   - [ ] Export data visualization in color or greyscale
-  - [ ] Data visualizations for all checklists in a project
+  - [x] Data visualizations for all checklists in a project
+  - [ ] Responsive sizing of visualizations (tailwind selectors?)
   - [ ] Import/Export project to/from CSV
+  - [ ] Collaborative project will look different
+  - [x] Project-name based URLs
+
+- [ ] **Collaborative Project Dashboard**
+  - [ ] Randomly assign reviews to people
+  - [ ] Show who has completed reviews
+  - [ ] Show who is assigned to which reviews
 
 - [x] **Sidebar**
   - [x] List projects and their checklists (expandable/collapsible)
@@ -51,10 +68,12 @@
   - [ ] View PDFs and search through them
 
 - [ ] **Testing**
-  - [ ] Vitest for testing
+  - [x] Vitest for testing
+  - [ ] Playwright for advanced component testing
 
 - [ ] **Analytics**
   - [ ] Analytics monitoring, posthog or do it manually and store in db?
+  - [x] Initial page load analytics
 
 - [ ] **Helper Popover**
   - [ ] ? icon that we can place to give users tips/info about things
@@ -62,15 +81,17 @@
   - [ ] Ex: What does it mean for something to be a critical item
 
 - [ ] **Quick Checklist**
-  - [ ] Let a user quickly score a checklist with pdf without creating a project
+  - [ ] Let a user quickly score a review with pdf without creating a project
   - [ ] Allow import/export to do this
+
+- [ ] **404 Page**
+  - [ ] Nice 404 page that helps users find the page they are looking for
 
 - [ ] **Misc**
 - [ ] Use Server-Sent Events (EventSource api) for server driven updates
 - [ ] Use solid router to control navigation between checklists, projects, etc.
   - makes it so back and forward buttons work properly
 - [ ] Better loading components
-- [ ] Improve URL to be like /project/projectName/checklist/checklistName
 - [ ] Icons: https://solid-icons.vercel.app/
 - [ ] UI library: https://zagjs.com/overview/installation
 
