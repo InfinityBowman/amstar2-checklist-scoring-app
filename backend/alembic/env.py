@@ -11,7 +11,7 @@ from app.core.config import settings
 from app.db.base import Base
 
 # Import models here so Alembic can autogenerate migrations
-# from app.models import project, checklist  # noqa: F401
+from app.models import User  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -54,7 +54,7 @@ def run_migrations_online() -> None:
         )
     )
 
-    async def do_run_migrations(connection: Connection) -> None:
+    def do_run_migrations(connection: Connection) -> None:
         context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
 
         with context.begin_transaction():

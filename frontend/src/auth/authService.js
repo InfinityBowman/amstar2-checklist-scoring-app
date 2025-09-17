@@ -1,5 +1,8 @@
+import API_ENDPOINTS from '../config/api.js';
+
 export async function signup(email, password, name) {
-  const res = await fetch('http://localhost:8000/auth/signup', {
+  console.log('Signup URL:', API_ENDPOINTS.SIGNUP);
+  const res = await fetch(API_ENDPOINTS.SIGNUP, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, name }),
@@ -17,7 +20,8 @@ let accessToken = null;
 
 export async function signin(email, password) {
   // console.log('Signing in user:', email);
-  const res = await fetch('http://localhost:8000/auth/signin', {
+  console.log('Signin URL:', API_ENDPOINTS.SIGNIN);
+  const res = await fetch(API_ENDPOINTS.SIGNIN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', // important for refresh cookie
@@ -36,7 +40,7 @@ export async function signin(email, password) {
 }
 
 export async function getCurrentUser() {
-  const res = await authFetch('http://localhost:8000/users/me');
+  const res = await authFetch(API_ENDPOINTS.CURRENT_USER);
   if (!res.ok) {
     const errorText = await res.text();
     console.error('Failed to fetch user:', errorText);
@@ -72,7 +76,7 @@ export async function authFetch(url, options = {}) {
 }
 
 export async function refreshAccessToken() {
-  const res = await fetch('http://localhost:8000/auth/refresh', {
+  const res = await fetch(API_ENDPOINTS.REFRESH, {
     method: 'POST',
     credentials: 'include', // sends HttpOnly cookie
   });
@@ -89,7 +93,7 @@ export async function refreshAccessToken() {
 }
 
 export async function signout() {
-  await fetch('http://localhost:8000/auth/signout', {
+  await fetch(API_ENDPOINTS.SIGNOUT, {
     method: 'POST',
     credentials: 'include',
   });
@@ -153,7 +157,7 @@ export async function resetPassword(email, code, newPassword) {
 }
 
 export async function checkHealth() {
-  const res = await fetch('http://localhost:8000/healthz', {
+  const res = await fetch(API_ENDPOINTS.HEALTH, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -171,7 +175,7 @@ export async function checkHealth() {
 }
 
 export async function checkHealthDb() {
-  const res = await fetch('http://localhost:8000/healthz/db', {
+  const res = await fetch(API_ENDPOINTS.HEALTH_DB, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
