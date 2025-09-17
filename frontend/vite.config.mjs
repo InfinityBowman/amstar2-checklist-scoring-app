@@ -10,6 +10,9 @@ export default defineConfig({
     solid(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,txt}'],
+      },
       includeAssets: ['favicon.svg', 'robots.txt'],
       manifest: {
         name: 'CoRATES',
