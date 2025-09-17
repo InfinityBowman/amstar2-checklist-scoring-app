@@ -1,9 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as authService from '../auth/authService';
+import API_ENDPOINTS from '../config/api.js';
 
 const mockFetch = vi.fn();
-
 global.fetch = mockFetch;
+
+// Mock Intl and navigator
+global.Intl = {
+  DateTimeFormat: () => ({
+    resolvedOptions: () => ({ timeZone: 'America/New_York' }),
+  }),
+};
+
+global.navigator = {
+  language: 'en-US',
+};
 
 describe('authService', () => {
   beforeEach(() => {
@@ -16,11 +27,17 @@ describe('authService', () => {
       mockFetch.mockResolvedValueOnce({ ok: true });
       await authService.signup('test@example.com', 'pass', 'Test');
       expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:8000/auth/signup',
+        API_ENDPOINTS.SIGNUP,
         expect.objectContaining({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: 'test@example.com', password: 'pass', name: 'Test' }),
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'pass',
+            name: 'Test',
+            timezone: 'America/New_York',
+            locale: 'en-US',
+          }),
         }),
       );
     });
@@ -52,6 +69,28 @@ describe('authService', () => {
       );
     });
 
+    it('should send timezone and locale with signin request', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ accessToken: 'abc123' }),
+      });
+      await authService.signin('test@example.com', 'pass');
+      expect(mockFetch).toHaveBeenCalledWith(
+        API_ENDPOINTS.SIGNIN,
+        expect.objectContaining({
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'pass',
+            timezone: 'America/New_York',
+            locale: 'en-US',
+          }),
+        }),
+      );
+    });
+
     it('should throw error if signin fails', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -68,6 +107,12 @@ describe('authService', () => {
       expect(user).toEqual({ id: 1 });
     });
 
+    it('should use authFetch with the correct endpoint', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 1 }) });
+      await authService.getCurrentUser();
+      expect(mockFetch).toHaveBeenCalledWith(API_ENDPOINTS.CURRENT_USER, expect.any(Object));
+    });
+
     it('should throw error if fetch fails', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -78,7 +123,6 @@ describe('authService', () => {
   });
 
   describe('authFetch', () => {
-    console.log('Test authfetch begin');
     it('should retry on 401 and refresh token', async () => {
       // First call returns 401, refresh succeeds, second call returns ok
       mockFetch
@@ -112,6 +156,18 @@ describe('authService', () => {
       );
     });
 
+    it('should use credentials:include when refreshing', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ accessToken: 'xyz' }) });
+      await authService.refreshAccessToken();
+      expect(mockFetch).toHaveBeenCalledWith(
+        API_ENDPOINTS.REFRESH,
+        expect.objectContaining({
+          method: 'POST',
+          credentials: 'include',
+        }),
+      );
+    });
+
     it('should throw error if refresh fails', async () => {
       mockFetch.mockResolvedValueOnce({ ok: false, text: () => Promise.resolve('Refresh failed') });
       await expect(authService.refreshAccessToken()).rejects.toThrow('Refresh failed');
@@ -129,6 +185,18 @@ describe('authService', () => {
         'http://localhost:8000/test',
         expect.objectContaining({
           headers: expect.objectContaining({ Authorization: 'Bearer null' }),
+        }),
+      );
+    });
+
+    it('should call signout endpoint with credentials:include', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true });
+      await authService.signout();
+      expect(mockFetch).toHaveBeenCalledWith(
+        API_ENDPOINTS.SIGNOUT,
+        expect.objectContaining({
+          method: 'POST',
+          credentials: 'include',
         }),
       );
     });
@@ -219,7 +287,7 @@ describe('authService', () => {
       mockFetch.mockResolvedValueOnce({ status: 200, ok: true, json: () => Promise.resolve({ status: 'ok' }) });
       await authService.checkHealth();
       expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:8000/healthz',
+        API_ENDPOINTS.HEALTH,
         expect.objectContaining({
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
@@ -228,8 +296,8 @@ describe('authService', () => {
     });
 
     it('should throw error if health check fails', async () => {
-      mockFetch.mockResolvedValueOnce({ ok: false, text: () => Promise.resolve('Failed to reset password') });
-      await expect(authService.checkHealth()).rejects.toThrow('Failed to reset password');
+      mockFetch.mockResolvedValueOnce({ ok: false, text: () => Promise.resolve('Health check failed') });
+      await expect(authService.checkHealth()).rejects.toThrow('Health check failed');
     });
   });
 
@@ -238,7 +306,7 @@ describe('authService', () => {
       mockFetch.mockResolvedValueOnce({ status: 200, ok: true, json: () => Promise.resolve({ status: 'ok' }) });
       await authService.checkHealthDb();
       expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:8000/healthz/db',
+        API_ENDPOINTS.HEALTH_DB,
         expect.objectContaining({
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
@@ -247,8 +315,8 @@ describe('authService', () => {
     });
 
     it('should throw error if health DB check fails', async () => {
-      mockFetch.mockResolvedValueOnce({ ok: false, text: () => Promise.resolve('Failed to reset password') });
-      await expect(authService.checkHealthDb()).rejects.toThrow('Failed to reset password');
+      mockFetch.mockResolvedValueOnce({ ok: false, text: () => Promise.resolve('Database health check failed') });
+      await expect(authService.checkHealthDb()).rejects.toThrow('Database health check failed');
     });
   });
 });
