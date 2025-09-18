@@ -1,4 +1,4 @@
-import { createContext, useContext, createSignal } from 'solid-js';
+import { createContext, useContext, createSignal, onMount } from 'solid-js';
 import * as authService from './authService';
 
 const AuthContext = createContext();
@@ -6,6 +6,20 @@ const AuthContext = createContext();
 export function AuthProvider(props) {
   const [isLoggedIn, setIsLoggedIn] = createSignal(false);
   const [user, setUser] = createSignal(null);
+  const [authLoading, setAuthLoading] = createSignal(true);
+
+  onMount(async () => {
+    try {
+      await authService.refreshAccessToken();
+      const user = await authService.getCurrentUser();
+      setUser(user);
+    } catch {
+      setUser(null);
+      setIsLoggedIn(false);
+    } finally {
+      setAuthLoading(false);
+    }
+  });
 
   async function signup(email, password, name) {
     await authService.signup(email, password, name);
@@ -58,6 +72,9 @@ export function AuthProvider(props) {
         getCurrentUser,
         refreshAccessToken,
         authFetch,
+        authLoading,
+        sendEmailVerification,
+        verifyEmail,
       }}
     >
       {props.children}

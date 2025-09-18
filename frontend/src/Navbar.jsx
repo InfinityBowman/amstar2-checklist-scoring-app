@@ -1,5 +1,5 @@
 import { A, useLocation } from '@solidjs/router';
-import { Show } from 'solid-js';
+import { Show, createEffect } from 'solid-js';
 import { useAuth } from './auth/AuthProvider.jsx';
 import { BASEPATH } from './routes/Routes.jsx';
 
@@ -11,6 +11,20 @@ export default function Navbar(props) {
   const { user, signout } = useAuth();
   const location = useLocation();
   const isHome = () => normalizePath(location.pathname) === normalizePath(BASEPATH);
+
+  // Read from localStorage on render
+  // Do this because we want to avoid layout shift on refresh
+  const storedName = localStorage.getItem('userName');
+  const isLikelyLoggedIn = !!storedName;
+
+  createEffect(() => {
+    // Update localStorage when user changes
+    if (user()) {
+      localStorage.setItem('userName', user().name);
+    } else {
+      localStorage.removeItem('userName');
+    }
+  });
 
   return (
     <nav class="flex items-center justify-between bg-gradient-to-r from-blue-700 to-blue-500 text-white px-8 py-4 shadow-lg">
@@ -33,23 +47,25 @@ export default function Navbar(props) {
       </div>
 
       <div class="flex space-x-6 items-center">
-        {/* <A href="/" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
-          Home
-        </A> */}
         <A href="/dashboard" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
           Dashboard
         </A>
         <Show
           when={user()}
           fallback={
-            <>
-              <A href="/signin" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
-                Sign In
-              </A>
-              <A href="/signup" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
-                Sign Up
-              </A>
-            </>
+            isLikelyLoggedIn ?
+              <>
+                <span class="font-medium">Hello, {storedName}</span>
+                <button class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">Sign Out</button>
+              </>
+            : <>
+                <A href="/signin" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
+                  Sign In
+                </A>
+                <A href="/signup" class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">
+                  Sign Up
+                </A>
+              </>
           }
         >
           <span class="font-medium">Hello, {user().name}</span>

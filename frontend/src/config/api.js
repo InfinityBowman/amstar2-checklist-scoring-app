@@ -9,11 +9,11 @@ if (baseUrl.endsWith('/api/v1')) {
 }
 
 // Debug logging
-console.log('VITE_API_URL env var:', import.meta.env.VITE_API_URL);
-console.log('API_PREFIX env var:', import.meta.env.VITE_API_PREFIX);
-console.log('API_BASE_URL:', API_BASE_URL);
-console.log('baseUrl:', baseUrl);
-console.log('Full API base URL:', `${baseUrl}${API_PREFIX}`);
+// console.log('VITE_API_URL env var:', import.meta.env.VITE_API_URL);
+// console.log('API_PREFIX env var:', import.meta.env.VITE_API_PREFIX);
+// console.log('API_BASE_URL:', API_BASE_URL);
+// console.log('baseUrl:', baseUrl);
+// console.log('Full API base URL:', `${baseUrl}${API_PREFIX}`);
 
 export const API_ENDPOINTS = {
   // Auth endpoints
@@ -31,8 +31,8 @@ export const API_ENDPOINTS = {
 };
 
 // Debug logging for final URLs
-console.log('Final API URLs:');
-console.log('SIGNUP:', API_ENDPOINTS.SIGNUP);
-console.log('SIGNIN:', API_ENDPOINTS.SIGNIN);
+// console.log('Final API URLs:');
+// console.log('SIGNUP:', API_ENDPOINTS.SIGNUP);
+// console.log('SIGNIN:', API_ENDPOINTS.SIGNIN);
 
 export default API_ENDPOINTS;

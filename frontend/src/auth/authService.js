@@ -56,6 +56,7 @@ export async function authFetch(url, options = {}) {
     ...(options.headers || {}),
     Authorization: `Bearer ${accessToken}`,
   };
+  options.credentials = 'include'; // ensure cookies are sent
 
   let res = await fetch(url, options);
 
@@ -65,6 +66,7 @@ export async function authFetch(url, options = {}) {
       await refreshAccessToken();
       // Retry the request with new token
       options.headers.Authorization = `Bearer ${accessToken}`;
+      options.credentials = 'include'; // ensure cookies are sent
       res = await fetch(url, options);
     } catch (err) {
       // Refresh failed, sign out user

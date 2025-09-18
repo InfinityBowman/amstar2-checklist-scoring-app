@@ -5,6 +5,8 @@ import Dialog from './components/Dialog.jsx';
 import Resizable from './components/Resizable.jsx';
 import { useAppState } from './AppState.jsx';
 import Navbar from './Navbar.jsx';
+import { useAuth } from './auth/AuthProvider.jsx';
+import FullScreenLoader from './components/FullScreenLoader.jsx';
 
 /**
  * TODO
@@ -25,10 +27,11 @@ export default function App(props) {
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
+  const { authLoading } = useAuth();
 
   const {
     projects,
-    loading,
+    dataLoading,
     loadData,
     setProjects,
     currentProject,
@@ -39,14 +42,19 @@ export default function App(props) {
     updateChecklist,
   } = useAppState();
 
-  // Load all projects and checklists on mount
-  onMount(async () => {
-    try {
-      await loadData();
-    } catch (error) {
-      console.error('Error loading projects:', error);
-    }
+  createEffect(() => {
+    console.log(authLoading());
+    console.log(dataLoading());
   });
+
+  // Load all projects and checklists on mount
+  // onMount(async () => {
+  //   try {
+  //     await loadData();
+  //   } catch (error) {
+  //     console.error('Error loading user or data:', error);
+  //   }
+  // });
 
   // Handlers for delete all checklists dialog
   const handleDeleteAll = () => {
@@ -126,11 +134,9 @@ export default function App(props) {
           />
         </div>
 
-        <div class="flex-1 min-h-0 overflow-y-auto">
-          <Show when={!loading()} fallback={<div class="p-8 text-center">Loading projects...</div>}>
-            {props.children}
-          </Show>
-        </div>
+        <Show when={!dataLoading() && !authLoading()} fallback={<div class="p-8 text-center">Loading projects...</div>}>
+          <div class="flex-1 min-h-0 overflow-y-auto">{props.children}</div>
+        </Show>
 
         {/* Mobile overlay backdrop */}
         <Show when={sidebarOpen()}>

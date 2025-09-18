@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -126,6 +126,7 @@ async def signin(
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(
+    request: Request,
     response: Response,
     db: AsyncSession = Depends(get_session)
 ):
@@ -135,7 +136,7 @@ async def refresh_token(
     No request body required. Uses refresh token from HttpOnly cookie.
     """
     # Get refresh token from cookie
-    refresh_token = response.cookies.get("refresh")
+    refresh_token = request.cookies.get("refresh")
     
     if not refresh_token:
         raise HTTPException(

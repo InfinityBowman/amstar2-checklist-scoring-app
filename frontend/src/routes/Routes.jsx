@@ -9,6 +9,8 @@ import SignUp from '../auth/SignUp.jsx';
 import VerifyEmail from '../auth/VerifyEmail.jsx';
 import ResetPassword from '../auth/ResetPassword.jsx';
 import App from '../App.jsx';
+import NotFound from './NotFound.jsx';
+import Offline from './Offline.jsx';
 import useOnlineStatus from '../primatives/useOnlineStatus';
 
 export const BASEPATH = '/amstar2-checklist-scoring-app';
@@ -34,6 +36,7 @@ export default function AppRoutes() {
         <Route path="/signup" component={SignUp} />
         <Route path="/verify-email" component={VerifyEmail} />
         <Route path="/reset-password" component={ResetPassword} />
+        <Route path="*" component={NotFound} />
       </Route>
     </Router>
   );
@@ -41,11 +44,8 @@ export default function AppRoutes() {
 
 function OnlineGuard(props) {
   const online = useOnlineStatus();
-  // createEffect(() => {
-  //   console.log('Online status changed:', online());
-  // });
   return (
-    <Show when={online()} fallback={<div>You must be online to access this page.</div>}>
+    <Show when={online()} fallback={<Offline />}>
       {props.children}
     </Show>
   );
