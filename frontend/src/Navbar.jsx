@@ -8,7 +8,7 @@ function normalizePath(path) {
 }
 
 export default function Navbar(props) {
-  const { user, signout } = useAuth();
+  const { user, signout, authLoading } = useAuth();
   const location = useLocation();
   const isHome = () => normalizePath(location.pathname) === normalizePath(BASEPATH);
 
@@ -62,7 +62,7 @@ export default function Navbar(props) {
         <Show
           when={user()}
           fallback={
-            isLikelyLoggedIn ?
+            isLikelyLoggedIn && authLoading() ?
               <>
                 <span class="font-medium">Hello, {storedName}</span>
                 <button class="hover:bg-blue-600 px-3 py-2 rounded transition font-medium">Sign Out</button>

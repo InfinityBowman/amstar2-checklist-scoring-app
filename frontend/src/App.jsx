@@ -42,20 +42,6 @@ export default function App(props) {
     updateChecklist,
   } = useAppState();
 
-  createEffect(() => {
-    console.log(authLoading());
-    console.log(dataLoading());
-  });
-
-  // Load all projects and checklists on mount
-  // onMount(async () => {
-  //   try {
-  //     await loadData();
-  //   } catch (error) {
-  //     console.error('Error loading user or data:', error);
-  //   }
-  // });
-
   // Handlers for delete all checklists dialog
   const handleDeleteAll = () => {
     setDeleteAllDialogOpen(true);

@@ -92,7 +92,6 @@ export async function refreshAccessToken() {
 
   const data = await res.json();
   accessToken = data.accessToken;
-  console.log('Refreshed access token:', accessToken);
 }
 
 export async function signout() {
