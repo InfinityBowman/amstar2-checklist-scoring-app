@@ -944,7 +944,7 @@ export default function AMSTAR2Checklist() {
   const [reviewName, setReviewName] = createSignal('');
   const [reviewerName, setReviewerName] = createSignal('');
   const [reviewDate, setReviewDate] = createSignal('');
-  const { currentChecklist, setCurrentChecklist, updateChecklist, loading } = useAppState();
+  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading } = useAppState();
   const params = useParams();
 
   createEffect(() => {
@@ -1027,7 +1027,7 @@ export default function AMSTAR2Checklist() {
         </div>
 
         {/* Questions */}
-        <Show when={!loading() && currentChecklist()} fallback={<div>Loading...</div>}>
+        <Show when={!dataLoading() && currentChecklist()} fallback={<div>Loading...</div>}>
           <div className="space-y-6">
             <Question1 onUpdate={(newQ1) => handleChecklistChange({ q1: newQ1 })} checklistState={currentChecklist} />
             <Question2 onUpdate={(newQ2) => handleChecklistChange({ q2: newQ2 })} checklistState={currentChecklist} />
