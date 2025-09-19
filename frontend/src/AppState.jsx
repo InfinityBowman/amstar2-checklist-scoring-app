@@ -1,5 +1,5 @@
 import { createStore } from 'solid-js/store';
-import { createContext, useContext } from 'solid-js';
+import { createContext, useContext, onMount } from 'solid-js';
 import * as localDB from './offline/localDB.js';
 
 // TODO use produce or batch for updates to store
@@ -11,8 +11,19 @@ export function StateProvider(props) {
     projects: [],
     currentProject: null,
     currentChecklist: null,
-    loading: true,
+    dataLoading: true,
     checklists: [],
+  });
+
+  // Load all projects and checklists on mount
+  onMount(async () => {
+    try {
+      await loadData();
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setState('dataLoading', false);
+    }
   });
 
   // Load all projects and checklists from IndexedDB
@@ -301,7 +312,7 @@ export function StateProvider(props) {
         projects: () => state.projects,
         currentProject: () => state.currentProject,
         currentChecklist: () => state.currentChecklist,
-        loading: () => state.loading,
+        dataLoading: () => state.dataLoading,
         checklists: () => state.checklists,
 
         // State operations

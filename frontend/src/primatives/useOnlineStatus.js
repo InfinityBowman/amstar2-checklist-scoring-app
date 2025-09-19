@@ -1,20 +1,16 @@
-import { createSignal, onCleanup, onMount } from 'solid-js';
+import { createSignal } from 'solid-js';
+
+const [online, setOnline] = createSignal(navigator.onLine);
+
+window.addEventListener('online', () => {
+  console.log('Went online');
+  setOnline(true);
+});
+window.addEventListener('offline', () => {
+  console.log('Went offline');
+  setOnline(false);
+});
 
 export default function useOnlineStatus() {
-  const [online, setOnline] = createSignal(navigator.onLine);
-
-  const goOnline = () => setOnline(true);
-  const goOffline = () => setOnline(false);
-
-  onMount(() => {
-    window.addEventListener('online', goOnline);
-    window.addEventListener('offline', goOffline);
-  });
-
-  onCleanup(() => {
-    window.removeEventListener('online', goOnline);
-    window.removeEventListener('offline', goOffline);
-  });
-
   return online;
 }

@@ -36,3 +36,79 @@
    - **API Documentation**: http://localhost:8000/docs
    - **Database**: localhost:5433 (PostgreSQL)
    - **Frontend**: [http://localhost:5173/amstar2-checklist-scoring-app/](http://localhost:5173/amstar2-checklist-scoring-app/)
+
+---
+
+#### Running Backend Commands
+
+```bash
+# Enter the backend container
+docker-compose exec backend bash
+
+# Create new migration
+alembic revision --autogenerate -m "description"
+
+# Apply migrations
+alembic upgrade head
+
+# View container logs
+docker-compose logs backend
+
+# Restart backend only
+docker-compose restart backend
+```
+
+### Database Management
+
+The PostgreSQL database runs in a Docker container with:
+
+- **Host**: localhost
+- **Port**: 5433
+- **Database**: amstar
+- **Username**: amstar
+- **Password**: amstar_password
+
+#### Connect to Database
+
+```bash
+# Using Docker
+docker-compose exec db psql -U amstar -d amstar
+
+# Host: localhost, Port: 5433
+```
+
+## Docker Commands
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Build and start (after code changes)
+docker-compose up --build -d
+
+# View running containers
+docker-compose ps
+
+# View logs
+docker-compose logs [service_name]
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (⚠️ deletes database data)
+docker-compose down -v
+
+# Rebuild specific service
+docker-compose build backend
+```
+
+### Reset Everything
+
+```bash
+# Stop and remove all containers, networks, and volumes
+docker-compose down -v
+docker system prune -f
+
+# Restart fresh
+docker-compose up --build -d
+```

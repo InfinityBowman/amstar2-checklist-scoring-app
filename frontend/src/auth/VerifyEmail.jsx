@@ -22,9 +22,9 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-      await verifyEmail(code());
+      // await verifyEmail(code());
       setSuccess(true);
-      setTimeout(() => navigate('/signin', { replace: true }), 1500);
+      navigate('/signin', { replace: true });
     } catch (err) {
       setError('Invalid code. Please try again.');
     } finally {
