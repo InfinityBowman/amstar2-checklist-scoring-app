@@ -68,8 +68,10 @@
   - [ ] View PDFs and search through them
 
 - [ ] **Testing**
-  - [x] Vitest for testing
-  - [ ] Playwright for advanced component testing
+  - [x] Vitest for basic testing
+  - [x] Business logic testing
+  - [x] Automated testing with actions
+  - [ ] Playwright for advanced integration testing
 
 - [ ] **Analytics**
   - [ ] Analytics monitoring, posthog or do it manually and store in db?
