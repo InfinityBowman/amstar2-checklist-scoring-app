@@ -6,8 +6,6 @@ import { AiOutlineLoading3Quarters } from 'solid-icons/ai';
 import { useSearchParams } from '@solidjs/router';
 import PinInput from './PinInput.jsx';
 
-
-
 // TODO
 // Use query param mode to determine where to redirect after verification
 // Can also give user a link with the code in the URL and go straight to reset password/signin
@@ -26,15 +24,12 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-
       await verifyEmail(code());
       setSuccess(true);
 
       setTimeout(() => {
         navigate('/signin', { replace: true });
       }, 1000);
-
-
     } catch (err) {
       setError('Invalid code. Please try again.');
     } finally {
@@ -45,7 +40,7 @@ export default function VerifyEmail() {
     if (useSearchParams.code) {
       setLoading(true);
       try {
-        await verifyEmail(useSearchParams.code);  // call backend
+        await verifyEmail(useSearchParams.code); // call backend
         setSuccess(true);
         navigate('/signin', { replace: true });
       } catch (err) {
@@ -55,7 +50,6 @@ export default function VerifyEmail() {
       }
     }
   });
-
 
   return (
     <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-2 sm:px-4 py-6 sm:py-12">
@@ -75,7 +69,6 @@ export default function VerifyEmail() {
           {/* <label class="block text-base sm:text-lg font-semibold text-gray-700 mb-1 sm:mb-2" htmlFor="code-input">
             Verification Code
           </label> */}
-
         </div>
         <AnimatedShow when={!!error()}>
           <p class="pt-2 sm:pt-3 px-2 text-red-600 text-base sm:text-lg">{error()}</p>
@@ -84,19 +77,22 @@ export default function VerifyEmail() {
           <p class="pt-2 sm:pt-3 px-2 text-green-600 text-base sm:text-lg">Email verified! Redirecting to sign in...</p>
         </AnimatedShow>
 
-        <Show when={codeSent()} fallback={
-          <button
-            class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
-            disabled={loading()}
-            type='button'
-            onClick={() => setCodeSent(true)}
-          >
-            <AnimatedShow when={loading()}>
-              <AiOutlineLoading3Quarters class="animate-spin mr-2" size={22} />
-            </AnimatedShow>
-            {loading() ? 'Verifying...' : 'Send Code'}
-          </button>
-        }>
+        <Show
+          when={codeSent()}
+          fallback={
+            <button
+              class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
+              disabled={loading()}
+              type="button"
+              onClick={() => setCodeSent(true)}
+            >
+              <AnimatedShow when={loading()}>
+                <AiOutlineLoading3Quarters class="animate-spin mr-2" size={22} />
+              </AnimatedShow>
+              {loading() ? 'Verifying...' : 'Send Code'}
+            </button>
+          }
+        >
           <PinInput required />
           <button
             type="submit"
@@ -108,7 +104,6 @@ export default function VerifyEmail() {
             </AnimatedShow>
             {loading() ? 'Verifying...' : 'Verify Email'}
           </button>
-
         </Show>
         <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">
           Didn't get a code?{' '}
