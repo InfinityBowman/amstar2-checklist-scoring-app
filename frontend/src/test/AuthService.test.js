@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as authService from '../auth/authService';
-import API_ENDPOINTS from '../config/api.js';
+import * as authService from '../api/authService';
+import API_ENDPOINTS from '../api/config.js';
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;

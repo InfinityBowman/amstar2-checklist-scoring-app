@@ -24,6 +24,17 @@ export function StateProvider(props) {
     } finally {
       setState('dataLoading', false);
     }
+
+    // try {
+    //   // TODO figure this out
+    //   if (navigator.storage && navigator.storage.persist) {
+    //     navigator.storage.persist().then((granted) => {
+    //       console.log(granted ? 'Storage is now persistent' : 'Storage is not persistent');
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error('Error requesting persistent storage:', error);
+    // }
   });
 
   // Load all projects and checklists from IndexedDB
@@ -76,19 +87,6 @@ export function StateProvider(props) {
 
   function setProjects(newProjects) {
     setState('projects', newProjects);
-  }
-
-  // Set the current project by object or ID
-  // Also sets the current checklist to the first checklist of the project (or null)
-  // Note: does not add the project to state or IndexedDB, just sets currentProject
-  function setCurrentProject1(projectOrId) {
-    let project = projectOrId;
-    if (typeof projectOrId === 'string') {
-      project = state.projects.find((p) => p.id === projectOrId);
-    }
-    project = project ? { ...project } : null; // Create a new object to avoid reference issues
-    setState('currentProject', project);
-    setState('currentChecklist', { ...(project?.checklists?.[0] ?? null) });
   }
 
   /**

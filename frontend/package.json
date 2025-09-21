@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
+    "sw": "SOURCE_MAP=true SW_DEV=true vite build && vite preview",
     "deploy": "gh-pages -d frontend/dist",
     "format": "prettier --write .",
     "test": "vitest"

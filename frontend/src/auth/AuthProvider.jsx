@@ -1,5 +1,5 @@
 import { createContext, useContext, createSignal, onMount, createEffect } from 'solid-js';
-import * as authService from './authService';
+import * as authService from '../api/authService.js';
 import useOnlineStatus from '../primatives/useOnlineStatus.js';
 
 const AuthContext = createContext();
@@ -14,7 +14,6 @@ export function AuthProvider(props) {
   let wasOnline = isOnline();
 
   onMount(() => {
-    console.log('onmount auth');
     if (!isOnline()) {
       setAuthLoading(false);
       return;
@@ -23,7 +22,7 @@ export function AuthProvider(props) {
   });
 
   createEffect(() => {
-    console.log('Online status changed:', isOnline(), 'wasonline:', wasOnline, 'User:', user());
+    // console.log('Online status changed:', isOnline(), 'wasonline:', wasOnline, 'User:', user());
     // Only run when online status changes
     if (isOnline() && !wasOnline && !user()) {
       initializeAuth();
@@ -32,12 +31,11 @@ export function AuthProvider(props) {
   });
 
   async function initializeAuth() {
-    console.log('Initializing auth...');
     setAuthLoading(true);
     try {
-      await authService.refreshAccessToken();
-      const user = await authService.getCurrentUser();
-      setUser(user);
+      // await authService.refreshAccessToken();
+      // const user = await authService.getCurrentUser();
+      // setUser(user);
     } catch {
       setUser(null);
       setIsLoggedIn(false);
