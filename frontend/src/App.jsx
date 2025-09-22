@@ -7,6 +7,7 @@ import { useAppState } from './AppState.jsx';
 import Navbar from './Navbar.jsx';
 import { useAuth } from './auth/AuthProvider.jsx';
 import FullScreenLoader from './components/FullScreenLoader.jsx';
+import { AnimatedShow } from './components/AnimatedShow.jsx';
 
 /**
  * TODO
@@ -111,18 +112,16 @@ export default function App(props) {
       <Navbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} open={sidebarOpen()} />
 
       <div class="flex flex-1 h-0 min-h-0">
-        <div>
-          <Sidebar
-            open={sidebarOpen()}
-            onClose={() => setSidebarOpen(false)}
-            setPdfUrl={setPdfUrl}
-            onDeleteChecklist={handleDeleteChecklist}
-          />
-        </div>
+        <Sidebar
+          open={sidebarOpen()}
+          onClose={() => setSidebarOpen(false)}
+          setPdfUrl={setPdfUrl}
+          onDeleteChecklist={handleDeleteChecklist}
+        />
 
-        <Show when={!dataLoading() && !authLoading()} fallback={<div class="p-8 text-center">Loading projects...</div>}>
+        <AnimatedShow class="flex flex-1" when={!dataLoading() && !authLoading()}>
           <div class="flex-1 min-h-0 overflow-y-auto">{props.children}</div>
-        </Show>
+        </AnimatedShow>
 
         {/* Mobile overlay backdrop */}
         <Show when={sidebarOpen()}>

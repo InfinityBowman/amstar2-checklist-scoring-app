@@ -33,9 +33,9 @@ export function AuthProvider(props) {
   async function initializeAuth() {
     setAuthLoading(true);
     try {
-      // await authService.refreshAccessToken();
-      // const user = await authService.getCurrentUser();
-      // setUser(user);
+      await authService.refreshAccessToken();
+      const user = await authService.getCurrentUser();
+      setUser(user);
     } catch {
       setUser(null);
       setIsLoggedIn(false);

@@ -22,7 +22,7 @@ export function AnimatedShow(props) {
   const timingFunction = () => props.timingFunction ?? 'ease-in-out';
 
   createEffect(() => {
-    if (props.when) {
+    if (() => props.when) {
       // Show: first render, then fade in
       setShouldRender(true);
       // Use requestAnimationFrame to ensure element is rendered before starting animation
@@ -54,6 +54,7 @@ export function AnimatedShow(props) {
           }}
           aria-live={props.ariaLive || 'polite'}
           role={props.role || 'alert'}
+          class={props.class || ''}
         >
           {props.children}
         </div>

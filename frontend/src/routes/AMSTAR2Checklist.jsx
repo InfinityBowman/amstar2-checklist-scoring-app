@@ -1,7 +1,7 @@
 import { createSignal, createEffect } from 'solid-js';
 import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
 import { useAppState } from '../AppState.jsx';
-import { useParams } from '@solidjs/router';
+import { useParams, useNavigate } from '@solidjs/router';
 
 function Question1(props) {
   const state = () => props.checklistState().q1.answers;
@@ -29,31 +29,7 @@ function Question1(props) {
     props.onUpdate(newQ1);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question2(props) {
@@ -82,32 +58,7 @@ function Question2(props) {
     props.onUpdate(newQ2);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="font-light text-gray-800 mb-4 h-12">{col.description}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question3(props) {
@@ -136,31 +87,7 @@ function Question3(props) {
     props.onUpdate(newQ3);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question4(props) {
@@ -191,31 +118,7 @@ function Question4(props) {
     props.onUpdate(newQ4);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question5(props) {
@@ -243,31 +146,7 @@ function Question5(props) {
     props.onUpdate(newQ5);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question6(props) {
@@ -295,31 +174,7 @@ function Question6(props) {
     props.onUpdate(newQ6);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question7(props) {
@@ -349,31 +204,7 @@ function Question7(props) {
     props.onUpdate(newQ7);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question8(props) {
@@ -403,31 +234,7 @@ function Question8(props) {
     props.onUpdate(newQ8);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question9(props) {
@@ -489,7 +296,7 @@ function Question9(props) {
       <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle}</div>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
@@ -510,7 +317,7 @@ function Question9(props) {
       <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle2}</div>
       <div className="flex gap-6">
         {question.columns2.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns2.length - 1 ? 'w-32 flex flex-col' : 'flex-1 flex flex-col'}>
+          <div key={colIdx} className={colIdx === question.columns2.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
             <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
@@ -557,31 +364,7 @@ function Question10(props) {
     props.onUpdate(newQ10);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question11(props) {
@@ -705,31 +488,7 @@ function Question12(props) {
     props.onUpdate(newQ12);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-60" />;
 }
 
 function Question13(props) {
@@ -757,31 +516,7 @@ function Question13(props) {
     props.onUpdate(newQ13);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question14(props) {
@@ -809,31 +544,7 @@ function Question14(props) {
     props.onUpdate(newQ14);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
 }
 
 function Question15(props) {
@@ -861,31 +572,7 @@ function Question15(props) {
     props.onUpdate(newQ15);
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-60" />;
 }
 
 function Question16(props) {
@@ -913,20 +600,26 @@ function Question16(props) {
     props.onUpdate(newQ16);
   }
 
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+}
+
+function StandardQuestion(props) {
+  let question = props.question;
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
       <div className="flex gap-6">
         {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
+          <div key={colIdx} className={colIdx === question.columns.length - 1 ? `${props.width} flex flex-col` : 'flex-1 flex flex-col'}>
             <div className="font-medium text-gray-800 h-8">{col.label}</div>
             <div className="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
                 <label key={optIdx} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={state()[colIdx][optIdx]}
-                    onChange={() => handleChange(colIdx, optIdx)}
+                    checked={props.state()[colIdx][optIdx]}
+                    onChange={() => props.handleChange(colIdx, optIdx)}
                     className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
                   />
                   <span className="text-gray-700">{option}</span>
@@ -946,16 +639,15 @@ export default function AMSTAR2Checklist() {
   const [reviewDate, setReviewDate] = createSignal('');
   const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading } = useAppState();
   const params = useParams();
+  const navigate = useNavigate();
 
   createEffect(() => {
     if (params.id && params.id !== currentChecklist()?.id) {
-      setCurrentChecklist(params.id);
-    }
-
-    if (!currentChecklist()) {
-      console.warn('AMSTAR2Checklist: No current checklist found for id', params.id);
-      // Go back to dashboard
-      navigate(`/dashboard`);
+      if (!dataLoading() && !setCurrentChecklist(params.id)) {
+        console.warn('AMSTAR2Checklist: No current checklist found for id', params.id);
+        // Go back to dashboard
+        navigate(`/dashboard`);
+      }
     }
   });
 

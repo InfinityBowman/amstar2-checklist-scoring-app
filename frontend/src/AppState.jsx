@@ -156,7 +156,7 @@ export function StateProvider(props) {
       if (!checklist) {
         console.warn(`setCurrentChecklist: Checklist with ID "${checklistOrId}" not found.`);
         setState('currentChecklist', null);
-        return;
+        return false;
       }
     } else if (typeof checklistOrId === 'object') {
       // If object was passed directly, create a copy to avoid reference issues
@@ -164,10 +164,11 @@ export function StateProvider(props) {
     } else {
       // Handle null/undefined case
       setState('currentChecklist', null);
-      return;
+      return false;
     }
 
     setState('currentChecklist', checklist);
+    return true;
   }
 
   // Add a new checklist in both state and IndexedDB

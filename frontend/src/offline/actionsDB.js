@@ -33,10 +33,11 @@ export async function saveAction(action) {
   });
 }
 
-await saveAction({
-  id: crypto.randomUUID(),
-  type: 'sync-checklist',
-  checklistId: 'abc123', // optional, if saving checklist
-  projectId: 'def456', // optional, if saving project
-  timestamp: Date.now(),
-});
+// Example usage:
+// await saveAction({
+//   id: crypto.randomUUID(),
+//   type: 'sync-checklist',
+//   checklistId: 'abc123', // optional, if saving checklist
+//   projectId: 'def456', // optional, if saving project
+//   timestamp: Date.now(),
+// });
