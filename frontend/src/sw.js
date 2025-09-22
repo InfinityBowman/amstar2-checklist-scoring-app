@@ -16,6 +16,8 @@ if (import.meta.env.DEV) allowlist = [/^\/$/];
 // to allow work offline
 registerRoute(new NavigationRoute(createHandlerBoundToURL('/amstar2-checklist-scoring-app/index.html'), { allowlist }));
 
+// activate the service worker as soon as it's finished installing
+// don't ask user to accept any prompts
 self.skipWaiting();
 clientsClaim();
 
