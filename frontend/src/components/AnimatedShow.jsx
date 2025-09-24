@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onCleanup } from 'solid-js';
+import { createSignal, createEffect, onCleanup, Show } from 'solid-js';
 
 /**
  * AnimatedShow
@@ -21,8 +21,12 @@ export function AnimatedShow(props) {
   const duration = () => props.duration ?? 300;
   const timingFunction = () => props.timingFunction ?? 'ease-in-out';
 
+  const when = () => props.when;
+
   createEffect(() => {
-    if (() => props.when) {
+    if (when()) {
+      // Ensure no pending timeout that could trigger after animation frame
+      clearTimeout(timeoutId);
       // Show: first render, then fade in
       setShouldRender(true);
       // Use requestAnimationFrame to ensure element is rendered before starting animation
@@ -44,23 +48,20 @@ export function AnimatedShow(props) {
   });
 
   return (
-    <>
-      {shouldRender() && (
-        <div
-          ref={elementRef}
-          style={{
-            opacity: isVisible() ? 1 : 0,
-            transition: `opacity ${duration()}ms ${timingFunction()}`,
-          }}
-          aria-live={props.ariaLive || 'polite'}
-          role={props.role || 'alert'}
-          class={props.class || ''}
-        >
-          {props.children}
-        </div>
-      )}
-      {!props.when && props.fallback}
-    </>
+    <Show when={shouldRender()} fallback={props.fallback}>
+      <div
+        ref={elementRef}
+        style={{
+          opacity: isVisible() ? 1 : 0,
+          transition: `opacity ${duration()}ms ${timingFunction()}`,
+        }}
+        aria-live={props.ariaLive || 'polite'}
+        role={props.role || 'alert'}
+        class={props.class || ''}
+      >
+        {props.children}
+      </div>
+    </Show>
   );
 }
 

@@ -73,10 +73,12 @@ export default function SignIn() {
           class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
           disabled={loading()}
         >
-          <Show when={loading()}>
-            <AiOutlineLoading3Quarters class="animate-spin mr-2" size={22} />
-          </Show>
-          {loading() ? 'Signing In...' : 'Sign In'}
+          <AnimatedShow when={loading()} fallback={'Sign In'}>
+            <div class="flex items-center">
+              <AiOutlineLoading3Quarters class="animate-spin mr-2" size={22} />
+              Signing In...
+            </div>
+          </AnimatedShow>
         </button>
         <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">
           Don&apos;t have an account?{' '}
