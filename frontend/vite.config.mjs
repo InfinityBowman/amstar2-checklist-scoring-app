@@ -5,21 +5,33 @@ import solid from 'vite-plugin-solid';
 
 export default defineConfig({
   base: '/amstar2-checklist-scoring-app',
+  build: {
+    sourcemap: process.env.SOURCE_MAP === 'true',
+    target: 'esnext',
+  },
+  devOptions: {
+    enabled: process.env.SW_DEV === 'true',
+    /* when using generateSW the PWA plugin will switch to classic */
+    type: 'module',
+    navigateFallback: 'index.html',
+  },
   plugins: [
     tailwindcss(),
     solid(),
     VitePWA({
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,txt}'],
+      strategies: 'injectManifest',
+      injectManifest: {
+        minify: false,
+        enableWorkboxModulesLogs: true,
       },
       includeAssets: ['favicon.svg', 'robots.txt'],
       manifest: {
         name: 'CoRATES',
         short_name: 'CoRATES',
-        start_url: '/',
-        display: 'standalone',
-        background_color: '#ffffff',
+        theme_color: '#ffffff',
         icons: [
           {
             src: 'apple-touch-icon.png',
@@ -41,11 +53,7 @@ export default defineConfig({
     }),
   ],
   test: {
-    // environment: 'jsdom',
     setupFiles: ['./src/test/vitest.setup.js'],
     globals: true,
-    // transformMode: {
-    //   web: [/\.[jt]sx$/],
-    // },
   },
 });

@@ -43,6 +43,7 @@
   - [ ] Checklist state could be encoded into url
   - [ ] Make it way prettier
   - [ ] Checklists-name based URLs
+  - [ ] Info for how to complete each question for AMSTAR2
 
 - [ ] **Merge Editor**
   - [ ] Compare two checklists in a merge editor
@@ -68,8 +69,10 @@
   - [ ] View PDFs and search through them
 
 - [ ] **Testing**
-  - [x] Vitest for testing
-  - [ ] Playwright for advanced component testing
+  - [x] Vitest for basic testing
+  - [x] Business logic testing
+  - [x] Automated testing with actions
+  - [ ] Playwright for advanced integration testing
 
 - [ ] **Analytics**
   - [ ] Analytics monitoring, posthog or do it manually and store in db?

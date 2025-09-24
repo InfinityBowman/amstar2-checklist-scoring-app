@@ -1,4 +1,4 @@
-import API_ENDPOINTS from '../config/api.js';
+import API_ENDPOINTS from './config.js';
 
 export async function signup(email, password, name) {
   console.log('Signup URL:', API_ENDPOINTS.SIGNUP);

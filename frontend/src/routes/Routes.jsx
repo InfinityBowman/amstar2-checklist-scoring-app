@@ -24,7 +24,7 @@ export default function AppRoutes() {
         {/* <Route path="/project/new" component={CreateProject} /> */}
         <Route path="/project/:name/:index" component={ProjectDashboard}></Route>
         <Route path="/checklist/:id" component={AMSTAR2Checklist} />
-        {/* <Route path="/checklist/compare/name+index and name+index in query params" component={ChecklistCompare} /> */}""
+        {/* <Route path="/checklist/compare/name+index and name+index in query params" component={ChecklistCompare} /> */}
         <Route
           path="/signin"
           component={() => (
@@ -33,9 +33,30 @@ export default function AppRoutes() {
             </OnlineGuard>
           )}
         />
-        <Route path="/signup" component={SignUp} />
-        <Route path="/verify-email" component={VerifyEmail} />
-        <Route path="/reset-password" component={ResetPassword} />
+        <Route
+          path="/signup"
+          component={() => (
+            <OnlineGuard>
+              <SignUp />
+            </OnlineGuard>
+          )}
+        />
+        <Route
+          path="/verify-email"
+          component={() => (
+            <OnlineGuard>
+              <VerifyEmail />
+            </OnlineGuard>
+          )}
+        />
+        <Route
+          path="/reset-password"
+          component={() => (
+            <OnlineGuard>
+              <ResetPassword />
+            </OnlineGuard>
+          )}
+        />
         <Route path="*" component={NotFound} />
       </Route>
     </Router>
