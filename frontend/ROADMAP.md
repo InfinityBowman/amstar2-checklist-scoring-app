@@ -43,6 +43,7 @@
   - [ ] Checklist state could be encoded into url
   - [ ] Make it way prettier
   - [ ] Checklists-name based URLs
+  - [ ] Info for how to complete each question for AMSTAR2
 
 - [ ] **Merge Editor**
   - [ ] Compare two checklists in a merge editor

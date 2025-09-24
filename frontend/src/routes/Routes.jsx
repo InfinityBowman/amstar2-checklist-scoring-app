@@ -33,9 +33,30 @@ export default function AppRoutes() {
             </OnlineGuard>
           )}
         />
-        <Route path="/signup" component={SignUp} />
-        <Route path="/verify-email" component={VerifyEmail} />
-        <Route path="/reset-password" component={ResetPassword} />
+        <Route
+          path="/signup"
+          component={() => (
+            <OnlineGuard>
+              <SignUp />
+            </OnlineGuard>
+          )}
+        />
+        <Route
+          path="/verify-email"
+          component={() => (
+            <OnlineGuard>
+              <VerifyEmail />
+            </OnlineGuard>
+          )}
+        />
+        <Route
+          path="/reset-password"
+          component={() => (
+            <OnlineGuard>
+              <ResetPassword />
+            </OnlineGuard>
+          )}
+        />
         <Route path="*" component={NotFound} />
       </Route>
     </Router>
