@@ -18,11 +18,11 @@ export default function TreeView(props) {
   };
 
   return (
-    <div class="mb-2">
+    <>
       <div
         class={`
           flex items-center justify-between cursor-pointer select-none rounded-lg transition-colors
-          px-2 py-2 font-semibold text-gray-800 hover:bg-gray-100
+          px-2 py-1 font-semibold text-sm text-gray-800 hover:bg-gray-100
         `}
         onClick={() => props.onSelect?.({ project: project() })}
         tabIndex={0}
@@ -30,7 +30,7 @@ export default function TreeView(props) {
       >
         <span class="truncate">{project().name || project().id}</span>
         <button
-          class="ml-2 flex items-center justify-center w-8 h-8 rounded hover:bg-gray-200 transition-colors"
+          class="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-200 transition-colors"
           onClick={toggleExpanded}
           tabIndex={0}
           aria-label={isExpanded() ? 'Collapse project' : 'Expand project'}
@@ -52,6 +52,6 @@ export default function TreeView(props) {
           <For each={project().checklists}>{(checklist) => props.children(checklist)}</For>
         </div>
       </Show>
-    </div>
+    </>
   );
 }

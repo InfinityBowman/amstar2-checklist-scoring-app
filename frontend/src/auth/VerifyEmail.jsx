@@ -107,7 +107,7 @@ export default function VerifyEmail() {
       <form
         aria-labelledby="verifyemail-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-16 border border-gray-100 relative space-y-2"
+        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-12 border border-gray-100 relative space-y-2"
         autoComplete="off"
       >
         <div class="text-center">

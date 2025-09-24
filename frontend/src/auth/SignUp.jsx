@@ -59,17 +59,17 @@ export default function SignUp() {
       <form
         aria-labelledby="signup-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-16 space-y-6 sm:space-y-8 border border-gray-100"
+        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-4 border border-gray-100"
         autocomplete="off"
       >
-        <div class="mb-2 sm:mb-4 text-center">
-          <h2 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-1 sm:mb-2" id="signup-heading">
+        <div class="mb-2 text-center">
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2" id="signup-heading">
             Get Started
           </h2>
-          <p class="text-gray-500 text-base sm:text-lg">Create a new account.</p>
+          <p class="text-gray-500 text-xs sm:text-sm">Create a new account.</p>
         </div>
         <div>
-          <label class="block text-base sm:text-lg font-semibold text-gray-700 mb-1 sm:mb-2" for="name-input">
+          <label class="block text-sm sm:text-base font-semibold text-gray-700 mb-1 sm:mb-2" for="name-input">
             Name
           </label>
           <div class="relative">
@@ -80,7 +80,7 @@ export default function SignUp() {
               spellcheck="false"
               value={name()}
               onInput={(e) => setName(e.target.value)}
-              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-base sm:text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               required
               id="name-input"
               placeholder="What should we call you?"
@@ -88,7 +88,7 @@ export default function SignUp() {
           </div>
         </div>
         <div>
-          <label class="block text-base sm:text-lg font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
+          <label class="block text-sm sm:text-base font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
             Email
           </label>
           <div class="relative">
@@ -99,7 +99,7 @@ export default function SignUp() {
               spellCheck="false"
               value={email()}
               onInput={(e) => setEmail(e.target.value)}
-              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-base sm:text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               required
               id="email-input"
               placeholder="you@example.com"
@@ -114,7 +114,7 @@ export default function SignUp() {
           <StrengthIndicator password={password()} onUnmet={setUnmetRequirements} />
         </div>
         <div>
-          <label class="block text-base sm:text-lg font-semibold text-gray-700 mb-1 sm:mb-2" for="confirm-password-input">
+          <label class="block text-sm sm:text-base font-semibold text-gray-700 mb-1 sm:mb-2" for="confirm-password-input">
             Confirm Password
           </label>
           <div class="relative">
@@ -125,19 +125,19 @@ export default function SignUp() {
               spellCheck="false"
               value={confirmPassword()}
               onInput={(e) => setConfirmPassword(e.target.value)}
-              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-base sm:text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition big-placeholder"
+              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition big-placeholder"
               required
               id="confirm-password-input"
               placeholder="••••••••"
             />
           </div>
           <AnimatedShow when={!!error()}>
-            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-base sm:text-lg">{error()}</p>
+            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-sm sm:text-base">{error()}</p>
           </AnimatedShow>
         </div>
         <button
           type="submit"
-          class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
+          class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
           disabled={loading()}
         >
           <AnimatedShow when={loading()} fallback={'Sign Up'}>
@@ -147,7 +147,7 @@ export default function SignUp() {
             </div>
           </AnimatedShow>
         </button>
-        <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">
+        <div class="text-center text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4">
           Already have an account?{' '}
           <a
             href="/signin"
