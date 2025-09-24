@@ -64,26 +64,29 @@ export default function ProjectDashboard() {
   return (
     <Show when={currentProject()} fallback={<div class="p-8">Project not found.</div>}>
       <div class="p-8">
-        <h2 class="text-2xl font-bold mb-4">{currentProject().name} Dashboard</h2>
-        <button onClick={() => deleteProject(currentProject().id)} class="bg-red-500 text-white px-4 py-2 rounded">
+        <h2 class="text2xl font-bold mb-4">{currentProject().name} Dashboard</h2>
+        <button
+          onClick={() => deleteProject(currentProject().id)}
+          class="bg-red-500 text-white px-3 py-1.5 rounded text-sm hover:bg-red-600 transition"
+        >
           Delete Project
         </button>
-        <div class="mb-4 text-gray-600">Created: {new Date(currentProject().createdAt).toLocaleDateString()}</div>
-        <div class="mb-6">
+        <div class="mb-2 text-xs text-gray-500">Created: {new Date(currentProject().createdAt).toLocaleDateString()}</div>
+        <div class="mb-3 text-sm">
           <strong>Total Checklists:</strong> {currentProject().checklists?.length || 0}
         </div>
-        <div class="mb-6">
-          <h3 class="text-xl font-semibold mb-2">Add New Checklist</h3>
+        <div class="mb-4">
+          <h3 class="text-base font-semibold mb-1">Add New Checklist</h3>
           <div class="flex gap-2 items-center">
             <input
               type="text"
-              class="px-3 py-2 border rounded w-64"
+              class="px-2 py-1 border rounded w-48 text-sm"
               placeholder="Checklist name"
               value={checklistName()}
               onInput={(e) => setChecklistName(e.target.value)}
             />
             <button
-              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
               onClick={handleAddChecklist}
               disabled={!checklistName().trim()}
             >
@@ -91,16 +94,21 @@ export default function ProjectDashboard() {
             </button>
           </div>
         </div>
-        <div>
-          <h3 class="text-xl font-semibold mb-2">Checklists</h3>
-          <ul class="list-disc pl-6">
+        <div class="mb-4">
+          <h3 class="text-base font-semibold mb-1">Checklists</h3>
+          <ul class="list-disc pl-5 space-y-1 text-sm">
             {(currentProject().checklists || []).map((cl) => (
               <li key={cl.id}>{cl.name || cl.title || cl.id}</li>
             ))}
           </ul>
         </div>
-        <AMSTARRobvis data={checklistData()} width={900} height={600} />
-        <AMSTARDistribution data={checklistData()} width={900} height={600} />
+        <div class="mb-4 flex gap-2">
+          <button class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={handleChecklistExport}>
+            Export Checklists CSV
+          </button>
+        </div>
+        <AMSTARRobvis data={checklistData()} width={700} height={500} />
+        <AMSTARDistribution data={checklistData()} width={700} height={500} />
       </div>
     </Show>
   );

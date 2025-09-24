@@ -21,7 +21,7 @@ export default function TreeView(props) {
     <>
       <div
         class={`
-          flex items-center justify-between cursor-pointer select-none rounded-lg transition-colors
+          flex items-center justify-between cursor-pointer select-none rounded-md transition-colors
           px-2 py-1 font-semibold text-sm text-gray-800 hover:bg-gray-100
         `}
         onClick={() => props.onSelect?.({ project: project() })}

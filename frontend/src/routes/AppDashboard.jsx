@@ -39,25 +39,30 @@ export default function AppDashboard() {
   };
 
   return (
-    <div class="p-6">
-      <h2 class="text-2xl font-bold mb-4">Your Projects</h2>
-      <Show when={projects().length !== 0} fallback={<div>No projects found.</div>}>
-        <ul class="space-y-2">
+    <div class="p-4">
+      <h2 class="text-xl font-bold mb-3">Your Projects</h2>
+      <Show when={projects().length !== 0} fallback={<div class="text-sm text-gray-500">No projects found.</div>}>
+        <ul class="space-y-1">
           <For each={projects()}>
             {(project) => (
               <li
                 key={project.id}
-                class={`p-4 border rounded cursor-pointer transition ${
-                  currentProject() && currentProject().id === project.id ? 'bg-blue-100 border-blue-400' : 'hover:bg-gray-100'
+                class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between ${
+                  currentProject() && currentProject().id === project.id ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-100'
                 }`}
                 onClick={() => handleProjectClick(project)}
               >
-                <div class="font-semibold">{project.name}</div>
-                <div class="text-sm text-gray-600">{project.description}</div>
-                <div class="text-xs text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
+                <div>
+                  <div class="font-medium">{project.name}</div>
+                  <div class="text-xs text-gray-600">{project.description}</div>
+                  <div class="text-xs text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
+                </div>
                 <button
-                  class="ml-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                  onClick={() => handleDeleteProject(project.id)}
+                  class="ml-0 sm:ml-4 mt-2 sm:mt-0 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteProject(project.id);
+                  }}
                 >
                   Delete
                 </button>
@@ -66,25 +71,25 @@ export default function AppDashboard() {
           </For>
         </ul>
       </Show>
-      <div class="mt-6 flex items-center gap-2">
+      <div class="mt-4 flex items-center gap-2">
         <input
           type="text"
-          class="px-3 py-2 border rounded w-64"
+          class="px-2 py-1 border rounded w-48 text-sm"
           placeholder="Project name"
           value={projectName()}
           onInput={(e) => setProjectName(e.target.value)}
         />
         <button
-          class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+          class="px-3 py-1.5 bg-green-500 text-white rounded hover:bg-green-600 transition text-sm"
           onClick={handleAddProject}
           disabled={!projectName().trim()}
         >
           + Add New Project
         </button>
       </div>
-      <div class="mt-6">
+      <div class="mt-4 flex flex-wrap gap-2">
         <button
-          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+          class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm"
           onClick={async () => {
             const exampleProject = await createExampleProject();
             console.log('Loaded example project:', exampleProject);
@@ -93,10 +98,10 @@ export default function AppDashboard() {
         >
           Load Example Project
         </button>
-        <button onClick={checkHealth} class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+        <button onClick={checkHealth} class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm">
           Check Health
         </button>
-        <button onClick={checkHealthDb} class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+        <button onClick={checkHealthDb} class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm">
           Check Health DB
         </button>
       </div>
