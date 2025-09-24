@@ -12,17 +12,6 @@ export default function Home() {
           <br />
           Works fully offline, saves your work automatically, and helps you visualize results.
         </p>
-        <div class="flex flex-col gap-4">
-          <A href="/dashboard" class="bg-blue-600 text-white py-3 px-6 rounded shadow hover:bg-blue-700 transition">
-            Go to Dashboard
-          </A>
-          <A href="/signin" class="bg-white border border-blue-600 text-blue-700 py-3 px-6 rounded shadow hover:bg-blue-50 transition">
-            Sign In
-          </A>
-          <A href="/signup" class="bg-white border border-green-600 text-green-700 py-3 px-6 rounded shadow hover:bg-green-50 transition">
-            Create Account
-          </A>
-        </div>
         <div class="mt-10 text-xs text-gray-400">
           <a href="https://github.com/InfinityBowman/amstar2-checklist-scoring-app" target="_blank" rel="noopener">
             View on GitHub

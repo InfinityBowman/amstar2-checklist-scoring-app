@@ -1,8 +1,13 @@
+import API_ENDPOINTS from '../config/api.js';
+
 export async function signup(email, password, name) {
-  const res = await fetch('http://localhost:8000/auth/signup', {
+  console.log('Signup URL:', API_ENDPOINTS.SIGNUP);
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const locale = navigator.language;
+  const res = await fetch(API_ENDPOINTS.SIGNUP, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, name }),
+    body: JSON.stringify({ email, password, name, timezone, locale }),
   });
 
   if (!res.ok) {
@@ -10,18 +15,19 @@ export async function signup(email, password, name) {
     console.error('Signup error:', errorText);
     throw new Error(errorText || 'Signup failed');
   }
-  // console.log('User created');
 }
 
 let accessToken = null;
 
 export async function signin(email, password) {
-  // console.log('Signing in user:', email);
-  const res = await fetch('http://localhost:8000/auth/signin', {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const locale = navigator.language;
+  console.log('Signin URL:', API_ENDPOINTS.SIGNIN);
+  const res = await fetch(API_ENDPOINTS.SIGNIN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', // important for refresh cookie
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, timezone, locale }),
   });
 
   if (!res.ok) {
@@ -32,11 +38,10 @@ export async function signin(email, password) {
 
   const data = await res.json();
   accessToken = data.accessToken;
-  // console.log('Access token:', accessToken);
 }
 
 export async function getCurrentUser() {
-  const res = await authFetch('http://localhost:8000/users/me');
+  const res = await authFetch(API_ENDPOINTS.CURRENT_USER);
   if (!res.ok) {
     const errorText = await res.text();
     console.error('Failed to fetch user:', errorText);
@@ -51,6 +56,7 @@ export async function authFetch(url, options = {}) {
     ...(options.headers || {}),
     Authorization: `Bearer ${accessToken}`,
   };
+  options.credentials = 'include'; // ensure cookies are sent
 
   let res = await fetch(url, options);
 
@@ -60,6 +66,7 @@ export async function authFetch(url, options = {}) {
       await refreshAccessToken();
       // Retry the request with new token
       options.headers.Authorization = `Bearer ${accessToken}`;
+      options.credentials = 'include'; // ensure cookies are sent
       res = await fetch(url, options);
     } catch (err) {
       // Refresh failed, sign out user
@@ -72,7 +79,7 @@ export async function authFetch(url, options = {}) {
 }
 
 export async function refreshAccessToken() {
-  const res = await fetch('http://localhost:8000/auth/refresh', {
+  const res = await fetch(API_ENDPOINTS.REFRESH, {
     method: 'POST',
     credentials: 'include', // sends HttpOnly cookie
   });
@@ -85,11 +92,10 @@ export async function refreshAccessToken() {
 
   const data = await res.json();
   accessToken = data.accessToken;
-  console.log('Refreshed access token:', accessToken);
 }
 
 export async function signout() {
-  await fetch('http://localhost:8000/auth/signout', {
+  await fetch(API_ENDPOINTS.SIGNOUT, {
     method: 'POST',
     credentials: 'include',
   });
@@ -153,7 +159,7 @@ export async function resetPassword(email, code, newPassword) {
 }
 
 export async function checkHealth() {
-  const res = await fetch('http://localhost:8000/healthz', {
+  const res = await fetch(API_ENDPOINTS.HEALTH, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -171,7 +177,7 @@ export async function checkHealth() {
 }
 
 export async function checkHealthDb() {
-  const res = await fetch('http://localhost:8000/healthz/db', {
+  const res = await fetch(API_ENDPOINTS.HEALTH_DB, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -186,30 +192,4 @@ export async function checkHealthDb() {
     console.error('Reset password error:', errorText);
     throw new Error(errorText || 'Failed to reset password');
   }
-}
-
-// THIS SHOULD CORRECTLY TEST THE FULL AUTH FLOW INCLUDING TOKEN REFRESH
-// Uncomment this "run" function in ./SignUp.jsx to run the demo
-export async function runTestAuth() {
-  console.log('Running auth test');
-  await signup('test@test.com', 'Test111!', 'Test User');
-  console.log('Signed up');
-  await signin('test@test.com', 'Test111!');
-  console.log('Signed in');
-
-  let user = await getCurrentUser();
-  console.log('Got user:', user);
-
-  console.log('Test token expiry and refresh');
-  accessToken = 'bad-token';
-  user = await getCurrentUser(); // should fail
-  if (!user) {
-    console.log('Token invalid, refreshing token');
-    await refreshAccessToken();
-    user = await getCurrentUser();
-    console.log('After refresh:', user);
-  }
-
-  await signout();
-  console.log('Signed out');
 }

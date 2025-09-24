@@ -5,6 +5,7 @@ from sqlalchemy import text
 
 from app.core.config import settings
 from app.db.session import get_session
+from app.api.v1 import api_router
 
 
 app = FastAPI(title="AMSTAR2 API", version="0.1.0")
@@ -29,8 +30,6 @@ async def healthz_db(session: AsyncSession = Depends(get_session)):
     return {"db": "ok"}
 
 
-# In the next steps, include routers under settings.API_PREFIX, e.g.:
-# from app.routers import projects, checklists
-# app.include_router(projects.router, prefix=settings.API_PREFIX)
-# app.include_router(checklists.router, prefix=settings.API_PREFIX)
+# Include API routers
+app.include_router(api_router, prefix=settings.API_PREFIX)
 

@@ -18,6 +18,12 @@ class Settings(BaseSettings):
         description="Comma-separated list or JSON list of allowed origins",
     )
 
+    # JWT Settings
+    SECRET_KEY: str = Field(..., description="Secret key for JWT signing")
+    ALGORITHM: str = Field(default="HS256", description="JWT algorithm")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=15, description="Access token expiration in minutes")
+    REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7, description="Refresh token expiration in days")
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

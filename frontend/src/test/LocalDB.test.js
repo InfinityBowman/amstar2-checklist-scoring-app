@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import * as LocalDB from '../offline/LocalDB';
+import * as LocalDB from '../offline/localDB';
 
 // Helper to clear DB before each test
 beforeEach(async () => {
