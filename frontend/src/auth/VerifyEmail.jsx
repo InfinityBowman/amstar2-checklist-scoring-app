@@ -107,11 +107,11 @@ export default function VerifyEmail() {
       <form
         aria-labelledby="verifyemail-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-12 border border-gray-100 relative space-y-2"
+        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-2 border border-gray-100 relative"
         autoComplete="off"
       >
         <div class="text-center">
-          <h2 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
             Verify Your Email
           </h2>
         </div>
@@ -121,10 +121,10 @@ export default function VerifyEmail() {
           fallback={
             <>
               <div class="mb-4 sm:mb-6 text-center">
-                <p class="text-gray-500 text-base sm:text-lg">Send a code to verify your email.</p>
+                <p class="text-gray-500 text-xs sm:text-sm">Send a code to verify your email.</p>
               </div>
               <button
-                class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
+                class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
                 disabled={loading()}
                 type="button"
                 onClick={() => sendCode()}
@@ -140,14 +140,14 @@ export default function VerifyEmail() {
           }
         >
           <div class="text-center">
-            <p class="text-gray-500 text-base sm:text-lg">Enter the verification code sent to your email.</p>
+            <p class="text-gray-500 text-sm sm:text-base">Enter the verification code sent to your email.</p>
           </div>
 
           <PinInput otp required autocomplete onInput={setCode} isError={!!error()} />
 
           <button
             type="submit"
-            class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
+            class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
             disabled={loading()}
           >
             <AnimatedShow when={loading()} fallback={'Verify Email'}>
@@ -157,18 +157,18 @@ export default function VerifyEmail() {
               </div>
             </AnimatedShow>
           </button>
-          <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">
+          <div class="text-center text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4">
             Didn't get a code?{' '}
             <a href="#" class="text-indigo-600 hover:underline font-semibold">
               Resend
             </a>
           </div>
         </Show>
-        <AnimatedShow when={!!error()} class="absolute left-10 right-0 bottom-4 sm:bottom-6">
-          <p class=" text-red-600 text-base sm:text-lg">{error()}</p>
+        <AnimatedShow when={!!error()} class="absolute left-10 right-0 bottom-2 sm:bottom-6">
+          <p class=" text-red-600 text-xs sm:text-sm">{error()}</p>
         </AnimatedShow>
-        <AnimatedShow when={success()} class="absolute left-10 right-0 bottom-4 sm:bottom-6">
-          <p class="pt-2 sm:pt-3 px-2 text-green-600 text-base sm:text-lg">Email verified! Redirecting to sign in...</p>
+        <AnimatedShow when={success()} class="absolute left-10 right-0 bottom-2 sm:bottom-6">
+          <p class="pt-2 sm:pt-3 px-2 text-green-600 text-xs sm:text-sm">Email verified! Ready to sign in...</p>
         </AnimatedShow>
       </form>
     </div>

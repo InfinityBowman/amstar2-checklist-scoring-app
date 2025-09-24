@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+@theme {
+  --text-2xs: 0.625rem; /* 10px */
+  --text-3xs: 0.5rem; /* 8px */
+}
+
 /* scrollbar for sidebar */
 .sidebar-scrollbar {
   scrollbar-width: thin;

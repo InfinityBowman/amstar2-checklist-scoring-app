@@ -48,11 +48,12 @@ export default function Sidebar(props) {
         {/* Main Content */}
         <div class="flex-1 overflow-y-auto sidebar-scrollbar space-y-2">
           {/* Projects */}
-          <div class="p-3">
-            <div class="mb-2">
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1">Projects</h3>
-            </div>
-            <div class="space-y-">
+          <div class="mb-2 px-2 pt-2">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1">Projects</h3>
+          </div>
+          <div class="border-t border-gray-100"></div>
+          <div class="p-3 pt-2">
+            <div class="space-y-2">
               <button
                 onClick={props.onAddProject}
                 class="w-full bg-gray-900 hover:bg-gray-800 text-white px-2 py-2 rounded transition-colors duration-200 flex items-center gap-2 text-sm font-medium"
@@ -116,10 +117,10 @@ export default function Sidebar(props) {
                             </svg>
                             <div class="flex-1 min-w-0">
                               <div class="flex gap-2 items-center">
-                                <div class="text-sm font-medium truncate">{checklist.name}</div>
+                                <div class="text-xs font-medium truncate">{checklist.name}</div>
                                 <span
                                   class={`
-                                    text-xs font-medium px-1.5 py-0.5 rounded
+                                    text-2xs font-semibold px-1.5 py-0.5 rounded
                                     ${(() => {
                                       const score = ChecklistState.scoreChecklist(checklist);
                                       if (score === 'High') return 'bg-green-100 text-green-800';

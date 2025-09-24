@@ -59,7 +59,7 @@ export default function SignUp() {
       <form
         aria-labelledby="signup-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-4 border border-gray-100"
+        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-4 border border-gray-100"
         autocomplete="off"
       >
         <div class="mb-2 text-center">
@@ -109,7 +109,7 @@ export default function SignUp() {
         <div>
           <PasswordInput password={password()} onPasswordChange={setPassword} autoComplete="new-password" required />
           <AnimatedShow when={submitted() && unmetRequirements().length > 0}>
-            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-base sm:text-lg">Password must include {unmetRequirements()?.[0]}</p>
+            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">Password must include {unmetRequirements()?.[0]}</p>
           </AnimatedShow>
           <StrengthIndicator password={password()} onUnmet={setUnmetRequirements} />
         </div>
@@ -132,7 +132,7 @@ export default function SignUp() {
             />
           </div>
           <AnimatedShow when={!!error()}>
-            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-sm sm:text-base">{error()}</p>
+            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">{error()}</p>
           </AnimatedShow>
         </div>
         <button
