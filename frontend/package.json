@@ -19,7 +19,8 @@
   "dependencies": {
     "@solidjs/router": "^0.15.3",
     "@zag-js/password-input": "^1.22.1",
-    "@zag-js/solid": "^1.22.1",
+    "@zag-js/pin-input": "^1.24.2",
+    "@zag-js/solid": "^1.24.2",
     "d3": "^7.9.0",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.9.9"
