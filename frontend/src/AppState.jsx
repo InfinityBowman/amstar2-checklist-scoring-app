@@ -234,7 +234,7 @@ export function StateProvider(props) {
 
         return updatedChecklist;
       } else {
-        // Try to update in checklists array
+        // Independent checklist: Try to update in checklists array
         const checklistIndex = state.checklists.findIndex((c) => c.id === updatedChecklist.id);
         if (checklistIndex >= 0) {
           // Save to IndexedDB
