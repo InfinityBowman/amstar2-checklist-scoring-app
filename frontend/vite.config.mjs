@@ -53,7 +53,7 @@ export default defineConfig({
     }),
   ],
   test: {
-    setupFiles: ['./src/test/vitest.setup.js'],
+    setupFiles: ['./src/tests/vitest.setup.js'],
     globals: true,
   },
 });
