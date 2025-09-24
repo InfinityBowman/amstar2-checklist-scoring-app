@@ -1,4 +1,4 @@
-import { createSignal, createEffect } from 'solid-js';
+import { createSignal, createEffect, Index, For } from 'solid-js';
 import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
 import { useAppState } from '../AppState.jsx';
 import { useParams, useNavigate } from '@solidjs/router';
@@ -605,6 +605,36 @@ function Question16(props) {
 
 function StandardQuestion(props) {
   let question = props.question;
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-8">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
+      <div className="flex gap-6">
+        <Index each={question.columns}>
+          {(col, colIdx) => (
+            <div className={colIdx === question.columns.length - 1 ? `${props.width} flex flex-col` : 'flex-1 flex flex-col'}>
+              <div className="font-medium text-gray-800 h-8">{col().label}</div>
+              <div className="flex flex-col gap-2">
+                <Index each={col().options}>
+                  {(option, optIdx) => (
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={props.state()[colIdx][optIdx]}
+                        onChange={() => props.handleChange(colIdx, optIdx)}
+                        className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700">{option()}</span>
+                    </label>
+                  )}
+                </Index>
+              </div>
+            </div>
+          )}
+        </Index>
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-md p-8">

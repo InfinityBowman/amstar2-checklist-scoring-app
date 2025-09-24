@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createSignal, Show, For } from 'solid-js';
 import { useAppState } from '../AppState.jsx';
 import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '../offline/createExampleProject.js';
@@ -41,30 +41,31 @@ export default function AppDashboard() {
   return (
     <div class="p-6">
       <h2 class="text-2xl font-bold mb-4">Your Projects</h2>
-      {projects().length === 0 ?
-        <div>No projects found.</div>
-      : <ul class="space-y-2">
-          {projects().map((project) => (
-            <li
-              key={project.id}
-              class={`p-4 border rounded cursor-pointer transition ${
-                currentProject() && currentProject().id === project.id ? 'bg-blue-100 border-blue-400' : 'hover:bg-gray-100'
-              }`}
-              onClick={() => handleProjectClick(project)}
-            >
-              <div class="font-semibold">{project.name}</div>
-              <div class="text-sm text-gray-600">{project.description}</div>
-              <div class="text-xs text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
-              <button
-                class="ml-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                onClick={() => handleDeleteProject(project.id)}
+      <Show when={projects().length !== 0} fallback={<div>No projects found.</div>}>
+        <ul class="space-y-2">
+          <For each={projects()}>
+            {(project) => (
+              <li
+                key={project.id}
+                class={`p-4 border rounded cursor-pointer transition ${
+                  currentProject() && currentProject().id === project.id ? 'bg-blue-100 border-blue-400' : 'hover:bg-gray-100'
+                }`}
+                onClick={() => handleProjectClick(project)}
               >
-                Delete
-              </button>
-            </li>
-          ))}
+                <div class="font-semibold">{project.name}</div>
+                <div class="text-sm text-gray-600">{project.description}</div>
+                <div class="text-xs text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
+                <button
+                  class="ml-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                  onClick={() => handleDeleteProject(project.id)}
+                >
+                  Delete
+                </button>
+              </li>
+            )}
+          </For>
         </ul>
-      }
+      </Show>
       <div class="mt-6 flex items-center gap-2">
         <input
           type="text"
