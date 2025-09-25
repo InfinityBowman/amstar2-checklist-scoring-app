@@ -64,7 +64,7 @@ export default function Sidebar(props) {
             <Show
               when={projects()?.length > 0}
               fallback={
-                <div class="text-center py-8 px-2">
+                <div class="text-center py-2 px-2">
                   <div class="w-8 h-8 bg-gray-100 rounded-lg mx-auto mb-2 flex items-center justify-center">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -174,11 +174,11 @@ export default function Sidebar(props) {
           <div class="mb-2 px-2">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1">Checklists</h3>
           </div>
-          <div class="border-t border-gray-100 pt-1">
+          <div class="border-t border-gray-100 pt-1 mx-2">
             <Show
               when={checklists()?.length > 0}
               fallback={
-                <div class="text-center py-8 px-2">
+                <div class="text-center py-2 px-2">
                   <div class="w-8 h-8 bg-gray-100 rounded-lg mx-auto mb-2 flex items-center justify-center">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -193,7 +193,7 @@ export default function Sidebar(props) {
                 </div>
               }
             >
-              <ul class="list-disc pl-5 space-y-1 text-sm">
+              <ul class="list-disc space-y-1 text-xs">
                 <For each={checklists()}>
                   {(checklist) => (
                     <div
@@ -252,7 +252,7 @@ export default function Sidebar(props) {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          props.onDeleteChecklist(project.id, checklist.id);
+                          props.onDeleteChecklist(null, checklist.id);
                         }}
                         class={`
                               p-1.5 mr-1 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
@@ -279,10 +279,10 @@ export default function Sidebar(props) {
           <div class="mb-2 px-2">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1">Actions</h3>
           </div>
-          <div class="border-t border-gray-100 pt-1 space-y-1">
+          <div class="border-t border-gray-100 pt-1 space-y-1 mx-2">
             <button
               onClick={props.onExportCSV}
-              class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm"
+              class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-xs"
             >
               <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -294,7 +294,7 @@ export default function Sidebar(props) {
               </svg>
               Export CSV
             </button>
-            <label class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-gray-700 hover:bg-gray-50 flex items-center gap-2 text-sm">
+            <label class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-gray-700 hover:bg-gray-50 flex items-center gap-2 text-xs">
               <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
@@ -308,7 +308,7 @@ export default function Sidebar(props) {
             </label>
             <button
               onClick={handleSetPdfUrl}
-              class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-blue-700 hover:bg-blue-50 flex items-center gap-2 text-sm"
+              class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-blue-700 hover:bg-blue-50 flex items-center gap-2 text-xs"
             >
               <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -320,7 +320,7 @@ export default function Sidebar(props) {
               </svg>
               Set PDF URL
             </button>
-            <label class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-blue-700 hover:bg-blue-50 flex items-center gap-2 text-sm cursor-pointer">
+            <label class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-blue-700 hover:bg-blue-50 flex items-center gap-2 text-xs cursor-pointer">
               <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
@@ -337,10 +337,10 @@ export default function Sidebar(props) {
           <div class="mb-2 px-2">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1">Settings</h3>
           </div>
-          <div class="border-t border-gray-100 pt-1 space-y-1">
+          <div class="border-t border-gray-100 pt-1 space-y-1 mx-2">
             <button
               onClick={props.onDeleteAll}
-              class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-red-600 hover:bg-red-50 flex items-center gap-2 text-sm"
+              class="w-full px-2 py-1.5 rounded text-left transition-colors duration-150 text-red-600 hover:bg-red-50 flex items-center gap-2 text-xs"
             >
               <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path

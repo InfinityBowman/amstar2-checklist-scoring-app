@@ -39,6 +39,7 @@ export default function App(props) {
     currentChecklist,
     setCurrentChecklist,
     updateChecklist,
+    getChecklist,
   } = useAppState();
 
   // Handlers for delete all checklists dialog
@@ -62,15 +63,11 @@ export default function App(props) {
   const deleteChecklistMessage = () => {
     let checklistName = 'this checklist';
     const pending = pendingDeleteId();
-    if (pending && pending.projectId && pending.checklistId) {
-      const project = projects().find((p) => p.id === pending.projectId);
-      if (project) {
-        const checklist = project.checklists.find((c) => c.id === pending.checklistId);
-        if (checklist) {
-          checklistName = checklist.title || checklist.name || 'Untitled Checklist';
-        }
-      }
+    let checklist = getChecklist(pending.checklistId);
+    if (checklist) {
+      checklistName = checklist.name || checklist.title || 'Untitled Checklist';
     }
+
     return `Are you sure you want to delete ${checklistName}? This action cannot be undone.`;
   };
 
@@ -83,10 +80,10 @@ export default function App(props) {
     setDialogOpen(true);
   };
 
-  // Handlers for the delete checklist dialog
+  // When confirmed, delete the checklist
   const confirmDelete = async () => {
     const pending = pendingDeleteId();
-    if (!pending || !pending.projectId || !pending.checklistId) return;
+    if (!pending || !pending.checklistId) return;
     try {
       console.log('Deleting checklist id:', pending.checklistId, 'from project:', pending.projectId);
       await deleteChecklist(pending.projectId, pending.checklistId);

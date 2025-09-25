@@ -209,7 +209,6 @@ export function StateProvider(props) {
     try {
       // Find the project index that contains this checklist
       const projectIndex = state.projects.findIndex((p) => p.checklists.some((c) => c.id === updatedChecklist.id));
-
       if (projectIndex >= 0) {
         const projectId = state.projects[projectIndex].id;
 
@@ -304,6 +303,17 @@ export function StateProvider(props) {
     }
   }
 
+  function getChecklist(checklistId) {
+    // Search in projects first
+    for (const project of state.projects) {
+      const found = project.checklists.find((c) => c.id === checklistId);
+      if (found) return found;
+    }
+
+    // Then search in independent checklists
+    return state.checklists.find((c) => c.id === checklistId) || null;
+  }
+
   return (
     <StateContext.Provider
       value={{
@@ -324,6 +334,7 @@ export function StateProvider(props) {
         addChecklist,
         updateChecklist,
         deleteChecklist,
+        getChecklist,
       }}
     >
       {props.children}
