@@ -4,7 +4,7 @@ import { useAppState } from '../AppState.jsx';
 export default function TreeView(props) {
   // Store expanded state with project ID as key for persistence
   const [expandedMap, setExpandedMap] = createSignal({});
-  const { projects } = useAppState();
+  const { projects, currentProject } = useAppState();
   const project = () => projects().find((p) => p.id === props.projectId);
 
   // Helper to get/set expanded state for current project
@@ -22,7 +22,7 @@ export default function TreeView(props) {
       <div
         class={`
           flex items-center justify-between cursor-pointer select-none rounded-md transition-colors
-          px-2 py-1 font-semibold text-sm text-gray-800 hover:bg-gray-100
+          px-2 py-1 font-medium text-xs text-gray-800 hover:bg-gray-100 ${currentProject()?.id === project()?.id ? 'bg-gray-200' : 'bg-white'}
         `}
         onClick={() => props.onSelect?.({ project: project() })}
         tabIndex={0}
@@ -30,7 +30,7 @@ export default function TreeView(props) {
       >
         <span class="truncate">{project().name || project().id}</span>
         <button
-          class="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-200 transition-colors"
+          class="flex items-center justify-center w-6 h-6 rounded hover:bg-gray-200 transition-colors"
           onClick={toggleExpanded}
           tabIndex={0}
           aria-label={isExpanded() ? 'Collapse project' : 'Expand project'}
@@ -47,8 +47,20 @@ export default function TreeView(props) {
           </svg>
         </button>
       </div>
-      <Show when={isExpanded() && project().checklists?.length > 0}>
-        <div class="ml-1 border-l border-gray-100 pl-2 mt-1 space-y-1">
+      {/* <Show when={isExpanded() && project().checklists?.length > 0}>
+        <div class="border-l border-gray-100 pl-2 mt-1 space-y-1">
+          <For each={project().checklists}>{(checklist) => props.children(checklist)}</For>
+        </div>
+      </Show> */}
+      <Show when={project().checklists?.length > 0}>
+        <div
+          class={`overflow-y-scroll`}
+          style={{
+            'max-height': isExpanded() ? '600px' : '0',
+            opacity: isExpanded() ? 1 : 0,
+            transition: 'max-height 0.25s ease-in-out, opacity 0.25s ease-in-out',
+          }}
+        >
           <For each={project().checklists}>{(checklist) => props.children(checklist)}</For>
         </div>
       </Show>

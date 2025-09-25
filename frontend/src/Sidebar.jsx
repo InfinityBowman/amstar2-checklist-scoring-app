@@ -5,7 +5,7 @@ import { useAppState } from './AppState.jsx';
 import { useNavigate } from '@solidjs/router';
 
 export default function Sidebar(props) {
-  const { projects, currentChecklist, checklists } = useAppState();
+  const { projects, checklists } = useAppState();
   const navigate = useNavigate();
 
   function handleSetPdfUrl() {
@@ -30,7 +30,7 @@ export default function Sidebar(props) {
       class={`
         transition-all duration-200 ease-in-out
         bg-white border-r border-gray-200 h-screen overflow-x-hidden
-        ${props.open ? 'w-72' : 'w-0'}
+        ${props.open ? 'w-64' : 'w-0'}
         md:relative
         ${props.open ? '' : 'md:w-0'}
         fixed top-0 left-0 z-30 md:static md:z-auto
@@ -46,21 +46,21 @@ export default function Sidebar(props) {
         `}
       >
         {/* Main Content */}
-        <div class="flex-1 overflow-y-auto sidebar-scrollbar space-y-4">
+        <div class="flex-1 overflow-y-auto sidebar-scrollbar space-y-6">
           {/* Projects */}
           <div class="mb-2 px-2 pt-4">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1">Projects</h3>
           </div>
-          <div class="p-2 pt-2 m-0 space-y-2 border-t border-gray-100">
-            <button
+          <div class="p-2 pb-0 space-y-1 border-t border-gray-100">
+            {/* <button
               onClick={props.onAddProject}
-              class="w-full bg-gray-900 hover:bg-gray-800 text-white px-2 py-2 rounded transition-colors duration-200 flex items-center gap-2 text-sm font-medium"
+              class="w-full bg-gray-900 hover:bg-gray-800 text-white px-2 py-2.5 rounded transition-colors duration-200 flex items-center gap-2 text-xs font-medium"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               New Project
-            </button>
+            </button> */}
             <Show
               when={projects()?.length > 0}
               fallback={
@@ -90,80 +90,7 @@ export default function Sidebar(props) {
                     }}
                   >
                     {(checklist) => (
-                      <div
-                        class={`
-                            flex items-center group rounded transition-colors
-                            ${currentChecklist() && checklist.id === currentChecklist().id ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}
-                          `}
-                        style="flex: 1"
-                      >
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/checklist/${checklist.id}`);
-                          }}
-                          class="flex-1 flex items-center gap-2 px-2 py-1.5 text-left focus:outline-none"
-                          tabIndex={0}
-                        >
-                          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                          </svg>
-                          <div class="flex-1 min-w-0">
-                            <div class="flex gap-2 items-center">
-                              <div class="text-xs font-medium truncate">{checklist.name}</div>
-                              <span
-                                class={`
-                                    text-2xs font-semibold px-1.5 py-0.5 rounded
-                                    ${(() => {
-                                      const score = ChecklistState.scoreChecklist(checklist);
-                                      if (score === 'High') return 'bg-green-100 text-green-800';
-                                      if (score === 'Moderate') return 'bg-yellow-100 text-yellow-800';
-                                      if (score === 'Low') return 'bg-orange-100 text-orange-800';
-                                      if (score === 'Critically Low') return 'bg-red-100 text-red-800';
-                                      return 'bg-gray-100 text-gray-600';
-                                    })()}
-                                  `}
-                              >
-                                {(() => {
-                                  if (!checklist) return 'Unknown';
-                                  const score = ChecklistState.scoreChecklist(checklist);
-                                  if (score.length + (checklist.name?.length || 0) < 30) {
-                                    return score;
-                                  } else {
-                                    return <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
-                                  }
-                                })()}
-                              </span>
-                            </div>
-                            <div class="text-xs text-gray-500 mt-0.5">{new Date(checklist.createdAt).toLocaleDateString()}</div>
-                          </div>
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            props.onDeleteChecklist(project.id, checklist.id);
-                          }}
-                          class={`
-                              p-1.5 mr-1 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
-                              ${currentChecklist() && checklist.id !== currentChecklist().id ? 'opacity-0 group-hover:opacity-100' : ''}
-                            `}
-                          aria-label="Delete checklist"
-                          tabIndex={-1}
-                        >
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
+                      <ChecklistItem checklist={checklist} onDelete={() => props.onDeleteChecklist(project.id, checklist.id)} />
                     )}
                   </TreeView>
                 )}
@@ -196,80 +123,7 @@ export default function Sidebar(props) {
               <ul class="list-disc space-y-1 text-xs">
                 <For each={checklists()}>
                   {(checklist) => (
-                    <div
-                      class={`
-                            flex items-center group rounded transition-colors
-                            ${currentChecklist() && checklist.id === currentChecklist().id ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}
-                          `}
-                      style="flex: 1"
-                    >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/checklist/${checklist.id}`);
-                        }}
-                        class="flex-1 flex items-center gap-2 px-2 py-1.5 text-left focus:outline-none"
-                        tabIndex={0}
-                      >
-                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                        <div class="flex-1 min-w-0">
-                          <div class="flex gap-2 items-center">
-                            <div class="text-xs font-medium truncate">{checklist.name}</div>
-                            <span
-                              class={`
-                                    text-2xs font-semibold px-1.5 py-0.5 rounded
-                                    ${(() => {
-                                      const score = ChecklistState.scoreChecklist(checklist);
-                                      if (score === 'High') return 'bg-green-100 text-green-800';
-                                      if (score === 'Moderate') return 'bg-yellow-100 text-yellow-800';
-                                      if (score === 'Low') return 'bg-orange-100 text-orange-800';
-                                      if (score === 'Critically Low') return 'bg-red-100 text-red-800';
-                                      return 'bg-gray-100 text-gray-600';
-                                    })()}
-                                  `}
-                            >
-                              {(() => {
-                                if (!checklist) return 'Unknown';
-                                const score = ChecklistState.scoreChecklist(checklist);
-                                if (score.length + (checklist.name?.length || 0) < 30) {
-                                  return score;
-                                } else {
-                                  return <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
-                                }
-                              })()}
-                            </span>
-                          </div>
-                          <div class="text-xs text-gray-500 mt-0.5">{new Date(checklist.createdAt).toLocaleDateString()}</div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          props.onDeleteChecklist(null, checklist.id);
-                        }}
-                        class={`
-                              p-1.5 mr-1 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
-                              ${currentChecklist() && checklist.id !== currentChecklist().id ? 'opacity-0 group-hover:opacity-100' : ''}
-                            `}
-                        aria-label="Delete checklist"
-                        tabIndex={-1}
-                      >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    </div>
+                    <ChecklistItem checklist={checklist} onDelete={() => props.onDeleteChecklist(project.id, checklist.id)} />
                   )}
                 </For>
               </ul>
@@ -356,6 +210,88 @@ export default function Sidebar(props) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ChecklistItem(props) {
+  const { currentChecklist } = useAppState();
+  const navigate = useNavigate();
+
+  return (
+    <div
+      class={`
+            flex items-center group rounded transition-colors
+            ${currentChecklist() && props.checklist.id === currentChecklist().id ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}
+          `}
+      style="flex: 1"
+    >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate(`/checklist/${props.checklist.id}`);
+        }}
+        class="flex-1 flex items-center gap-2 px-2 py-1.5 text-left focus:outline-none"
+        tabIndex={0}
+      >
+        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        <div class="flex-1 min-w-0">
+          <div class="flex gap-2 items-center">
+            <div class="text-xs font-medium truncate">{props.checklist.name}</div>
+            <span
+              class={`
+                    text-3xs font-medium px-1.5 py-0.5 rounded
+                    ${(() => {
+                      const score = ChecklistState.scoreChecklist(props.checklist);
+                      if (score === 'High') return 'bg-green-100 text-green-800';
+                      if (score === 'Moderate') return 'bg-yellow-100 text-yellow-800';
+                      if (score === 'Low') return 'bg-orange-100 text-orange-800';
+                      if (score === 'Critically Low') return 'bg-red-100 text-red-800';
+                      return 'bg-gray-100 text-gray-600';
+                    })()}
+                  `}
+            >
+              {(() => {
+                if (!props.checklist) return 'Unknown';
+                const score = ChecklistState.scoreChecklist(props.checklist);
+                if (score.length + (props.checklist.name?.length || 0) < 30) {
+                  return score;
+                } else {
+                  return <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
+                }
+              })()}
+            </span>
+          </div>
+          <div class="text-2xs text-gray-500 mt-0.5">{new Date(props.checklist.createdAt).toLocaleDateString()}</div>
+        </div>
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          props.onDelete(null, props.checklist.id);
+        }}
+        class={`
+                              p-1.5 mr-1 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
+                              ${currentChecklist() && props.checklist.id !== currentChecklist().id ? 'opacity-0 group-hover:opacity-100' : ''}
+                            `}
+        aria-label="Delete checklist"
+        tabIndex={-1}
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
+        </svg>
+      </button>
     </div>
   );
 }
