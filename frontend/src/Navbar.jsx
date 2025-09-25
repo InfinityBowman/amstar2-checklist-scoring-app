@@ -3,7 +3,7 @@ import { Show, createEffect } from 'solid-js';
 import { useAuth } from './auth/AuthProvider.jsx';
 import { BASEPATH } from './routes/Routes.jsx';
 import { FiMenu } from 'solid-icons/fi';
-  
+
 function normalizePath(path) {
   return path.endsWith('/') ? path.slice(0, -1) : path;
 }
