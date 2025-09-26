@@ -58,6 +58,7 @@ export default function VerifyEmail() {
       navigate('/signin', { replace: true });
       setLoading(false);
     } catch (err) {
+      console.error('Verify email error:', err);
       setLoading(false);
       setError('Invalid code. Please try again.');
     }
@@ -107,11 +108,11 @@ export default function VerifyEmail() {
       <form
         aria-labelledby="verifyemail-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-2 border border-gray-100 relative"
+        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-2 border border-gray-100 relative"
         autoComplete="off"
       >
         <div class="text-center">
-          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
             Verify Your Email
           </h2>
         </div>
@@ -120,7 +121,7 @@ export default function VerifyEmail() {
           when={codeSent()}
           fallback={
             <>
-              <div class="mb-4 sm:mb-6 text-center">
+              <div class="mb-6 sm:mb-8 text-center">
                 <p class="text-gray-500 text-xs sm:text-sm">Send a code to verify your email.</p>
               </div>
               <button

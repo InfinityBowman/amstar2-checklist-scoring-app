@@ -13,6 +13,15 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { signin } = useAuth();
 
+  async function handleSignin() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        signin(email(), password());
+        resolve();
+      }, 200);
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
@@ -20,33 +29,36 @@ export default function SignIn() {
       setError('Please enter email and password');
       return;
     }
+    setLoading(true);
     try {
-      setLoading(true);
-      await signin(email(), password());
+      let result = await handleSignin();
+      if (result.status === 'rejected') throw result.reason;
       navigate('/dashboard', { replace: true });
-    } catch (err) {
-      setError('Incorrect email or password');
-    } finally {
       setLoading(false);
+    } catch (err) {
+      console.error('Signin error:', err);
+
+      setLoading(false);
+      setError('Incorrect email or password');
     }
   }
 
   return (
-    <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-2 sm:px-4 py-6 sm:py-12">
+    <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-8 sm:py-12">
       <form
         aria-labelledby="signin-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-4 border border-gray-100"
+        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-12 space-y-4 border border-gray-100"
         autocomplete="off"
       >
         <div class="mb-2 sm:mb-4 text-center">
-          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2" id="signin-heading">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2" id="signin-heading">
             Welcome Back
           </h2>
           <p class="text-gray-500 text-xs sm:text-sm">Sign in to your account.</p>
         </div>
         <div>
-          <label class="block text-sm sm:text-base font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
+          <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
             Email
           </label>
           <input
