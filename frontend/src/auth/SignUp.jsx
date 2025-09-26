@@ -22,8 +22,12 @@ export default function SignUp() {
   async function handleSignup() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        signup(email(), password(), name());
-        resolve();
+        const result = signup(email(), password(), name());
+        if (result.status === 'success') {
+          resolve();
+        } else {
+          reject(new Error(result.message));
+        }
       }, 200);
     });
   }
@@ -46,8 +50,7 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      let result = await handleSignup();
-      if (result.status === 'rejected') throw result.reason;
+      await handleSignup();
       navigate('/verify-email', { replace: true });
       setLoading(false);
     } catch (err) {

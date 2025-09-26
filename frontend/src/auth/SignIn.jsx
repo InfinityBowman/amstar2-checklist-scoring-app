@@ -16,8 +16,12 @@ export default function SignIn() {
   async function handleSignin() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        signin(email(), password());
-        resolve();
+        const result = signin(email(), password());
+        if (result.status === 'success') {
+          resolve();
+        } else {
+          reject(new Error(result.message));
+        }
       }, 200);
     });
   }
@@ -31,8 +35,7 @@ export default function SignIn() {
     }
     setLoading(true);
     try {
-      let result = await handleSignin();
-      if (result.status === 'rejected') throw result.reason;
+      await handleSignin();
       navigate('/dashboard', { replace: true });
       setLoading(false);
     } catch (err) {

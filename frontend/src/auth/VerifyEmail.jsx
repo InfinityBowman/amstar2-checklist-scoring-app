@@ -24,22 +24,34 @@ export default function VerifyEmail() {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async function fakeVerifyEmail(code) {
+  async function handleVerifyEmail() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        console.log('Verifying code:', code);
-        if (code === '111111' || code === 111111) resolve();
+        // const result = verifyEmail(code()); // backend verifies code
+        // if (result.status === 'success') {
+        //   resolve();
+        // } else {
+        //   reject(new Error(result.message));
+        // }
+        console.log('Verifying code:', code());
+        if (code() === '111111' || code() === 111111) resolve();
         else reject(new Error('Invalid code'));
       }, 200);
     });
   }
 
-  async function fakeSendEmail() {
+  async function handleSendEmail() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        console.log('Sending code: 111111');
+        console.log('Sending verification code to email');
         resolve();
-      }, 200);
+        // const result = sendEmailVerification(); // server generates and sends code
+        // if (result.status === 'success') {
+        //   resolve();
+        // } else {
+        //   reject(new Error(result.message));
+        // }
+      }, 400);
     });
   }
 
@@ -48,12 +60,7 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-      // Wait for both the verification and the delay
-      // const [verifyResult] = await Promise.allSettled([verifyEmail(code()), wait(500)]);
-      const [result] = await Promise.allSettled([fakeVerifyEmail(code()), wait(500)]);
-      // The result for fakeVerifyEmail is always at index 0
-      if (result.status === 'rejected') throw result.reason;
-      console.log(result);
+      await handleVerifyEmail();
       setSuccess(true);
       navigate('/signin', { replace: true });
       setLoading(false);
@@ -68,10 +75,7 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-      // Call backend to send code to user's email
-      // const [verifyResult] = await Promise.allSettled([sendEmailVerification(code()), wait(500)]);
-      const [sendEmail] = await Promise.allSettled([fakeSendEmail(), wait(500)]);
-      if (sendEmail.status === 'rejected') throw sendEmail.reason;
+      await handleSendEmail();
       setLoading(false);
       setSearchParams({ codeSent: 'true' });
       setCodeSent(true);
