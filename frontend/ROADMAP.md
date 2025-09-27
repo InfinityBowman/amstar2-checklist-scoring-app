@@ -42,7 +42,7 @@
   - [x] Automatic yes/partial yes/no based on answers
   - [ ] Checklist state could be encoded into url
   - [ ] Make it way prettier
-  - [ ] Checklists-name based URLs
+  - [x] Checklists-name based URLs
   - [ ] Info for how to complete each question for AMSTAR2
 
 - [ ] **Merge Editor**
@@ -61,7 +61,7 @@
   - [ ] Show who has completed reviews
   - [ ] Show who is assigned to which reviews
 
-- [x] **Sidebar**
+- [ ] **Sidebar**
   - [x] List projects and their checklists (expandable/collapsible)
   - [x] Updating checklist data should update the sidebar
 
@@ -100,5 +100,7 @@
   - [x] Better loading components
   - [x] Icons: https://solid-icons.vercel.app/
   - [x] UI library: https://zagjs.com/overview/installation
+
+Format needs to be updated to create a review, then add checklists to that review
 
 _This roadmap is a living document and will be updated as the project evolves._

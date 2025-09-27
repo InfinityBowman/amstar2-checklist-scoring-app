@@ -26,7 +26,7 @@ projects (
   id          UUID PRIMARY KEY,
   owner_id    UUID REFERENCES users(id) ON DELETE CASCADE, -- who owns this project
   name        TEXT NOT NULL, -- name of the project
-  created_at  TIMESTAMP DEFAULT now(),
+  -- created_at  TIMESTAMP DEFAULT now(),
   updated_at  TIMESTAMP DEFAULT now()
 )
 ```
@@ -141,6 +141,15 @@ A checklist currently has this structure in the frontend:
 - Reviews → Review Assignments → Users: many-to-many.
 - Reviews → Checklists → Users (reviewer): 1-to-many (each reviewer gets a checklist).
 - Checklists → Checklist Answers: 1-to-many (each question stored separately, JSON array for answers).
+
+
+Cascade chain:  
+Delete from projects:  
+-Deletes all project_members for that project.  
+--Deletes all reviews for that project.  
+---Deletes all review_assignments for those reviews.  
+---Deletes all checklists for those reviews.  
+----Deletes all checklist_answers for those checklists.  
 
 ---
 

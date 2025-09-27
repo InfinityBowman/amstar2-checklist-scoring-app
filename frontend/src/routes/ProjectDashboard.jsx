@@ -4,9 +4,10 @@ import { useAppState } from '../AppState.jsx';
 import { createEffect, Show, createSignal } from 'solid-js';
 import { useNavigate, useParams } from '@solidjs/router';
 import { createChecklist, getAnswers, exportChecklistsToCSV } from '../offline/AMSTAR2Checklist.js';
+import { uploadAndStoreFile, getStoredFile } from '../offline/fileStorage.js';
 
 export default function ProjectDashboard() {
-  const { currentProject, setCurrentProject, addChecklist, deleteProject } = useAppState();
+  const { currentProject, setCurrentProject, addChecklist, deleteProject, getChecklistIndex } = useAppState();
   const params = useParams();
   const navigate = useNavigate();
   const [checklistName, setChecklistName] = createSignal('');
@@ -51,6 +52,54 @@ export default function ProjectDashboard() {
     setChecklistData(data);
   });
 
+  const handleGetStoredFile = async () => {
+    const fileName = prompt('Enter the name of the file to retrieve (including extension):');
+    if (!fileName) return;
+    try {
+      const file = await getStoredFile(fileName);
+      if (!file) {
+        alert(`File "${fileName}" not found.`);
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name || fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error retrieving file:', error);
+      alert('Error retrieving file. See console for details.');
+    }
+  };
+
+  const handleDisplayStoredFile = async () => {
+    const fileName = prompt('Enter the name of the PDF file to display (including .pdf):');
+    if (!fileName) return;
+    try {
+      const file = await getStoredFile(fileName);
+      if (!file) {
+        alert(`File "${fileName}" not found.`);
+        return;
+      }
+      // Only display if it's a PDF
+      if (file.type !== 'application/pdf' && !fileName.toLowerCase().endsWith('.pdf')) {
+        alert('Selected file is not a PDF.');
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      // Open in a new tab using the browser's PDF viewer
+      window.open(url, '_blank');
+      // Revoke the URL after some time since this is an example implementation
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (error) {
+      console.error('Error displaying file:', error);
+      alert('Error displaying file. See console for details.');
+    }
+  };
+
   return (
     <Show when={currentProject()} fallback={<div class="p-8">Project not found.</div>}>
       <div class="p-6 max-w-4xl mx-auto">
@@ -93,7 +142,7 @@ export default function ProjectDashboard() {
               <li
                 key={cl.id}
                 class="flex items-center justify-between px-4 py-2 hover:bg-blue-50 transition cursor-pointer"
-                onClick={() => navigate(`/checklist/${cl.id}`)}
+                onClick={() => navigate(`/checklist/${encodeURIComponent(cl.name)}/${getChecklistIndex(cl.id, cl.name)}`)}
                 tabIndex={0}
                 role="button"
                 aria-label={`Open checklist ${cl.name || cl.title || cl.id}`}
@@ -115,6 +164,15 @@ export default function ProjectDashboard() {
         <div class="mb-4 flex gap-2">
           <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={handleChecklistExport}>
             Export Checklists CSV
+          </button>
+          <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={uploadAndStoreFile}>
+            Upload file
+          </button>
+          <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={handleGetStoredFile}>
+            Download File
+          </button>
+          <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={handleDisplayStoredFile}>
+            Display File
           </button>
         </div>
         <div class="mb-6">

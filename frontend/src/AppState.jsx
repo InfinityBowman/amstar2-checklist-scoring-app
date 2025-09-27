@@ -132,7 +132,7 @@ export function StateProvider(props) {
 
   // Set the current checklist by object or ID
   // Looks in both projects and checklists store
-  function setCurrentChecklist(checklistOrId) {
+  function setCurrentChecklist1(checklistOrId) {
     let checklist = null;
 
     if (typeof checklistOrId === 'string') {
@@ -169,6 +169,70 @@ export function StateProvider(props) {
 
     setState('currentChecklist', checklist);
     return true;
+  }
+
+  function setCurrentChecklist(arg) {
+    let checklist = null;
+
+    if (typeof arg === 'object' && arg !== null) {
+      if ('checklist' in arg && arg.checklist) {
+        checklist = { ...arg.checklist };
+      } else if ('id' in arg) {
+        // Search in projects first
+        for (const project of state.projects) {
+          const found = project.checklists?.find((c) => c.id === arg.id);
+          if (found) {
+            checklist = { ...found };
+            break;
+          }
+        }
+        // Then search in independent checklists
+        if (!checklist) {
+          const found = state.checklists.find((c) => c.id === arg.id);
+          if (found) checklist = { ...found };
+        }
+      } else if ('name' in arg) {
+        // Search by name and optional index
+        let matches = [];
+        for (const project of state.projects) {
+          matches = matches.concat(project.checklists?.filter((c) => c.name === arg.name) || []);
+        }
+        matches = matches.concat(state.checklists.filter((c) => c.name === arg.name));
+        checklist = matches[arg.index ?? 0] ? { ...matches[arg.index ?? 0] } : null;
+      }
+    } else if (typeof arg === 'string') {
+      // Try as id first
+      for (const project of state.projects) {
+        const found = project.checklists?.find((c) => c.id === arg);
+        if (found) {
+          checklist = { ...found };
+          break;
+        }
+      }
+      if (!checklist) {
+        checklist = state.checklists.find((c) => c.id === arg);
+        if (!checklist) {
+          // Try as name
+          for (const project of state.projects) {
+            const found = project.checklists?.find((c) => c.name === arg);
+            if (found) {
+              checklist = { ...found };
+              break;
+            }
+          }
+          if (!checklist) {
+            checklist = state.checklists.find((c) => c.name === arg);
+          }
+        }
+      }
+      checklist = checklist ? { ...checklist } : null;
+    } else {
+      setState('currentChecklist', null);
+      return false;
+    }
+
+    setState('currentChecklist', checklist);
+    return !!checklist;
   }
 
   // Add a new checklist in both state and IndexedDB
@@ -314,6 +378,20 @@ export function StateProvider(props) {
     return state.checklists.find((c) => c.id === checklistId) || null;
   }
 
+  function getChecklistIndex(checklistId, name) {
+    // Gather all checklists with the given name from all projects
+    let matches = [];
+    for (const project of state.projects) {
+      matches = matches.concat(project.checklists?.filter((c) => c.name === name) || []);
+    }
+    // Add independent checklists with the given name
+    matches = matches.concat(state.checklists.filter((c) => c.name === name));
+
+    // Find the index of the checklist with the given ID
+    const index = matches.findIndex((c) => c.id === checklistId);
+    return index >= 0 ? index : -1;
+  }
+
   return (
     <StateContext.Provider
       value={{
@@ -335,6 +413,7 @@ export function StateProvider(props) {
         updateChecklist,
         deleteChecklist,
         getChecklist,
+        getChecklistIndex,
       }}
     >
       {props.children}

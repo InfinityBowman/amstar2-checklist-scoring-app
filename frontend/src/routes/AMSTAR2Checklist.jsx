@@ -605,9 +605,13 @@ export default function AMSTAR2Checklist() {
   const navigate = useNavigate();
 
   createEffect(() => {
-    if (params.id && params.id !== currentChecklist()?.id) {
-      if (!dataLoading() && !setCurrentChecklist(params.id)) {
-        console.warn('AMSTAR2Checklist: No current checklist found for id', params.id);
+    if (params.name && params.index !== undefined) {
+      const checklistName = decodeURIComponent(params.name);
+      const checklistIndex = Number(params.index);
+      setCurrentChecklist({ name: checklistName, index: checklistIndex });
+    } else {
+      if (!dataLoading()) {
+        console.warn('AMSTAR2Checklist: No current checklist found for', params.name, params.index);
         // Go back to dashboard
         navigate(`/dashboard`);
       }

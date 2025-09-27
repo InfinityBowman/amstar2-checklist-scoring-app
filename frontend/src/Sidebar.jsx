@@ -215,7 +215,7 @@ export default function Sidebar(props) {
 }
 
 function ChecklistItem(props) {
-  const { currentChecklist } = useAppState();
+  const { currentChecklist, getChecklistIndex } = useAppState();
   const navigate = useNavigate();
 
   return (
@@ -229,7 +229,9 @@ function ChecklistItem(props) {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          navigate(`/checklist/${props.checklist.id}`);
+          let name = props.checklist.name;
+          let id = props.checklist.id;
+          navigate(`/checklist/${encodeURIComponent(name)}/${getChecklistIndex(id, name)}`);
         }}
         class="flex-1 flex items-center gap-2 px-2 py-1.5 text-left focus:outline-none"
         tabIndex={0}
