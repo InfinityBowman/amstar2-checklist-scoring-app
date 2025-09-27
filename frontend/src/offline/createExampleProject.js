@@ -1,5 +1,5 @@
 import { createProject } from './project.js';
-import {createChecklist} from './AMSTAR2Checklist.js';
+import { createChecklist } from './AMSTAR2Checklist.js';
 import { saveProject, generateUUID } from './localDB.js';
 
 // Generates and saves an example project with several checklists
