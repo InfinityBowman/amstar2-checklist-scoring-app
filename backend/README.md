@@ -21,7 +21,7 @@ Request Body:
 
 Responses:  
 201 Created – user successfully created  
-400 Bad Request – missing username/password  
+400 Bad Request – missing or invalid email/password  
 409 Conflict – email already exists
 
 **POST /auth/signin**
@@ -119,7 +119,7 @@ Request Body:
 Responses:
 
 - 200 OK – reset email sent
-- 400 Bad Request – missing email
+- 400 Bad Request – missing or invalid email format
 
 **POST /auth/reset-password**
 
@@ -137,7 +137,7 @@ Request Body:
 Responses:
 
 - 200 OK – password reset successful
-- 400 Bad Request – missing fields
+- 400 Bad Request – missing or invalid fields
 - 401 Unauthorized – invalid code
 - 404 Not Found – user not found
 

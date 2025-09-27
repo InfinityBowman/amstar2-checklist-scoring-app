@@ -1,7 +1,7 @@
 # Potential schema for the database
 
 Users table  
-Stores user accounts. Email verification pin should time out after ~15min, so we store requested_at timestamp
+Stores user accounts. Email verification code should time out after ~15min, so we store requested_at timestamp. Password reset code should time out after ~15min, so we store requested_at timestamp.
 
 ```sql
 users (
@@ -10,9 +10,12 @@ users (
   email                        TEXT UNIQUE NOT NULL,
   password_hash                TEXT NOT NULL,
   created_at                   TIMESTAMP DEFAULT now(),
-  email_verified_at            TIMESTAMP,         -- when the email was verified, we dont need a boolean
-  email_verification_requested TIMESTAMP,        -- when verification was requested
-  email_verification_pin       TEXT,              -- the current verification code
+  email_verified_at            TIMESTAMP,         -- when the email was verified
+  email_verification_code       TEXT,              -- the current verification code
+  email_verification_requested_at TIMESTAMP,        -- when verification was requested
+  password_reset_at        TIMESTAMP, -- when password was reset
+  password_reset_code         TEXT, -- the current reset code
+  password_reset_requested_at     TIMESTAMP,-- when reset was requested
   timezone                     TEXT DEFAULT 'UTC', -- user's last known or sign up timezone
   locale                       TEXT DEFAULT 'en-US'  -- user's last detected locale
 )
@@ -74,7 +77,7 @@ Represents a checklist filled out by a reviewer for a review.
 checklists (
   id           UUID PRIMARY KEY,
   review_id    UUID REFERENCES reviews(id) ON DELETE CASCADE, -- links checklist to a specific review, allows multiple reviews in a project to each have multiple checklists associated with them
-  reviewer_id  UUID REFERENCES users(id) ON DELETE CASCADE, -- the user assigned to review this checklist
+  reviewer_id  UUID REFERENCES users(id) ON DELETE CASCADE NULL, -- the user assigned to review this checklist (not required, checklists can be preset without assignments)
   type         TEXT CHECK (role IN ('amstar')) DEFAULT 'amstar', -- support for other formats later
   completed_at TIMESTAMP, -- save when checklist is marked as completed
   updated_at   TIMESTAMP -- save when this checklist was last updated
@@ -142,14 +145,13 @@ A checklist currently has this structure in the frontend:
 - Reviews → Checklists → Users (reviewer): 1-to-many (each reviewer gets a checklist).
 - Checklists → Checklist Answers: 1-to-many (each question stored separately, JSON array for answers).
 
-
 Cascade chain:  
 Delete from projects:  
 -Deletes all project_members for that project.  
 --Deletes all reviews for that project.  
 ---Deletes all review_assignments for those reviews.  
 ---Deletes all checklists for those reviews.  
-----Deletes all checklist_answers for those checklists.  
+----Deletes all checklist_answers for those checklists.
 
 ---
 
