@@ -1,8 +1,6 @@
 /**
  * Project factory.
  *
- * TODO: add import/export functions for projects, rewrite to be like AMSTAR2Checklist.js so it is a class with static methods
- *
  * @param {Object} options - Project properties.
  * @param {string} options.id - Unique project ID.
  * @param {string} options.name - Project name/title.
@@ -21,3 +19,7 @@ export function createProject({ id, name, createdAt = Date.now(), checklists = [
     checklists,
   };
 }
+
+export function exportProjectToCSV(project) {}
+
+export function importProjectFromCSV(csvString) {}

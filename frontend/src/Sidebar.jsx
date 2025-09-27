@@ -1,5 +1,5 @@
 import { Show, For } from 'solid-js';
-import ChecklistState from './offline/AMSTAR2Checklist.js';
+import { scoreChecklist } from './offline/AMSTAR2Checklist.js';
 import TreeView from './components/TreeView.jsx';
 import { useAppState } from './AppState.jsx';
 import { useNavigate } from '@solidjs/router';
@@ -249,7 +249,7 @@ function ChecklistItem(props) {
               class={`
                     text-3xs font-medium px-1.5 py-0.5 rounded
                     ${(() => {
-                      const score = ChecklistState.scoreChecklist(props.checklist);
+                      const score = scoreChecklist(props.checklist);
                       if (score === 'High') return 'bg-green-100 text-green-800';
                       if (score === 'Moderate') return 'bg-yellow-100 text-yellow-800';
                       if (score === 'Low') return 'bg-orange-100 text-orange-800';
@@ -260,7 +260,7 @@ function ChecklistItem(props) {
             >
               {(() => {
                 if (!props.checklist) return 'Unknown';
-                const score = ChecklistState.scoreChecklist(props.checklist);
+                const score = scoreChecklist(props.checklist);
                 if (score.length + (props.checklist.name?.length || 0) < 30) {
                   return score;
                 } else {

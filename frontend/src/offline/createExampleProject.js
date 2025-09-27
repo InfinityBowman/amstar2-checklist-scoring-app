@@ -1,5 +1,5 @@
 import { createProject } from './project.js';
-import AMSTAR2Checklist from './AMSTAR2Checklist.js';
+import {createChecklist} from './AMSTAR2Checklist.js';
 import { saveProject, generateUUID } from './localDB.js';
 
 // Generates and saves an example project with several checklists
@@ -9,7 +9,7 @@ export async function createExampleProject() {
   let allChecklists = [];
 
   for (const name of checklistNames) {
-    const checklist = AMSTAR2Checklist.CreateChecklist({
+    const checklist = createChecklist({
       name,
       id: generateUUID(),
       createdAt: Date.now(),

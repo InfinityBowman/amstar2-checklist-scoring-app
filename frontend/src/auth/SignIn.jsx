@@ -1,4 +1,4 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { useAuth } from './AuthProvider.jsx';
 import { AnimatedShow } from '../components/AnimatedShow.jsx';

@@ -1,4 +1,4 @@
-import { createSignal, Show, createEffect } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 import StrengthIndicator from './StrengthIndicator.jsx';
 import PasswordInput from './PasswordInput.jsx';
 import { useNavigate } from '@solidjs/router';

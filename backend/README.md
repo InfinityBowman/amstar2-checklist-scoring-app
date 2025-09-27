@@ -11,45 +11,45 @@
 
 **POST /auth/signup**
 
-Description: Create a new user.
-Request Body:
-{
-"email": "test@test.com",
-"password": "Test123",
-"name": "Test User"
+Description: Create a new user.  
+Request Body:  
+{  
+"email": "test@test.com",  
+"password": "Test123",  
+"name": "Test User"  
 }
 
-Responses:
-201 Created – user successfully created
-400 Bad Request – missing username/password
+Responses:  
+201 Created – user successfully created  
+400 Bad Request – missing username/password  
 409 Conflict – email already exists
 
 **POST /auth/signin**
-Description: Log in user, set refresh cookie, return access token.
-Request Body:
-{
-"email": "test@test.com",
-"password": "Test123"
+Description: Log in user, set refresh cookie, return access token.  
+Request Body:  
+{  
+"email": "test@test.com",  
+"password": "Test123"  
 }
 
-Responses:
-200 OK
-{
-"accessToken": "<jwt>"
-}
-Sets Set-Cookie: refresh=<token>; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800
+Responses:  
+200 OK  
+{  
+"accessToken": "<jwt>"  
+}  
+Sets Set-Cookie: refresh=<token>; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800  
 401 Unauthorized – invalid credentials
 
 **POST /auth/refresh**
 
-Description: Issue new access token using refresh cookie.
-Request: No body required, but must include cookie.
-Responses:
-200 OK
-{
-"accessToken": "<new-jwt>"
-}
-401 Unauthorized – missing cookie
+Description: Issue new access token using refresh cookie.  
+Request: No body required, but must include cookie.  
+Responses:  
+200 OK  
+{  
+"accessToken": "<new-jwt>"  
+}  
+401 Unauthorized – missing cookie  
 403 Forbidden – invalid/expired refresh token
 
 **POST /auth/signout**
@@ -60,20 +60,20 @@ Response:
 
 **GET /users/me**
 
-Description: Fetch the current logged-in user (protected).
-Headers: Authorization: Bearer <accessToken>
-Responses:
-200 OK
-{
-"id": "alice",
-"name": "Alice Example"
-}
-401 Unauthorized – missing/invalid token
+Description: Fetch the current logged-in user (protected).  
+Headers: Authorization: Bearer <accessToken>  
+Responses:  
+200 OK  
+{  
+"id": "alice",  
+"name": "Alice Example"  
+}  
+401 Unauthorized – missing/invalid token  
 403 Forbidden – expired token
 
 **POST /auth/send-verification**
 
-Description: Send a verification code to the user's email after signup.
+Description: Send a verification code to the user's email after signup.  
 Request Body:
 
 ```json
@@ -172,3 +172,32 @@ The FastAPI docs have a section on WebSockets in the advanced user guide.
   - Collaborative checklist merge editor.
   - Backend listens to database changes via `LISTEN/NOTIFY`.
   - WebSocket connections push updates to all subscribed clients (pub/sub (publish/subscribe) pattern).
+
+## Email SMTP Integration
+
+**Purpose:**  
+Send transactional emails (e.g. email verification, password reset) using Mailgun or Postmark.  
+Send a code that has a expirary time of 15min. Set this in the user table as:
+
+```sql
+users (
+  ...
+  email_verified_at            TIMESTAMP,  -- when the email was verified, we dont need a boolean
+  email_verification_requested TIMESTAMP,  -- when verification was requested
+  email_verification_pin       TEXT,       -- the current verification code
+)
+```
+
+**Implementation Notes:**
+
+- Use something like aiosmtplib.
+- Store SMTP credentials (host, port, username, password) in environment variables or a config file.
+- Use secure connections (TLS/SSL) for all SMTP traffic.
+
+```json
+SMTP_HOST=smtp.mailgun.org
+SMTP_PORT=587
+SMTP_USERNAME=postmaster@yourdomain.com
+SMTP_PASSWORD=yourpassword
+SMTP_FROM=yourapp@yourdomain.com
+```

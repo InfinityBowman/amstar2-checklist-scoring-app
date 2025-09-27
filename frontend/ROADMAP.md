@@ -94,11 +94,11 @@
   - [ ] Pages and features that require online status should be guarded/informative
 
 - [ ] **Misc**
-- [ ] Use Server-Sent Events (EventSource api) for server driven updates
-- [ ] Use solid router to control navigation between checklists, projects, etc.
-  - makes it so back and forward buttons work properly
-- [ ] Better loading components
-- [ ] Icons: https://solid-icons.vercel.app/
-- [ ] UI library: https://zagjs.com/overview/installation
+  - [ ] Use Server-Sent Events (EventSource api) for server driven updates
+  - [x] Use solid router to control navigation between checklists, projects, etc.
+    - makes it so back and forward buttons work properly
+  - [x] Better loading components
+  - [x] Icons: https://solid-icons.vercel.app/
+  - [x] UI library: https://zagjs.com/overview/installation
 
 _This roadmap is a living document and will be updated as the project evolves._
