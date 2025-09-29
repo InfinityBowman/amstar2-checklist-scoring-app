@@ -20,6 +20,7 @@ export function createProject({ id, name, createdAt = Date.now(), checklists = [
   };
 }
 
+// TODO: Implement CSV import/export for projects
 export function exportProjectToCSV(project) {}
 
 export function importProjectFromCSV(csvString) {}
