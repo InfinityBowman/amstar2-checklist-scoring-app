@@ -1,6 +1,8 @@
 import uuid
+
 from datetime import datetime, timedelta
 from typing import Optional
+from random import randint
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -82,6 +84,14 @@ def verify_token(token: str, token_type: str = "access") -> dict:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+
+def generate_verification_code() -> str:
+    """Generate a random 6-digit verification code."""
+    return f"{randint(100000, 999999)}"
+
+def mock_send_verification_email(email: str, code: str) -> None:
+    """Mock sending verification email (replace with real email service later)"""
+    print(f"Sending verification code {code} to email {email}")
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),

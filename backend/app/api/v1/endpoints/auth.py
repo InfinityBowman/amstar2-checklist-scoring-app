@@ -1,8 +1,9 @@
+from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from app.core.config import settings
 from app.db.session import get_session
@@ -13,13 +14,19 @@ from app.utils.auth import (
     verify_password,
     create_access_token,
     create_refresh_token,
-    verify_token
+    verify_token,
+    generate_verification_code,
+    mock_send_verification_email
 )
+
+# In-memory store for verification codes (replace with DB in production)
+verification_codes: Dict[str, str] = {}
 
 router = APIRouter()
 security = HTTPBearer(auto_error=False)
 
 
+# ---------------- MODELS ---------------- 
 class TokenResponse(BaseModel):
     accessToken: str
 
@@ -28,7 +35,15 @@ class SignupResponse(BaseModel):
     message: str
     user: UserResponse
 
+class VerifyEmailRequest(BaseModel):
+    email: str
+    code: str
 
+
+class VerifyEmailResponse(BaseModel):
+    message: str
+
+# ---------------- ENDPOINTS ----------------
 @router.post("/signup", response_model=SignupResponse, status_code=status.HTTP_201_CREATED)
 async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_session)):
     """
@@ -61,6 +76,12 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_session))
     await db.commit()
     await db.refresh(new_user)
     
+    verification_code = generate_verification_code()
+    verification_codes[new_user.email] = verification_code
+
+    # Mock sending email
+    mock_send_verification_email(new_user.email, verification_code)
+
     # Return user data (without password)
     user_response = UserResponse(
         id=new_user.id,
@@ -185,3 +206,59 @@ async def signout(response: Response):
     """
     response.delete_cookie(key="refresh", path="/")
     return {"message": "Successfully signed out"}
+
+
+@router.post("/verify-email", response_model=VerifyEmailResponse)
+async def verify_email(
+    request: VerifyEmailRequest,
+    db: AsyncSession = Depends(get_session)
+):
+    """
+    Verify the email with the code sent earlier.
+    
+    - **email**: User's email address
+    - **code**: verification code sent via email
+
+    Responses:
+    - 200: Email verified
+    - 400: Missing email/code
+    - 401: Invalid code
+    - 404: User not found
+    """
+    email = request.email
+    code = request.code.strip()
+    
+    # 1. Check missing fields
+    if not email or not code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing email or code"
+        )
+    
+    # 2. Check if user exists
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # 3. Check if code matches
+    stored_code = verification_codes.get(email)
+    if not stored_code or stored_code != code:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid verfication code"
+        )
+    
+    # 4. Mark user as verified
+    user.is_active = True
+    db.add(user)
+    await db.commit()
+
+    verification_codes.pop(email, None)
+
+    return VerifyEmailResponse(message="Email verified successfully")
+    
