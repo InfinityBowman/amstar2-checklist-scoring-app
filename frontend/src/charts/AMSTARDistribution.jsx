@@ -29,7 +29,7 @@ export default function AMSTARDistribution(props) {
     onCleanup(() => window.removeEventListener('resize', resize));
   });
 
-  // Optionally, trigger resize when data changes (for SSR/hydration edge cases)
+  // Trigger resize when data changes
   createEffect(() => {
     if (containerRef) {
       const rect = containerRef.getBoundingClientRect();
@@ -47,6 +47,8 @@ export default function AMSTARDistribution(props) {
   const margin = { top: 50, right: 150, bottom: 60, left: 80 };
   const chartWidth = () => width() - margin.left - margin.right;
   const chartHeight = () => height() - margin.top - margin.bottom;
+  // Responsive font size based on width
+  const titleFont = () => Math.max(Math.round(width() / 50), 12) + 1; // e.g. 900px => 18px, 400px => 10px
 
   const colorMap = {
     yes: '#10b981',
@@ -114,7 +116,7 @@ export default function AMSTARDistribution(props) {
       .attr('x', width() / 2)
       .attr('y', 30)
       .attr('text-anchor', 'middle')
-      .attr('font-size', '18px')
+      .attr('font-size', titleFont() + 'px')
       .attr('font-weight', '600')
       .attr('fill', '#111827')
       .text(title());

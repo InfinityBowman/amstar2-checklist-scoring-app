@@ -19,7 +19,7 @@ export default function PasswordInput(props) {
 
   return (
     <div {...api().getRootProps()} class={props.class}>
-      <label {...api().getLabelProps()} class="block text-base sm:text-md font-semibold text-gray-700 mb-1 sm:mb-2">
+      <label {...api().getLabelProps()} class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
         Password
       </label>
       <div {...api().getControlProps()} class="relative">

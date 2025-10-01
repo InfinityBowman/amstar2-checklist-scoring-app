@@ -22,8 +22,9 @@ export default function AppRoutes() {
         <Route path="/" component={Home} />
         <Route path="/dashboard" component={AppDashboard} />
         {/* <Route path="/project/new" component={CreateProject} /> */}
-        <Route path="/project/:name/:index" component={ProjectDashboard}></Route>
-        <Route path="/checklist/:id" component={AMSTAR2Checklist} />
+        <Route path="/project/:name/:index" component={ProjectDashboard} />
+        {/* <Route path="/checklist/:id" component={AMSTAR2Checklist} /> */}
+        <Route path="/checklist/:name/:index" component={AMSTAR2Checklist} />
         {/* <Route path="/checklist/compare/name+index and name+index in query params" component={ChecklistCompare} /> */}
         <Route
           path="/signin"

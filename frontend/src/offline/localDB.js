@@ -25,7 +25,6 @@ function openDB() {
 }
 
 export async function saveChecklist(checklist) {
-  console.trace('Saving checklist to IndexedDB:', checklist);
   const db = await openDB();
   checklist = deepClone(checklist);
   return new Promise((resolve, reject) => {
@@ -142,7 +141,6 @@ export async function saveChecklistToProject(projectId, checklist) {
       // Update existing checklist
       project.checklists[checklistIndex] = deepClone(checklist);
     } else {
-      console.log('Adding new checklist to project', deepClone(checklist));
       // Add new checklist to project
       project.checklists.push(deepClone(checklist));
     }

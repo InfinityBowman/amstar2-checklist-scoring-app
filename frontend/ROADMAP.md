@@ -7,15 +7,20 @@
   - [ ] Make it look pretty
 
 - [ ] **Authentication**
-  - [ ] Integrate login/logout flow
-  - [ ] Use HttpOnly cookies and refresh token
-  - [ ] Show/hide features based on authentication state
-  - [ ] Email verification
-  - [ ] Password reset
+  - [x] Integrate sign in/sign out flow
+  - [x] Integrate sign up flow
+  - [x] Use HttpOnly cookies and refresh token
+  - [x] Show/hide features based on authentication state
+  - [ ] Mock email verification
+  - [ ] Mock password reset
+  - [ ] Real email verification
+  - [ ] Real password reset
+  - [ ] Mock change email
+  - [ ] Real change email
 
 - [ ] **Landing Page**
   - [ ] Create a welcoming landing page
-  - [ ] Show app description
+  - [x] Show app description
   - [x] Show login/register prompt
   - [ ] Maybe also have statically rendered about page
   - [ ] This page should be statically rendered and function perfectly if JavaScript is disabled
@@ -37,12 +42,12 @@
 
 - [ ] **AMSTAR 2 Checklists**
   - [ ] Import/Export checklists to/from CSV
-  - [ ] Customize critical/noncritical items for scoring
+  - [x] Customize critical/noncritical items for scoring
   - [x] Automatic saving
   - [x] Automatic yes/partial yes/no based on answers
   - [ ] Checklist state could be encoded into url
   - [ ] Make it way prettier
-  - [ ] Checklists-name based URLs
+  - [x] Checklists-name based URLs
   - [ ] Info for how to complete each question for AMSTAR2
 
 - [ ] **Merge Editor**
@@ -50,6 +55,7 @@
 
 - [ ] **Project Dashboard**
   - [ ] Export data visualization in color or greyscale
+  - [ ] Sort projects in data viz
   - [x] Data visualizations for all checklists in a project
   - [ ] Responsive sizing of visualizations (tailwind selectors?)
   - [ ] Import/Export project to/from CSV
@@ -61,7 +67,7 @@
   - [ ] Show who has completed reviews
   - [ ] Show who is assigned to which reviews
 
-- [x] **Sidebar**
+- [ ] **Sidebar**
   - [x] List projects and their checklists (expandable/collapsible)
   - [x] Updating checklist data should update the sidebar
 
@@ -94,11 +100,13 @@
   - [ ] Pages and features that require online status should be guarded/informative
 
 - [ ] **Misc**
-- [ ] Use Server-Sent Events (EventSource api) for server driven updates
-- [ ] Use solid router to control navigation between checklists, projects, etc.
-  - makes it so back and forward buttons work properly
-- [ ] Better loading components
-- [ ] Icons: https://solid-icons.vercel.app/
-- [ ] UI library: https://zagjs.com/overview/installation
+  - [ ] Use Server-Sent Events (EventSource api) for server driven updates
+  - [x] Use solid router to control navigation between checklists, projects, etc.
+    - makes it so back and forward buttons work properly
+  - [x] Better loading components
+  - [x] Icons: https://solid-icons.vercel.app/
+  - [x] UI library: https://zagjs.com/overview/installation
+
+Format needs to be updated to create a review, then add checklists to that review
 
 _This roadmap is a living document and will be updated as the project evolves._

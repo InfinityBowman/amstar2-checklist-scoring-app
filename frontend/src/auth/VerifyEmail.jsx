@@ -24,22 +24,34 @@ export default function VerifyEmail() {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async function fakeVerifyEmail(code) {
+  async function handleVerifyEmail() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        console.log('Verifying code:', code);
-        if (code === '111111' || code === 111111) resolve();
+        // const result = verifyEmail(code()); // backend verifies code
+        // if (result.status === 'success') {
+        //   resolve();
+        // } else {
+        //   reject(new Error(result.message));
+        // }
+        console.log('Verifying code:', code());
+        if (code() === '111111' || code() === 111111) resolve();
         else reject(new Error('Invalid code'));
       }, 200);
     });
   }
 
-  async function fakeSendEmail() {
+  async function handleSendEmail() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        console.log('Sending code: 111111');
+        console.log('Sending verification code to email');
         resolve();
-      }, 200);
+        // const result = sendEmailVerification(); // server generates and sends code
+        // if (result.status === 'success') {
+        //   resolve();
+        // } else {
+        //   reject(new Error(result.message));
+        // }
+      }, 400);
     });
   }
 
@@ -48,16 +60,12 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-      // Wait for both the verification and the delay
-      // const [verifyResult] = await Promise.allSettled([verifyEmail(code()), wait(500)]);
-      const [result] = await Promise.allSettled([fakeVerifyEmail(code()), wait(500)]);
-      // The result for fakeVerifyEmail is always at index 0
-      if (result.status === 'rejected') throw result.reason;
-      console.log(result);
+      await handleVerifyEmail();
       setSuccess(true);
       navigate('/signin', { replace: true });
       setLoading(false);
     } catch (err) {
+      console.error('Verify email error:', err);
       setLoading(false);
       setError('Invalid code. Please try again.');
     }
@@ -67,10 +75,7 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-      // Call backend to send code to user's email
-      // const [verifyResult] = await Promise.allSettled([sendEmailVerification(code()), wait(500)]);
-      const [sendEmail] = await Promise.allSettled([fakeSendEmail(), wait(500)]);
-      if (sendEmail.status === 'rejected') throw sendEmail.reason;
+      await handleSendEmail();
       setLoading(false);
       setSearchParams({ codeSent: 'true' });
       setCodeSent(true);
@@ -107,11 +112,11 @@ export default function VerifyEmail() {
       <form
         aria-labelledby="verifyemail-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-2 border border-gray-100 relative"
+        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-2 border border-gray-100 relative"
         autoComplete="off"
       >
         <div class="text-center">
-          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
             Verify Your Email
           </h2>
         </div>
@@ -120,7 +125,7 @@ export default function VerifyEmail() {
           when={codeSent()}
           fallback={
             <>
-              <div class="mb-4 sm:mb-6 text-center">
+              <div class="mb-6 sm:mb-8 text-center">
                 <p class="text-gray-500 text-xs sm:text-sm">Send a code to verify your email.</p>
               </div>
               <button
