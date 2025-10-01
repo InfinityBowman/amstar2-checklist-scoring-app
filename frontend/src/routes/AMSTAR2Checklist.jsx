@@ -516,7 +516,7 @@ function Question15(props) {
   const question = AMSTAR_CHECKLIST.q15;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
+    const newAnswers = state().answers.map((arr) => [...arr]);
     newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No/No meta-analysis conducted in last column

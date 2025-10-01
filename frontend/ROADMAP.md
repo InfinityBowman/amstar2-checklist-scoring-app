@@ -55,6 +55,7 @@
 
 - [ ] **Project Dashboard**
   - [ ] Export data visualization in color or greyscale
+  - [ ] Sort projects in data viz
   - [x] Data visualizations for all checklists in a project
   - [ ] Responsive sizing of visualizations (tailwind selectors?)
   - [ ] Import/Export project to/from CSV

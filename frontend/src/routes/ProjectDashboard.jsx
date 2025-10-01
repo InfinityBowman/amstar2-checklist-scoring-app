@@ -179,10 +179,10 @@ export default function ProjectDashboard() {
           </button>
         </div>
         <div class="mb-6">
-          <AMSTARRobvis data={checklistData()} width={700} height={500} />
+          <AMSTARRobvis data={checklistData()} />
         </div>
         <div>
-          <AMSTARDistribution data={checklistData()} width={800} height={500} />
+          <AMSTARDistribution data={checklistData()} />
         </div>
       </div>
     </Show>
