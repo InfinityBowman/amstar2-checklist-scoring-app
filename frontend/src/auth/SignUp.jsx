@@ -19,14 +19,14 @@ export default function SignUp() {
   const navigate = useNavigate();
   const { signup } = useAuth();
 
-  async function handleSignup() {
+  async function handleSignupWithDelay() {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const result = signup(email(), password(), name());
-        if (result.status === 'success') {
+      setTimeout(async () => {
+        try {
+          await signup(email(), password(), name());
           resolve();
-        } else {
-          reject(new Error(result.message));
+        } catch (err) {
+          reject(err);
         }
       }, 200);
     });
@@ -50,14 +50,19 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      await handleSignup();
+      await handleSignupWithDelay();
       navigate('/verify-email', { replace: true });
       setLoading(false);
     } catch (err) {
       console.error('Signup error:', err);
-      // TODO more specific error messages based on error code
-      setLoading(false);
-      setError('Sign up failed');
+      let msg = JSON.parse(err.message).detail;
+
+      if (msg.includes('Email not verified')) {
+        navigate('/verify-email', { replace: true });
+      } else {
+        setLoading(false);
+        setError('Sign up failed');
+      }
     }
   }
 

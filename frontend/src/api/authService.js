@@ -1,7 +1,6 @@
 import API_ENDPOINTS from './config.js';
 
 export async function signup(email, password, name) {
-  console.log('Signup URL:', API_ENDPOINTS.SIGNUP);
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const locale = navigator.language;
   const res = await fetch(API_ENDPOINTS.SIGNUP, {
@@ -22,7 +21,6 @@ let accessToken = null;
 export async function signin(email, password) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const locale = navigator.language;
-  console.log('Signin URL:', API_ENDPOINTS.SIGNIN);
   const res = await fetch(API_ENDPOINTS.SIGNIN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -103,11 +101,12 @@ export async function signout() {
 }
 
 export async function sendEmailVerification(email) {
-  const res = await fetch('http://localhost:8000/auth/send-verification', {
+  const res = await fetch(API_ENDPOINTS.SEND_VERIFICATION, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
   });
+  console.log('Send verification response:', await res.text());
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -117,7 +116,7 @@ export async function sendEmailVerification(email) {
 }
 
 export async function verifyEmail(email, code) {
-  const res = await fetch('http://localhost:8000/auth/verify-email', {
+  const res = await fetch(API_ENDPOINTS.VERIFY_EMAIL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, code }),
