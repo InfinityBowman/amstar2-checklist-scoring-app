@@ -1,4 +1,4 @@
-import { Show, createSignal, createEffect } from 'solid-js';
+import { Show, createSignal, createEffect, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { useAuth } from './AuthProvider.jsx';
 import { AnimatedShow } from '../components/AnimatedShow.jsx';
@@ -18,40 +18,25 @@ export default function VerifyEmail() {
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { verifyEmail, sendEmailVerification } = useAuth();
+  const { verifyEmail, sendEmailVerification, getPendingEmail } = useAuth();
 
-  function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  onMount(() => {
+    const pendingEmail = getPendingEmail();
+    if (!pendingEmail) {
+      navigate('/signin', { replace: true });
+    }
+  });
 
-  async function handleVerifyEmail() {
+  async function handleVerifyWithDelay(code) {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // const result = verifyEmail(code()); // backend verifies code
-        // if (result.status === 'success') {
-        //   resolve();
-        // } else {
-        //   reject(new Error(result.message));
-        // }
-        console.log('Verifying code:', code());
-        if (code() === '111111' || code() === 111111) resolve();
-        else reject(new Error('Invalid code'));
+      setTimeout(async () => {
+        try {
+          await verifyEmail(code);
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
       }, 200);
-    });
-  }
-
-  async function handleSendEmail() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log('Sending verification code to email');
-        resolve();
-        // const result = sendEmailVerification(); // server generates and sends code
-        // if (result.status === 'success') {
-        //   resolve();
-        // } else {
-        //   reject(new Error(result.message));
-        // }
-      }, 400);
     });
   }
 
@@ -60,7 +45,7 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-      await handleVerifyEmail();
+      await handleVerifyWithDelay(code());
       setSuccess(true);
       navigate('/signin', { replace: true });
       setLoading(false);
@@ -71,11 +56,24 @@ export default function VerifyEmail() {
     }
   }
 
+  async function sendCodeWithDelay() {
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          await sendEmailVerification(); // server generates and sends code
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      }, 200);
+    });
+  }
+
   async function sendCode() {
     setError('');
     setLoading(true);
     try {
-      await handleSendEmail();
+      await sendCodeWithDelay();
       setLoading(false);
       setSearchParams({ codeSent: 'true' });
       setCodeSent(true);

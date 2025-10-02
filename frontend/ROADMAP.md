@@ -7,15 +7,20 @@
   - [ ] Make it look pretty
 
 - [ ] **Authentication**
-  - [ ] Integrate login/logout flow
-  - [ ] Use HttpOnly cookies and refresh token
-  - [ ] Show/hide features based on authentication state
-  - [ ] Email verification
-  - [ ] Password reset
+  - [x] Integrate sign in/sign out flow
+  - [x] Integrate sign up flow
+  - [x] Use HttpOnly cookies and refresh token
+  - [x] Show/hide features based on authentication state
+  - [ ] Mock email verification
+  - [ ] Mock password reset
+  - [ ] Real email verification
+  - [ ] Real password reset
+  - [ ] Mock change email
+  - [ ] Real change email
 
 - [ ] **Landing Page**
   - [ ] Create a welcoming landing page
-  - [ ] Show app description
+  - [x] Show app description
   - [x] Show login/register prompt
   - [ ] Maybe also have statically rendered about page
   - [ ] This page should be statically rendered and function perfectly if JavaScript is disabled
@@ -37,7 +42,7 @@
 
 - [ ] **AMSTAR 2 Checklists**
   - [ ] Import/Export checklists to/from CSV
-  - [ ] Customize critical/noncritical items for scoring
+  - [x] Customize critical/noncritical items for scoring
   - [x] Automatic saving
   - [x] Automatic yes/partial yes/no based on answers
   - [ ] Checklist state could be encoded into url
@@ -50,6 +55,7 @@
 
 - [ ] **Project Dashboard**
   - [ ] Export data visualization in color or greyscale
+  - [ ] Sort projects in data viz
   - [x] Data visualizations for all checklists in a project
   - [ ] Responsive sizing of visualizations (tailwind selectors?)
   - [ ] Import/Export project to/from CSV

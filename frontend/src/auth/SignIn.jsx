@@ -15,12 +15,12 @@ export default function SignIn() {
 
   async function handleSignin() {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const result = signin(email(), password());
-        if (result.status === 'success') {
+      setTimeout(async () => {
+        try {
+          await signin(email(), password());
           resolve();
-        } else {
-          reject(new Error(result.message));
+        } catch (err) {
+          reject(err);
         }
       }, 200);
     });
@@ -35,14 +35,20 @@ export default function SignIn() {
     }
     setLoading(true);
     try {
+      // await signin(email(), password());
       await handleSignin();
       navigate('/dashboard', { replace: true });
       setLoading(false);
     } catch (err) {
-      console.error('Signin error:', err);
+      let msg = JSON.parse(err.message).detail;
 
-      setLoading(false);
-      setError('Incorrect email or password');
+      // If user has made account but not verified email
+      if (msg.includes('Email not verified')) {
+        navigate('/verify-email', { replace: true });
+      } else {
+        setLoading(false);
+        setError('Incorrect email or password');
+      }
     }
   }
 
