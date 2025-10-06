@@ -12,8 +12,16 @@ import App from '../App.jsx';
 import NotFound from './NotFound.jsx';
 import Offline from './Offline.jsx';
 import useOnlineStatus from '../primatives/useOnlineStatus';
+import AMSTAR2Merge from './AMSTAR2Merge.jsx';
 
 export const BASEPATH = '/amstar2-checklist-scoring-app';
+
+export function slugify(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
 
 export default function AppRoutes() {
   return (
@@ -22,9 +30,10 @@ export default function AppRoutes() {
         <Route path="/" component={Home} />
         <Route path="/dashboard" component={AppDashboard} />
         {/* <Route path="/project/new" component={CreateProject} /> */}
-        <Route path="/project/:name/:index" component={ProjectDashboard}></Route>
-        <Route path="/checklist/:id" component={AMSTAR2Checklist} />
-        {/* <Route path="/checklist/compare/name+index and name+index in query params" component={ChecklistCompare} /> */}
+        <Route path="/projects/:projectSlug" component={ProjectDashboard} />
+        <Route path="/projects/:projectSlug/reviews/:reviewSlug/checklists/:checklistSlug" component={AMSTAR2Checklist} />
+        <Route path="/checklist/:checklistSlug" component={AMSTAR2Checklist} />
+        <Route path="/merge/:checklistSlugA/:checklistSlugB" component={AMSTAR2Merge} />
         <Route
           path="/signin"
           component={() => (

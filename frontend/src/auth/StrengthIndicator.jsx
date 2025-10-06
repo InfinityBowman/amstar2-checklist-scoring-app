@@ -25,25 +25,25 @@ export default function StrengthIndicator(props) {
   });
 
   return (
-    <div class="w-full mt-3 sm:mt-4">
+    <div class="w-full mt-2">
       {/* Requirements */}
-      <div class="text-sm sm:text-base text-gray-700" id="password-requirements" aria-live="polite">
+      <div class="text-xs text-gray-700" id="password-requirements" aria-live="polite">
         <ul class="pace-y-0.5 sm:space-y-1">
           {requirementsList.map((req) => {
             const met = strength().met.includes(req.label);
             return (
               <li class="flex items-center gap-2">
                 <span
-                  class={`w-3 h-3 sm:w-4 sm:h-4 ml-1 rounded-full flex items-center justify-center ${
+                  class={`w-3.5 h-3.5 ml-1 rounded-full flex items-center justify-center ${
                     met ? 'bg-white text-green-500 border-green-500 border-[1.5px]' : 'border-red-500 border-[1.5px] text-red-500'
                   }`}
                   aria-hidden="true"
                 >
                   {met ?
-                    <svg class="w-2 h-2 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 16">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 16">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M4 8l3 3 5-5" />
                     </svg>
-                  : <svg class="w-2 h-2 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 16">
+                  : <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 16">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M5 5l6 6M11 5l-6 6" />
                     </svg>
                   }

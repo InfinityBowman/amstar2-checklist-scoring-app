@@ -23,6 +23,6 @@ async def get_current_user_profile(
         id=current_user.id,
         email=current_user.email,
         name=current_user.name,
-        is_active=current_user.is_active,
-        created_at=current_user.created_at
+        created_at=current_user.created_at,
+        email_verified_at=current_user.email_verified_at
     )

@@ -15,10 +15,6 @@ export default function PinInput(props) {
 
   const api = createMemo(() => pinInput.connect(service, normalizeProps));
 
-  // const inputClass =
-  //   props.inputClass ||
-  //   'w-10 h-12 sm:w-14 sm:h-14 rounded-lg border-2 border-gray-300 bg-gray-50 text-center text-xl font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-400 outline-none';
-
   const inputClass = () =>
     'w-10 h-12 sm:w-14 sm:h-14 rounded-lg border-2 ' +
     (props.isError ?

@@ -1,4 +1,4 @@
-import { Show, createSignal, createEffect } from 'solid-js';
+import { Show, createSignal, createEffect, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { useAuth } from './AuthProvider.jsx';
 import { AnimatedShow } from '../components/AnimatedShow.jsx';
@@ -18,27 +18,24 @@ export default function VerifyEmail() {
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { verifyEmail, sendEmailVerification } = useAuth();
+  const { verifyEmail, sendEmailVerification, getPendingEmail } = useAuth();
 
-  function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  onMount(() => {
+    const pendingEmail = getPendingEmail();
+    if (!pendingEmail) {
+      navigate('/signin', { replace: true });
+    }
+  });
 
-  async function fakeVerifyEmail(code) {
+  async function handleVerifyWithDelay(code) {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log('Verifying code:', code);
-        if (code === '111111' || code === 111111) resolve();
-        else reject(new Error('Invalid code'));
-      }, 200);
-    });
-  }
-
-  async function fakeSendEmail() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log('Sending code: 111111');
-        resolve();
+      setTimeout(async () => {
+        try {
+          await verifyEmail(code);
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
       }, 200);
     });
   }
@@ -48,29 +45,35 @@ export default function VerifyEmail() {
     setError('');
     setLoading(true);
     try {
-      // Wait for both the verification and the delay
-      // const [verifyResult] = await Promise.allSettled([verifyEmail(code()), wait(500)]);
-      const [result] = await Promise.allSettled([fakeVerifyEmail(code()), wait(500)]);
-      // The result for fakeVerifyEmail is always at index 0
-      if (result.status === 'rejected') throw result.reason;
-      console.log(result);
+      await handleVerifyWithDelay(code());
       setSuccess(true);
       navigate('/signin', { replace: true });
       setLoading(false);
     } catch (err) {
+      console.error('Verify email error:', err);
       setLoading(false);
       setError('Invalid code. Please try again.');
     }
+  }
+
+  async function sendCodeWithDelay() {
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          await sendEmailVerification(); // server generates and sends code
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      }, 200);
+    });
   }
 
   async function sendCode() {
     setError('');
     setLoading(true);
     try {
-      // Call backend to send code to user's email
-      // const [verifyResult] = await Promise.allSettled([sendEmailVerification(code()), wait(500)]);
-      const [sendEmail] = await Promise.allSettled([fakeSendEmail(), wait(500)]);
-      if (sendEmail.status === 'rejected') throw sendEmail.reason;
+      await sendCodeWithDelay();
       setLoading(false);
       setSearchParams({ codeSent: 'true' });
       setCodeSent(true);
@@ -107,11 +110,11 @@ export default function VerifyEmail() {
       <form
         aria-labelledby="verifyemail-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-16 border border-gray-100 relative space-y-2"
+        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-2 border border-gray-100 relative"
         autoComplete="off"
       >
         <div class="text-center">
-          <h2 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2" id="verifyemail-heading">
             Verify Your Email
           </h2>
         </div>
@@ -120,11 +123,11 @@ export default function VerifyEmail() {
           when={codeSent()}
           fallback={
             <>
-              <div class="mb-4 sm:mb-6 text-center">
-                <p class="text-gray-500 text-base sm:text-lg">Send a code to verify your email.</p>
+              <div class="mb-6 sm:mb-8 text-center">
+                <p class="text-gray-500 text-xs sm:text-sm">Send a code to verify your email.</p>
               </div>
               <button
-                class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
+                class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
                 disabled={loading()}
                 type="button"
                 onClick={() => sendCode()}
@@ -140,14 +143,14 @@ export default function VerifyEmail() {
           }
         >
           <div class="text-center">
-            <p class="text-gray-500 text-base sm:text-lg">Enter the verification code sent to your email.</p>
+            <p class="text-gray-500 text-sm sm:text-base">Enter the verification code sent to your email.</p>
           </div>
 
           <PinInput otp required autocomplete onInput={setCode} isError={!!error()} />
 
           <button
             type="submit"
-            class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
+            class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
             disabled={loading()}
           >
             <AnimatedShow when={loading()} fallback={'Verify Email'}>
@@ -157,18 +160,18 @@ export default function VerifyEmail() {
               </div>
             </AnimatedShow>
           </button>
-          <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">
+          <div class="text-center text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4">
             Didn't get a code?{' '}
             <a href="#" class="text-indigo-600 hover:underline font-semibold">
               Resend
             </a>
           </div>
         </Show>
-        <AnimatedShow when={!!error()} class="absolute left-10 right-0 bottom-4 sm:bottom-6">
-          <p class=" text-red-600 text-base sm:text-lg">{error()}</p>
+        <AnimatedShow when={!!error()} class="absolute left-10 right-0 bottom-2 sm:bottom-6">
+          <p class=" text-red-600 text-xs sm:text-sm">{error()}</p>
         </AnimatedShow>
-        <AnimatedShow when={success()} class="absolute left-10 right-0 bottom-4 sm:bottom-6">
-          <p class="pt-2 sm:pt-3 px-2 text-green-600 text-base sm:text-lg">Email verified! Redirecting to sign in...</p>
+        <AnimatedShow when={success()} class="absolute left-10 right-0 bottom-2 sm:bottom-6">
+          <p class="pt-2 sm:pt-3 px-2 text-green-600 text-xs sm:text-sm">Email verified! Ready to sign in...</p>
         </AnimatedShow>
       </form>
     </div>

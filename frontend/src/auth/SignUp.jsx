@@ -1,4 +1,4 @@
-import { createSignal, Show, createEffect } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 import StrengthIndicator from './StrengthIndicator.jsx';
 import PasswordInput from './PasswordInput.jsx';
 import { useNavigate } from '@solidjs/router';
@@ -19,6 +19,19 @@ export default function SignUp() {
   const navigate = useNavigate();
   const { signup } = useAuth();
 
+  async function handleSignupWithDelay() {
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          await signup(email(), password(), name());
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      }, 200);
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitted(true);
@@ -37,14 +50,19 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      await signup(email(), password(), name());
+      await handleSignupWithDelay();
       navigate('/verify-email', { replace: true });
+      setLoading(false);
     } catch (err) {
       console.error('Signup error:', err);
-      // TODO more specific error messages based on error code
-      setError('Sign up failed');
-    } finally {
-      setLoading(false);
+      let msg = JSON.parse(err.message).detail;
+
+      if (msg.includes('Email not verified')) {
+        navigate('/verify-email', { replace: true });
+      } else {
+        setLoading(false);
+        setError('Sign up failed');
+      }
     }
   }
 
@@ -55,21 +73,21 @@ export default function SignUp() {
   });
 
   return (
-    <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-2 sm:px-4 py-6 sm:py-12">
+    <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-6 sm:py-12">
       <form
         aria-labelledby="signup-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-16 space-y-6 sm:space-y-8 border border-gray-100"
+        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-12 space-y-4 border border-gray-100"
         autocomplete="off"
       >
-        <div class="mb-2 sm:mb-4 text-center">
-          <h2 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-1 sm:mb-2" id="signup-heading">
+        <div class="mb-2 text-center">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2" id="signup-heading">
             Get Started
           </h2>
-          <p class="text-gray-500 text-base sm:text-lg">Create a new account.</p>
+          <p class="text-gray-500 text-xs sm:text-sm">Create a new account.</p>
         </div>
         <div>
-          <label class="block text-base sm:text-lg font-semibold text-gray-700 mb-1 sm:mb-2" for="name-input">
+          <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2" for="name-input">
             Name
           </label>
           <div class="relative">
@@ -80,7 +98,7 @@ export default function SignUp() {
               spellcheck="false"
               value={name()}
               onInput={(e) => setName(e.target.value)}
-              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-base sm:text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               required
               id="name-input"
               placeholder="What should we call you?"
@@ -88,7 +106,7 @@ export default function SignUp() {
           </div>
         </div>
         <div>
-          <label class="block text-base sm:text-lg font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
+          <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
             Email
           </label>
           <div class="relative">
@@ -99,7 +117,7 @@ export default function SignUp() {
               spellCheck="false"
               value={email()}
               onInput={(e) => setEmail(e.target.value)}
-              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-base sm:text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               required
               id="email-input"
               placeholder="you@example.com"
@@ -109,12 +127,12 @@ export default function SignUp() {
         <div>
           <PasswordInput password={password()} onPasswordChange={setPassword} autoComplete="new-password" required />
           <AnimatedShow when={submitted() && unmetRequirements().length > 0}>
-            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-base sm:text-lg">Password must include {unmetRequirements()?.[0]}</p>
+            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">Password must include {unmetRequirements()?.[0]}</p>
           </AnimatedShow>
           <StrengthIndicator password={password()} onUnmet={setUnmetRequirements} />
         </div>
         <div>
-          <label class="block text-base sm:text-lg font-semibold text-gray-700 mb-1 sm:mb-2" for="confirm-password-input">
+          <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2" for="confirm-password-input">
             Confirm Password
           </label>
           <div class="relative">
@@ -125,19 +143,19 @@ export default function SignUp() {
               spellCheck="false"
               value={confirmPassword()}
               onInput={(e) => setConfirmPassword(e.target.value)}
-              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-base sm:text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition big-placeholder"
+              class="w-full pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition big-placeholder"
               required
               id="confirm-password-input"
               placeholder="••••••••"
             />
           </div>
           <AnimatedShow when={!!error()}>
-            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-base sm:text-lg">{error()}</p>
+            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">{error()}</p>
           </AnimatedShow>
         </div>
         <button
           type="submit"
-          class="w-full py-3 sm:py-4 px-4 sm:px-6 text-lg sm:text-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
+          class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
           disabled={loading()}
         >
           <AnimatedShow when={loading()} fallback={'Sign Up'}>
@@ -147,7 +165,7 @@ export default function SignUp() {
             </div>
           </AnimatedShow>
         </button>
-        <div class="text-center text-base sm:text-lg text-gray-500 mt-2 sm:mt-4">
+        <div class="text-center text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4">
           Already have an account?{' '}
           <a
             href="/signin"

@@ -10,15 +10,9 @@ import { AnimatedShow } from './components/AnimatedShow.jsx';
 /**
  * TODO
  * Save review title, name, date for each checklist
- * Implement my own service worker instead of vite pwa
  * pdfs might need to be linked to or owned by checklists
- * ensure scorechecklist is correct
- * AMSTAR folder for all AMSTAR stuff
  * black and white export option for d3
- * finish handling of different projects
  * search pdf
- *
- * Change from using checklists in the state to just using projects
  */
 export default function App(props) {
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
@@ -28,18 +22,7 @@ export default function App(props) {
   const [pdfUrl, setPdfUrl] = createSignal(null);
   const { authLoading } = useAuth();
 
-  const {
-    projects,
-    dataLoading,
-    loadData,
-    setProjects,
-    currentProject,
-    addProject,
-    deleteChecklist,
-    currentChecklist,
-    setCurrentChecklist,
-    updateChecklist,
-  } = useAppState();
+  const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppState();
 
   // Handlers for delete all checklists dialog
   const handleDeleteAll = () => {
@@ -62,15 +45,11 @@ export default function App(props) {
   const deleteChecklistMessage = () => {
     let checklistName = 'this checklist';
     const pending = pendingDeleteId();
-    if (pending && pending.projectId && pending.checklistId) {
-      const project = projects().find((p) => p.id === pending.projectId);
-      if (project) {
-        const checklist = project.checklists.find((c) => c.id === pending.checklistId);
-        if (checklist) {
-          checklistName = checklist.title || checklist.name || 'Untitled Checklist';
-        }
-      }
+    let checklist = getChecklist(pending.checklistId);
+    if (checklist) {
+      checklistName = checklist.name || checklist.title || 'Untitled Checklist';
     }
+
     return `Are you sure you want to delete ${checklistName}? This action cannot be undone.`;
   };
 
@@ -83,10 +62,10 @@ export default function App(props) {
     setDialogOpen(true);
   };
 
-  // Handlers for the delete checklist dialog
+  // When confirmed, delete the checklist
   const confirmDelete = async () => {
     const pending = pendingDeleteId();
-    if (!pending || !pending.projectId || !pending.checklistId) return;
+    if (!pending || !pending.checklistId) return;
     try {
       console.log('Deleting checklist id:', pending.checklistId, 'from project:', pending.projectId);
       await deleteChecklist(pending.projectId, pending.checklistId);

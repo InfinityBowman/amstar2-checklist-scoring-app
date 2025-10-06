@@ -1,15 +1,16 @@
-import { createSignal, createEffect, Index, For } from 'solid-js';
-import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
-import { useAppState } from '../AppState.jsx';
+import { createSignal, createEffect, onMount } from 'solid-js';
+import { AMSTAR_CHECKLIST } from '@offline/checklistMap.js';
+import { useAppState } from '@/AppState.jsx';
 import { useParams, useNavigate } from '@solidjs/router';
+import { slugify } from './Routes.jsx';
 
-function Question1(props) {
-  const state = () => props.checklistState().q1.answers;
+export function Question1(props) {
+  const state = () => props.checklistState().q1;
   const question = AMSTAR_CHECKLIST.q1;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -29,16 +30,16 @@ function Question1(props) {
     props.onUpdate(newQ1);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question2(props) {
-  const state = () => props.checklistState().q2.answers;
+export function Question2(props) {
+  const state = () => props.checklistState().q2;
   const question = AMSTAR_CHECKLIST.q2;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first or second column changed, update Yes/Partial Yes/No in last column
     if (colIdx === 0 || colIdx === 1) {
@@ -52,22 +53,22 @@ function Question2(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 2) {
-      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state()[2][optIdx] : false));
+      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state().answers[2][optIdx] : false));
     }
     const newQ2 = { ...props.checklistState().q2, answers: newAnswers };
     props.onUpdate(newQ2);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question3(props) {
-  const state = () => props.checklistState().q3.answers;
+export function Question3(props) {
+  const state = () => props.checklistState().q3;
   const question = AMSTAR_CHECKLIST.q3;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -87,16 +88,16 @@ function Question3(props) {
     props.onUpdate(newQ3);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question4(props) {
-  const state = () => props.checklistState().q4.answers;
+export function Question4(props) {
+  const state = () => props.checklistState().q4;
   const question = AMSTAR_CHECKLIST.q4;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first or second column changed, update Yes/Partial Yes/No in last column
     if (colIdx === 0 || colIdx === 1) {
@@ -110,7 +111,7 @@ function Question4(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 2) {
-      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state()[2][optIdx] : false));
+      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state().answers[2][optIdx] : false));
     }
 
     // Update the whole q4 object, only changing answers
@@ -118,16 +119,16 @@ function Question4(props) {
     props.onUpdate(newQ4);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question5(props) {
-  const state = () => props.checklistState().q5.answers;
+export function Question5(props) {
+  const state = () => props.checklistState().q5;
   const question = AMSTAR_CHECKLIST.q5;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -146,16 +147,16 @@ function Question5(props) {
     props.onUpdate(newQ5);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question6(props) {
-  const state = () => props.checklistState().q6.answers;
+export function Question6(props) {
+  const state = () => props.checklistState().q6;
   const question = AMSTAR_CHECKLIST.q6;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -174,16 +175,16 @@ function Question6(props) {
     props.onUpdate(newQ6);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question7(props) {
-  const state = () => props.checklistState().q7.answers;
+export function Question7(props) {
+  const state = () => props.checklistState().q7;
   const question = AMSTAR_CHECKLIST.q7;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first or second column changed, update Yes/Partial Yes/No in last column
     if (colIdx === 0 || colIdx === 1) {
@@ -197,23 +198,23 @@ function Question7(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 2) {
-      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state()[2][optIdx] : false));
+      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state().answers[2][optIdx] : false));
     }
 
     const newQ7 = { ...props.checklistState().q7, answers: newAnswers };
     props.onUpdate(newQ7);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question8(props) {
-  const state = () => props.checklistState().q8.answers;
+export function Question8(props) {
+  const state = () => props.checklistState().q8;
   const question = AMSTAR_CHECKLIST.q8;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first or second column changed, update Yes/Partial Yes/No in last column
     if (colIdx === 0 || colIdx === 1) {
@@ -227,24 +228,24 @@ function Question8(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 2) {
-      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state()[2][optIdx] : false));
+      newAnswers[2] = newAnswers[2].map((v, i) => (i === optIdx ? !state().answers[2][optIdx] : false));
     }
 
     const newQ8 = { ...props.checklistState().q8, answers: newAnswers };
     props.onUpdate(newQ8);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question9(props) {
-  const stateA = () => props.checklistState().q9a.answers;
-  const stateB = () => props.checklistState().q9b.answers;
+export function Question9(props) {
+  const stateA = () => props.checklistState().q9a;
+  const stateB = () => props.checklistState().q9b;
   const question = AMSTAR_CHECKLIST.q9;
 
   function handleChangeA(colIdx, optIdx) {
-    const newAnswersA = stateA().map((arr) => [...arr]);
-    newAnswersA[colIdx][optIdx] = !stateA()[colIdx][optIdx];
+    const newAnswersA = stateA().answers.map((arr) => [...arr]);
+    newAnswersA[colIdx][optIdx] = !stateA().answers[colIdx][optIdx];
 
     // If first or second column changed, update Yes/Partial Yes/No/Not applicable in last column
     if (colIdx === 0 || colIdx === 1) {
@@ -259,7 +260,7 @@ function Question9(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 2) {
-      newAnswersA[2] = newAnswersA[2].map((v, i) => (i === optIdx ? !stateA()[2][optIdx] : false));
+      newAnswersA[2] = newAnswersA[2].map((v, i) => (i === optIdx ? !stateA().answers[2][optIdx] : false));
     }
 
     const newQ9a = { ...props.checklistState().q9a, answers: newAnswersA };
@@ -267,8 +268,8 @@ function Question9(props) {
   }
 
   function handleChangeB(colIdx, optIdx) {
-    const newAnswersB = stateB().map((arr) => [...arr]);
-    newAnswersB[colIdx][optIdx] = !stateB()[colIdx][optIdx];
+    const newAnswersB = stateB().answers.map((arr) => [...arr]);
+    newAnswersB[colIdx][optIdx] = !stateB().answers[colIdx][optIdx];
 
     // If first or second column changed, update Yes/Partial Yes/No/Not applicable in last column
     if (colIdx === 0 || colIdx === 1) {
@@ -283,69 +284,45 @@ function Question9(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 2) {
-      newAnswersB[2] = newAnswersB[2].map((v, i) => (i === optIdx ? !stateB()[2][optIdx] : false));
+      newAnswersB[2] = newAnswersB[2].map((v, i) => (i === optIdx ? !stateB().answers[2][optIdx] : false));
     }
 
     const newQ9b = { ...props.checklistState().q9b, answers: newAnswersB };
+    console.log('Updating q9b to', newQ9b);
     props.onUpdateb(newQ9b);
   }
 
+  function onUpdateab(newQ) {
+    const newCritical = newQ.critical;
+    const newQa = { ...stateA(), critical: newCritical };
+    const newQb = { ...stateB(), critical: newCritical };
+    props.onUpdatea(newQa);
+    setTimeout(() => {
+      props.onUpdateb(newQb);
+    }, 10);
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle}</div>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={stateA()[colIdx][optIdx]}
-                    onChange={() => handleChangeA(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
+    <div class="bg-white rounded-lg shadow-md p-8 text-sm">
+      <div class="flex">
+        <h3 class="font-semibold text-gray-900">{question.text}</h3>
+        <CriticalButton state={stateA} onUpdate={onUpdateab} />
       </div>
-      <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle2}</div>
-      <div className="flex gap-6">
-        {question.columns2.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns2.length - 1 ? 'w-42 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 mb-2 h-6">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={stateB()[colIdx][optIdx]}
-                    onChange={() => handleChangeB(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      <div class="font-semibold text-gray-900 h-4 mt-2 mb-1">{question.subtitle}</div>
+      <StandardQuestionInternal state={stateA} question={{ text: 'q9a' }} columns={question.columns} handleChange={handleChangeA} />
+      <div class="font-semibold text-gray-900 h-4 mt-2">{question.subtitle2}</div>
+      <StandardQuestionInternal state={stateB} question={{ text: 'q9b' }} columns={question.columns2} handleChange={handleChangeB} />
     </div>
   );
 }
 
-function Question10(props) {
-  const state = () => props.checklistState().q10.answers;
+export function Question10(props) {
+  const state = () => props.checklistState().q10;
   const question = AMSTAR_CHECKLIST.q10;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -364,17 +341,17 @@ function Question10(props) {
     props.onUpdate(newQ10);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question11(props) {
-  const stateA = () => props.checklistState().q11a.answers;
-  const stateB = () => props.checklistState().q11b.answers;
+export function Question11(props) {
+  const stateA = () => props.checklistState().q11a;
+  const stateB = () => props.checklistState().q11b;
   const question = AMSTAR_CHECKLIST.q11;
 
   function handleChangeA(colIdx, optIdx) {
-    const newAnswersA = stateA().map((arr) => [...arr]);
-    newAnswersA[colIdx][optIdx] = !stateA()[colIdx][optIdx];
+    const newAnswersA = stateA().answers.map((arr) => [...arr]);
+    newAnswersA[colIdx][optIdx] = !stateA().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No/No meta-analysis conducted in last column
     if (colIdx === 0) {
@@ -386,7 +363,7 @@ function Question11(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 1) {
-      newAnswersA[1] = newAnswersA[1].map((v, i) => (i === optIdx ? !stateA()[1][optIdx] : false));
+      newAnswersA[1] = newAnswersA[1].map((v, i) => (i === optIdx ? !stateA().answers[1][optIdx] : false));
     }
 
     const newQ11a = { ...props.checklistState().q11a, answers: newAnswersA };
@@ -394,8 +371,8 @@ function Question11(props) {
   }
 
   function handleChangeB(colIdx, optIdx) {
-    const newAnswersB = stateB().map((arr) => [...arr]);
-    newAnswersB[colIdx][optIdx] = !stateB()[colIdx][optIdx];
+    const newAnswersB = stateB().answers.map((arr) => [...arr]);
+    newAnswersB[colIdx][optIdx] = !stateB().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No/No meta-analysis conducted in last column
     if (colIdx === 0) {
@@ -407,69 +384,57 @@ function Question11(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 1) {
-      newAnswersB[1] = newAnswersB[1].map((v, i) => (i === optIdx ? !stateB()[1][optIdx] : false));
+      newAnswersB[1] = newAnswersB[1].map((v, i) => (i === optIdx ? !stateB().answers[1][optIdx] : false));
     }
 
     const newQ11b = { ...props.checklistState().q11b, answers: newAnswersB };
     props.onUpdateb(newQ11b);
   }
 
+  function onUpdateab(newQ) {
+    const newCritical = newQ.critical;
+    const newQa = { ...stateA(), critical: newCritical };
+    const newQb = { ...stateB(), critical: newCritical };
+    props.onUpdatea(newQa);
+    setTimeout(() => {
+      props.onUpdateb(newQb);
+    }, 10);
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle}</div>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={stateA()[colIdx][optIdx]}
-                    onChange={() => handleChangeA(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
+    <div class="bg-white rounded-lg shadow-md p-8 text-sm">
+      <div class="flex">
+        <h3 class="font-semibold text-gray-900">{question.text}</h3>
+        <CriticalButton state={stateA} onUpdate={onUpdateab} />
       </div>
-      <div className="font-semibold text-gray-900 h-6 my-2">{question.subtitle2}</div>
-      <div className="flex gap-6">
-        {question.columns2.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns2.length - 1 ? 'w-60 flex flex-col' : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={stateB()[colIdx][optIdx]}
-                    onChange={() => handleChangeB(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+
+      <div class="font-semibold text-gray-900 h-4 mt-2">{question.subtitle}</div>
+      <StandardQuestionInternal
+        state={stateA}
+        question={{ text: 'q11a' }}
+        columns={question.columns}
+        handleChange={handleChangeA}
+        width="w-48"
+      />
+      <div class="font-semibold text-gray-900 h-4 mt-4">{question.subtitle2}</div>
+      <StandardQuestionInternal
+        state={stateB}
+        question={{ text: 'q11b' }}
+        columns={question.columns2}
+        handleChange={handleChangeB}
+        width="w-48"
+      />
     </div>
   );
 }
 
-function Question12(props) {
-  const state = () => props.checklistState().q12.answers;
+export function Question12(props) {
+  const state = () => props.checklistState().q12;
   const question = AMSTAR_CHECKLIST.q12;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No/No meta-analysis conducted in last column
     if (colIdx === 0) {
@@ -481,23 +446,23 @@ function Question12(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 1) {
-      newAnswers[1] = newAnswers[1].map((v, i) => (i === optIdx ? !state()[1][optIdx] : false));
+      newAnswers[1] = newAnswers[1].map((v, i) => (i === optIdx ? !state().answers[1][optIdx] : false));
     }
 
     const newQ12 = { ...props.checklistState().q12, answers: newAnswers };
     props.onUpdate(newQ12);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-60" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} width="w-48" />;
 }
 
-function Question13(props) {
-  const state = () => props.checklistState().q13.answers;
+export function Question13(props) {
+  const state = () => props.checklistState().q13;
   const question = AMSTAR_CHECKLIST.q13;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -516,16 +481,16 @@ function Question13(props) {
     props.onUpdate(newQ13);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question14(props) {
-  const state = () => props.checklistState().q14.answers;
+export function Question14(props) {
+  const state = () => props.checklistState().q14;
   const question = AMSTAR_CHECKLIST.q14;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -544,16 +509,16 @@ function Question14(props) {
     props.onUpdate(newQ14);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question15(props) {
-  const state = () => props.checklistState().q15.answers;
+export function Question15(props) {
+  const state = () => props.checklistState().q15;
   const question = AMSTAR_CHECKLIST.q15;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No/No meta-analysis conducted in last column
     if (colIdx === 0) {
@@ -565,23 +530,23 @@ function Question15(props) {
 
     // If last column changed, ensure mutual exclusivity
     if (colIdx === 1) {
-      newAnswers[1] = newAnswers[1].map((v, i) => (i === optIdx ? !state()[1][optIdx] : false));
+      newAnswers[1] = newAnswers[1].map((v, i) => (i === optIdx ? !state().answers[1][optIdx] : false));
     }
 
     const newQ15 = { ...props.checklistState().q15, answers: newAnswers };
     props.onUpdate(newQ15);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-60" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} width="w-48" />;
 }
 
-function Question16(props) {
-  const state = () => props.checklistState().q16.answers;
+export function Question16(props) {
+  const state = () => props.checklistState().q16;
   const question = AMSTAR_CHECKLIST.q16;
 
   function handleChange(colIdx, optIdx) {
-    const newAnswers = state().map((arr) => [...arr]);
-    newAnswers[colIdx][optIdx] = !state()[colIdx][optIdx];
+    const newAnswers = state().answers.map((arr) => [...arr]);
+    newAnswers[colIdx][optIdx] = !state().answers[colIdx][optIdx];
 
     // If first column changed, update Yes/No in last column
     if (colIdx === 0) {
@@ -600,65 +565,86 @@ function Question16(props) {
     props.onUpdate(newQ16);
   }
 
-  return <StandardQuestion state={state} question={question} handleChange={handleChange} width="w-42" />;
+  return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
 function StandardQuestion(props) {
-  let question = props.question;
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        <Index each={question.columns}>
-          {(col, colIdx) => (
-            <div className={colIdx === question.columns.length - 1 ? `${props.width} flex flex-col` : 'flex-1 flex flex-col'}>
-              <div className="font-medium text-gray-800 h-8">{col().label}</div>
-              <div className="flex flex-col gap-2">
-                <Index each={col().options}>
-                  {(option, optIdx) => (
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={props.state()[colIdx][optIdx]}
-                        onChange={() => props.handleChange(colIdx, optIdx)}
-                        className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                      />
-                      <span className="text-gray-700">{option()}</span>
-                    </label>
-                  )}
-                </Index>
-              </div>
-            </div>
-          )}
-        </Index>
+    <div class="bg-white rounded-lg shadow-md p-7">
+      <div class="flex">
+        <h3 class="font-semibold text-sm text-gray-900 mb-1">{props.question.text}</h3>
+        <CriticalButton state={props.state} onUpdate={props.onUpdate} />
       </div>
+      <StandardQuestionInternal columns={props.question.columns} {...props} />
     </div>
   );
+}
 
+function CriticalButton(props) {
+  function onUpdateCritical(critical) {
+    const newQ = { ...props.state(), critical: critical };
+    props.onUpdate(newQ);
+  }
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{question.text}</h3>
-      <div className="flex gap-6">
-        {question.columns.map((col, colIdx) => (
-          <div key={colIdx} className={colIdx === question.columns.length - 1 ? `${props.width} flex flex-col` : 'flex-1 flex flex-col'}>
-            <div className="font-medium text-gray-800 h-8">{col.label}</div>
-            <div className="flex flex-col gap-2">
+    <div class="ml-auto">
+      <button
+        class={`ml-2 px-3 h-6 rounded-full text-xs font-medium transition-colors text-nowrap
+        ${
+          props.state().critical ?
+            'bg-red-100 text-red-700 border border-red-300 hover:bg-red-200'
+          : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
+        }`}
+        onClick={() => onUpdateCritical(!props.state().critical)}
+        aria-pressed={props.state().critical}
+      >
+        {props.state().critical ? 'Critical' : 'Not Critical'}
+      </button>
+    </div>
+  );
+}
+
+function StandardQuestionInternal(props) {
+  return (
+    <div class="flex flex-col gap-4 sm:flex-row sm:gap-6">
+      {props.columns.map((col, colIdx) => (
+        <div
+          key={colIdx}
+          class={colIdx === props.columns.length - 1 ? `${props.width ?? 'w-32'} flex flex-col min-w-0` : 'flex-1 flex flex-col min-w-0'}
+        >
+          <div class="font-semibold text-gray-800 text-xs break-words whitespace-normal min-w-0 w-full min-h-[2rem] flex items-center">
+            {col.label}
+          </div>
+          {colIdx === props.columns.length - 1 ?
+            <div class="flex flex-col gap-2 mt-1">
               {col.options.map((option, optIdx) => (
-                <label key={optIdx} className="flex items-center space-x-2">
+                <label key={optIdx} class="flex items-center space-x-2 text-xs">
                   <input
-                    type="checkbox"
-                    checked={props.state()[colIdx][optIdx]}
+                    type="radio"
+                    name={`col-${colIdx}-${props.question?.text ?? ''}`}
+                    checked={props.state().answers[colIdx][optIdx]}
                     onChange={() => props.handleChange(colIdx, optIdx)}
-                    className="w-4 h-4 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    class="w-3.5 h-3.5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
                   />
-                  <span className="text-gray-700">{option}</span>
+                  <span class="text-gray-700 break-words">{option}</span>
                 </label>
               ))}
             </div>
-          </div>
-        ))}
-      </div>
+          : <div class="flex flex-col gap-2">
+              {col.options.map((option, optIdx) => (
+                <label key={optIdx} class="flex items-center space-x-2 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={props.state().answers[colIdx][optIdx]}
+                    onChange={() => props.handleChange(colIdx, optIdx)}
+                    class="w-3 h-3 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  />
+                  <span class="text-gray-700 break-words">{option}</span>
+                </label>
+              ))}
+            </div>
+          }
+        </div>
+      ))}
     </div>
   );
 }
@@ -672,9 +658,13 @@ export default function AMSTAR2Checklist() {
   const navigate = useNavigate();
 
   createEffect(() => {
-    if (params.id && params.id !== currentChecklist()?.id) {
-      if (!dataLoading() && !setCurrentChecklist(params.id)) {
-        console.warn('AMSTAR2Checklist: No current checklist found for id', params.id);
+    if (params.checklistSlug !== undefined) {
+      const lastDash = params.checklistSlug.lastIndexOf('-');
+      let id = lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
+      setCurrentChecklist({ id });
+    } else {
+      if (!dataLoading()) {
+        console.warn('AMSTAR2Checklist: No current checklist found for', params.checklistSlug);
         // Go back to dashboard
         navigate(`/dashboard`);
       }
@@ -684,7 +674,7 @@ export default function AMSTAR2Checklist() {
   createEffect(() => {
     // Update local state when currentChecklist changes
     if (currentChecklist()) {
-      setReviewName(currentChecklist().name || currentChecklist().title || '');
+      setReviewName(currentChecklist().name || '');
       setReviewerName(currentChecklist().reviewerName || '');
       setReviewDate(currentChecklist().reviewDate || '');
     }
@@ -698,30 +688,40 @@ export default function AMSTAR2Checklist() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div class="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100">
+      <div class="container mx-auto px-4 py-6 max-w-5xl">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">AMSTAR 2 Checklist</h1>
-          <p className="text-gray-600 mb-6">App description here</p>
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <h1 class="text-2xl font-bold text-gray-900 mb-4">AMSTAR 2 Checklist</h1>
 
           {/* Review Details */}
-          <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div class="grid md:grid-cols-3 gap-4 text-xs">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
+              <label class="block font-medium text-gray-700 mb-2">Review Title</label>
               <input
                 type="text"
                 value={reviewName()}
                 onChange={(e) => {
                   setReviewName(e.target.value);
-                  handleChecklistChange({ title: e.target.value });
+                  handleChecklistChange({ name: e.target.value });
+                  console.log('Review name changed to', e.target.value);
+
+                  // Update the route if checklist name changes
+                  if (params.projectSlug && params.reviewSlug && params.checklistSlug && currentChecklist()) {
+                    const lastDash = params.checklistSlug.lastIndexOf('-');
+                    const checklistId = lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
+                    const newChecklistSlug = slugify(e.target.value) + '-' + checklistId;
+                    navigate(`/projects/${params.projectSlug}/reviews/${params.reviewSlug}/checklists/${newChecklistSlug}`, {
+                      replace: true,
+                    });
+                  }
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
                 placeholder="Enter review title"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Reviewer Name</label>
+              <label class="block font-medium text-gray-700 mb-2">Reviewer Name</label>
               <input
                 type="text"
                 value={reviewerName()}
@@ -729,12 +729,12 @@ export default function AMSTAR2Checklist() {
                   setReviewerName(e.target.value);
                   handleChecklistChange({ reviewerName: e.target.value });
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
                 placeholder="Enter your name"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Review Date</label>
+              <label class="block font-medium text-gray-700 mb-2">Review Date</label>
               <input
                 type="date"
                 value={reviewDate()}
@@ -742,7 +742,7 @@ export default function AMSTAR2Checklist() {
                   setReviewDate(e.target.value);
                   handleChecklistChange({ reviewDate: e.target.value });
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
               />
             </div>
           </div>
@@ -750,7 +750,7 @@ export default function AMSTAR2Checklist() {
 
         {/* Questions */}
         <Show when={!dataLoading() && currentChecklist()} fallback={<div>Loading...</div>}>
-          <div className="space-y-6">
+          <div class="space-y-6">
             <Question1 onUpdate={(newQ1) => handleChecklistChange({ q1: newQ1 })} checklistState={currentChecklist} />
             <Question2 onUpdate={(newQ2) => handleChecklistChange({ q2: newQ2 })} checklistState={currentChecklist} />
             <Question3 onUpdate={(newQ3) => handleChecklistChange({ q3: newQ3 })} checklistState={currentChecklist} />
