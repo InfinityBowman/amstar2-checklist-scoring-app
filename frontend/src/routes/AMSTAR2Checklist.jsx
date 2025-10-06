@@ -1,9 +1,10 @@
-import { createSignal, createEffect } from 'solid-js';
-import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
-import { useAppState } from '../AppState.jsx';
+import { createSignal, createEffect, onMount } from 'solid-js';
+import { AMSTAR_CHECKLIST } from '@offline/checklistMap.js';
+import { useAppState } from '@/AppState.jsx';
 import { useParams, useNavigate } from '@solidjs/router';
+import { slugify } from './Routes.jsx';
 
-function Question1(props) {
+export function Question1(props) {
   const state = () => props.checklistState().q1;
   const question = AMSTAR_CHECKLIST.q1;
 
@@ -32,7 +33,7 @@ function Question1(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question2(props) {
+export function Question2(props) {
   const state = () => props.checklistState().q2;
   const question = AMSTAR_CHECKLIST.q2;
 
@@ -61,7 +62,7 @@ function Question2(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question3(props) {
+export function Question3(props) {
   const state = () => props.checklistState().q3;
   const question = AMSTAR_CHECKLIST.q3;
 
@@ -90,7 +91,7 @@ function Question3(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question4(props) {
+export function Question4(props) {
   const state = () => props.checklistState().q4;
   const question = AMSTAR_CHECKLIST.q4;
 
@@ -121,7 +122,7 @@ function Question4(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question5(props) {
+export function Question5(props) {
   const state = () => props.checklistState().q5;
   const question = AMSTAR_CHECKLIST.q5;
 
@@ -149,7 +150,7 @@ function Question5(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question6(props) {
+export function Question6(props) {
   const state = () => props.checklistState().q6;
   const question = AMSTAR_CHECKLIST.q6;
 
@@ -177,7 +178,7 @@ function Question6(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question7(props) {
+export function Question7(props) {
   const state = () => props.checklistState().q7;
   const question = AMSTAR_CHECKLIST.q7;
 
@@ -207,7 +208,7 @@ function Question7(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question8(props) {
+export function Question8(props) {
   const state = () => props.checklistState().q8;
   const question = AMSTAR_CHECKLIST.q8;
 
@@ -237,7 +238,7 @@ function Question8(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question9(props) {
+export function Question9(props) {
   const stateA = () => props.checklistState().q9a;
   const stateB = () => props.checklistState().q9b;
   const question = AMSTAR_CHECKLIST.q9;
@@ -315,7 +316,7 @@ function Question9(props) {
   );
 }
 
-function Question10(props) {
+export function Question10(props) {
   const state = () => props.checklistState().q10;
   const question = AMSTAR_CHECKLIST.q10;
 
@@ -343,7 +344,7 @@ function Question10(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question11(props) {
+export function Question11(props) {
   const stateA = () => props.checklistState().q11a;
   const stateB = () => props.checklistState().q11b;
   const question = AMSTAR_CHECKLIST.q11;
@@ -427,7 +428,7 @@ function Question11(props) {
   );
 }
 
-function Question12(props) {
+export function Question12(props) {
   const state = () => props.checklistState().q12;
   const question = AMSTAR_CHECKLIST.q12;
 
@@ -455,7 +456,7 @@ function Question12(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} width="w-48" />;
 }
 
-function Question13(props) {
+export function Question13(props) {
   const state = () => props.checklistState().q13;
   const question = AMSTAR_CHECKLIST.q13;
 
@@ -483,7 +484,7 @@ function Question13(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question14(props) {
+export function Question14(props) {
   const state = () => props.checklistState().q14;
   const question = AMSTAR_CHECKLIST.q14;
 
@@ -511,7 +512,7 @@ function Question14(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} />;
 }
 
-function Question15(props) {
+export function Question15(props) {
   const state = () => props.checklistState().q15;
   const question = AMSTAR_CHECKLIST.q15;
 
@@ -539,7 +540,7 @@ function Question15(props) {
   return <StandardQuestion state={state} question={question} handleChange={handleChange} {...props} width="w-48" />;
 }
 
-function Question16(props) {
+export function Question16(props) {
   const state = () => props.checklistState().q16;
   const question = AMSTAR_CHECKLIST.q16;
 
@@ -657,13 +658,13 @@ export default function AMSTAR2Checklist() {
   const navigate = useNavigate();
 
   createEffect(() => {
-    if (params.name && params.index !== undefined) {
-      const checklistName = decodeURIComponent(params.name);
-      const checklistIndex = Number(params.index);
-      setCurrentChecklist({ name: checklistName, index: checklistIndex });
+    if (params.checklistSlug !== undefined) {
+      const lastDash = params.checklistSlug.lastIndexOf('-');
+      let id = lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
+      setCurrentChecklist({ id });
     } else {
       if (!dataLoading()) {
-        console.warn('AMSTAR2Checklist: No current checklist found for', params.name, params.index);
+        console.warn('AMSTAR2Checklist: No current checklist found for', params.checklistSlug);
         // Go back to dashboard
         navigate(`/dashboard`);
       }
@@ -673,7 +674,7 @@ export default function AMSTAR2Checklist() {
   createEffect(() => {
     // Update local state when currentChecklist changes
     if (currentChecklist()) {
-      setReviewName(currentChecklist().name || currentChecklist().title || '');
+      setReviewName(currentChecklist().name || '');
       setReviewerName(currentChecklist().reviewerName || '');
       setReviewDate(currentChecklist().reviewDate || '');
     }
@@ -702,7 +703,18 @@ export default function AMSTAR2Checklist() {
                 value={reviewName()}
                 onChange={(e) => {
                   setReviewName(e.target.value);
-                  handleChecklistChange({ title: e.target.value });
+                  handleChecklistChange({ name: e.target.value });
+                  console.log('Review name changed to', e.target.value);
+
+                  // Update the route if checklist name changes
+                  if (params.projectSlug && params.reviewSlug && params.checklistSlug && currentChecklist()) {
+                    const lastDash = params.checklistSlug.lastIndexOf('-');
+                    const checklistId = lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
+                    const newChecklistSlug = slugify(e.target.value) + '-' + checklistId;
+                    navigate(`/projects/${params.projectSlug}/reviews/${params.reviewSlug}/checklists/${newChecklistSlug}`, {
+                      replace: true,
+                    });
+                  }
                 }}
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
                 placeholder="Enter review title"

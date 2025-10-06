@@ -2,9 +2,20 @@ import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import solid from 'vite-plugin-solid';
+import path from 'path';
 
 export default defineConfig({
   base: '/amstar2-checklist-scoring-app',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@routes': path.resolve(__dirname, 'src/routes'),
+      '@primitives': path.resolve(__dirname, 'src/primitives'),
+      '@auth': path.resolve(__dirname, 'src/auth'),
+      '@offline': path.resolve(__dirname, 'src/offline'),
+    },
+  },
   build: {
     sourcemap: process.env.SOURCE_MAP === 'true',
     target: 'esnext',

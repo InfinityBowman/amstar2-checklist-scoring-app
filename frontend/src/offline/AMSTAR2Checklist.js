@@ -2,7 +2,22 @@ import { AMSTAR_CHECKLIST } from './checklistMap.js';
 import Papa from 'papaparse';
 import { generateUUID } from './localDB.js';
 
-// Checklist generator with default empty answers
+/**
+ * Creates a new AMSTAR2 checklist object with default empty answers for all questions.
+ *
+ * @param {Object} options - Checklist properties.
+ * @param {string} options.name - The checklist name (required).
+ * @param {string} options.id - Unique checklist ID (required).
+ * @param {number} [options.createdAt=Date.now()] - Timestamp of checklist creation.
+ * @param {string} [options.reviewerName=''] - Name of the reviewer.
+ *
+ * @returns {Object} A checklist object with all AMSTAR2 questions initialized to default answers.
+ *
+ * @throws {Error} If `id` or `name` is missing or not a non-empty string.
+ *
+ * Example:
+ *   createChecklist({ name: 'My Checklist', id: 'chk-123', reviewerName: 'Alice' });
+ */
 export function createChecklist({ name = null, id = null, createdAt = Date.now(), reviewerName = '' }) {
   if (!id || typeof id !== 'string' || !id.trim()) {
     throw new Error('AMSTAR2Checklist requires a non-empty string id.');
@@ -289,14 +304,14 @@ export function importChecklistsFromCSV(csv) {
 
   // Group rows by checklist name + reviewer
   const grouped = {};
-  data.forEach((row) => {
+  data.forEach(async (row) => {
     const key = `${row['Checklist Name']}|${row['Reviewer']}`;
     if (!grouped[key]) {
       grouped[key] = {
         name: row['Checklist Name'],
         reviewerName: row['Reviewer'],
         createdAt: Date.now(),
-        id: generateUUID(),
+        id: await generateUUID(),
       };
     }
     if (!grouped[key][row['Question']]) {

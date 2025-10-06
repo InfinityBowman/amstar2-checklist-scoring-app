@@ -1,12 +1,23 @@
-import { Show, For } from 'solid-js';
-import { scoreChecklist } from './offline/AMSTAR2Checklist.js';
-import TreeView from './components/TreeView.jsx';
+import { Show, For, createSignal, createEffect } from 'solid-js';
+import { scoreChecklist } from '@offline/AMSTAR2Checklist.js';
+import TreeView from '@components/TreeView.jsx';
 import { useAppState } from './AppState.jsx';
-import { useNavigate } from '@solidjs/router';
+import { useParams, useNavigate } from '@solidjs/router';
+import { slugify } from '@routes/Routes.jsx';
 
 export default function Sidebar(props) {
-  const { projects, checklists } = useAppState();
+  const { projects, checklists, getChecklist } = useAppState();
+  const [currentChecklist, setCurrentChecklist] = createSignal(null);
   const navigate = useNavigate();
+  const params = useParams();
+
+  createEffect(() => {
+    if (params.name && params.index !== undefined) {
+      const checklistName = decodeURIComponent(params.name);
+      const checklistIndex = Number(params.index);
+      setCurrentChecklist(getChecklist({ name: checklistName, index: checklistIndex }));
+    }
+  });
 
   function handleSetPdfUrl() {
     const url = window.prompt('Enter PDF URL:');
@@ -84,20 +95,23 @@ export default function Sidebar(props) {
                   <TreeView
                     projectId={project.id}
                     onSelect={() => {
-                      const matches = projects().filter((p) => p.name === project.name);
-                      const index = matches.findIndex((p) => p.id === project.id);
-                      navigate(`/project/${encodeURIComponent(project.name)}/${index}`);
+                      navigate(`/projects/${slugify(project.name)}-${project.id}`);
                     }}
                   >
-                    {(checklist) => (
-                      <ChecklistItem checklist={checklist} onDelete={() => props.onDeleteChecklist(project.id, checklist.id)} />
+                    {(checklist, review) => (
+                      <ChecklistItem
+                        project={project}
+                        isSelected={currentChecklist()?.id === checklist.id}
+                        checklist={checklist}
+                        onDelete={() => props.onDeleteChecklist(project.id, review.id, checklist.id)}
+                      />
                     )}
                   </TreeView>
                 )}
               </For>
             </Show>
           </div>
-          {/* Checklists label */}
+          {/* Checklists label for quick checklists (no project) */}
           <div class="mb-2 px-2">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1">Checklists</h3>
           </div>
@@ -123,7 +137,7 @@ export default function Sidebar(props) {
               <ul class="list-disc space-y-1 text-xs">
                 <For each={checklists()}>
                   {(checklist) => (
-                    <ChecklistItem checklist={checklist} onDelete={() => props.onDeleteChecklist(project.id, checklist.id)} />
+                    <ChecklistItem project={null} checklist={checklist} onDelete={() => props.onDeleteChecklist(null, checklist.id)} />
                   )}
                 </For>
               </ul>
@@ -215,24 +229,37 @@ export default function Sidebar(props) {
 }
 
 function ChecklistItem(props) {
-  const { currentChecklist, getChecklistIndex } = useAppState();
   const navigate = useNavigate();
+
+  function handleChecklistClick() {
+    const checklistSlug = slugify(props.checklist.name);
+
+    if (!props.project) {
+      navigate(`/checklist/${checklistSlug}-${props.checklist.id}`);
+      return;
+    }
+    const projectSlug = slugify(props.project.name);
+    const review = (props.project.reviews || []).find((r) => (r.checklists || []).some((cl) => cl.id === props.checklist.id));
+    if (!review) {
+      console.error('Review not found for checklist', props.checklist);
+      return;
+    }
+    const reviewSlug = slugify(review.name);
+    navigate(
+      `/projects/${projectSlug}-${props.project.id}/reviews/${reviewSlug}-${review.id}/checklists/${checklistSlug}-${props.checklist.id}`,
+    );
+  }
 
   return (
     <div
       class={`
             flex items-center group rounded transition-colors
-            ${currentChecklist() && props.checklist.id === currentChecklist().id ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}
+            ${props.isSelected ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}
           `}
       style="flex: 1"
     >
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          let name = props.checklist.name;
-          let id = props.checklist.id;
-          navigate(`/checklist/${encodeURIComponent(name)}/${getChecklistIndex(id, name)}`);
-        }}
+        onClick={() => handleChecklistClick()}
         class="flex-1 flex items-center gap-2 px-2 py-1.5 text-left focus:outline-none"
         tabIndex={0}
       >
@@ -279,10 +306,9 @@ function ChecklistItem(props) {
           e.stopPropagation();
           props.onDelete(null, props.checklist.id);
         }}
-        class={`
-                              p-1.5 mr-1 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
-                              ${currentChecklist() && props.checklist.id !== currentChecklist().id ? 'opacity-0 group-hover:opacity-100' : ''}
-                            `}
+        class={`p-1.5 mr-1 rounded transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50
+                  ${props.isSelected ? 'opacity-0 group-hover:opacity-100' : ''}
+                `}
         aria-label="Delete checklist"
         tabIndex={-1}
       >

@@ -11,7 +11,7 @@
   - [x] Integrate sign up flow
   - [x] Use HttpOnly cookies and refresh token
   - [x] Show/hide features based on authentication state
-  - [ ] Mock email verification
+  - [x] Mock email verification
   - [ ] Mock password reset
   - [ ] Real email verification
   - [ ] Real password reset
@@ -108,5 +108,8 @@
   - [x] UI library: https://zagjs.com/overview/installation
 
 Format needs to be updated to create a review, then add checklists to that review
+
+- pdfs can be linked to reviews
+- Checklists dont need a name since reviews have that
 
 _This roadmap is a living document and will be updated as the project evolves._

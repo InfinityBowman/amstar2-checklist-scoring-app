@@ -5,10 +5,10 @@
  * @param {string} options.id - Unique project ID.
  * @param {string} options.name - Project name/title.
  * @param {number} [options.createdAt=Date.now()] - Timestamp of project creation.
- * @param {Array} [options.checklists=[]] - Array of checklist objects or checklist IDs.
+ * @param {Array} [options.reviews=[]] - Array of review objects containing pdf link or checklist.
  * @returns {Object} a project object.
  */
-export function createProject({ id, name, createdAt = Date.now(), checklists = [] } = {}) {
+export function createProject({ id, name, createdAt = Date.now(), reviews = [] } = {}) {
   if (name === null) {
     throw new Error('Project name cannot be null');
   }
@@ -16,7 +16,7 @@ export function createProject({ id, name, createdAt = Date.now(), checklists = [
     id,
     name,
     createdAt,
-    checklists,
+    reviews,
   };
 }
 
