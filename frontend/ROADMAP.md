@@ -111,5 +111,7 @@ Format needs to be updated to create a review, then add checklists to that revie
 
 - pdfs can be linked to reviews
 - Checklists dont need a name since reviews have that
+- Polish up the checklist page
+  - navbar, pdf viewer, edit the review it's part of
 
 _This roadmap is a living document and will be updated as the project evolves._

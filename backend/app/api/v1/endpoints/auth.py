@@ -37,7 +37,7 @@ class SignupResponse(BaseModel):
     user: UserResponse
 
 class VerifyEmailRequest(BaseModel):
-    email: str
+    email: EmailStr
     code: str
 
 
@@ -62,6 +62,9 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_session))
     - **name**: User's display name
     - **password**: User's password (will be hashed)
     """
+    # Normalize email
+    user_data.email = user_data.email.strip().lower()
+
     # Check if user already exists
     result = await db.execute(select(User).where(User.email == user_data.email))
     existing_user = result.scalar_one_or_none()
@@ -118,6 +121,9 @@ async def signin(
     
     Returns access token and sets refresh token as HttpOnly cookie.
     """
+    # Normalize email
+    user_data.email = user_data.email.strip().lower()
+
     # Find user by email
     result = await db.execute(select(User).where(User.email == user_data.email))
     user = result.scalar_one_or_none()
@@ -184,9 +190,14 @@ async def refresh_token(
                 detail="Invalid refresh token"
             )
         
-        # Check if user still exists and is active
+        # Check if user still exists
         result = await db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found"
+            )
         
         # Create new access token
         new_access_token = create_access_token({"sub": str(user.id)})

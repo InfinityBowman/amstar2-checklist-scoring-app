@@ -21,9 +21,9 @@ registerRoute(new NavigationRoute(createHandlerBoundToURL('/amstar2-checklist-sc
 self.skipWaiting();
 clientsClaim();
 
-// --- Custom logic for offline actions ---
+// --- logic for offline actions ---
 
-// Helper: Open IndexedDB (simple version)
+// Open IndexedDB
 function openActionsDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('actions-db', 1);
@@ -38,7 +38,7 @@ function openActionsDB() {
   });
 }
 
-// Helper: Get all actions
+// Get all actions
 function getAllActions(db) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('actions', 'readonly');
@@ -49,7 +49,7 @@ function getAllActions(db) {
   });
 }
 
-// Helper: Delete action
+// Delete action
 function deleteAction(db, id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('actions', 'readwrite');

@@ -19,19 +19,6 @@ export default function SignUp() {
   const navigate = useNavigate();
   const { signup } = useAuth();
 
-  async function handleSignupWithDelay() {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          await signup(email(), password(), name());
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      }, 200);
-    });
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitted(true);
@@ -50,7 +37,8 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      await handleSignupWithDelay();
+      await signup(email(), password(), name());
+      await new Promise((resolve) => setTimeout(resolve, 200)); // Simulate delay for UX
       navigate('/verify-email', { replace: true });
       setLoading(false);
     } catch (err) {
