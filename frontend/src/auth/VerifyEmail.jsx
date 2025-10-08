@@ -28,13 +28,13 @@ export default function VerifyEmail() {
     }
   });
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e, pinCode) {
     e?.preventDefault && e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      console.log('Verifying code:', code());
-      await verifyEmail(code());
+      const codeToVerify = pinCode ?? code();
+      await verifyEmail(codeToVerify);
       await new Promise((resolve) => setTimeout(resolve, 200)); // Simulate delay for UX
       setSuccess(true);
       navigate('/signin', { replace: true });
@@ -127,7 +127,14 @@ export default function VerifyEmail() {
             <p class="text-gray-500 text-sm sm:text-base">Enter the verification code sent to your email.</p>
           </div>
 
-          <PinInput otp required autocomplete onInput={setCode} isError={!!error()} onComplete={handleSubmit} />
+          <PinInput
+            otp
+            required
+            autocomplete
+            onInput={setCode}
+            isError={!!error()}
+            onComplete={(value) => handleSubmit(undefined, value)}
+          />
 
           <button
             type="submit"

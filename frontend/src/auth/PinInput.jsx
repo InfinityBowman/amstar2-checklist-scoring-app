@@ -12,7 +12,7 @@ export default function PinInput(props) {
       props.onInput && props.onInput(value.valueAsString);
     },
     onValueComplete(details) {
-      props.onComplete && props.onComplete();
+      props.onComplete && props.onComplete(details.valueAsString);
     },
   });
 
