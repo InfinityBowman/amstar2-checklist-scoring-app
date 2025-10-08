@@ -4,7 +4,7 @@
   "description": "An app for managing and scoring AMSTAR 2 checklists",
   "homepage": "https://InfinityBowman.github.io/amstar2-checklist-scoring-app",
   "scripts": {
-    "dev": "docker compose up --build backend db -d && vite dev",
+    "dev": "docker compose up --build backend postgres electric -d && vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "sw": "SOURCE_MAP=true SW_DEV=true vite build && vite preview",
@@ -16,15 +16,22 @@
   "author": "Jacob Maynard",
   "license": "MIT",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
+    "@electric-sql/client": "^1.0.14",
     "@solidjs/router": "^0.15.3",
+    "@tanstack/electric-db-collection": "^0.1.29",
+    "@tanstack/solid-db": "^0.1.27",
     "@zag-js/password-input": "^1.22.1",
     "@zag-js/pin-input": "^1.24.2",
     "@zag-js/solid": "^1.24.2",
     "d3": "^7.9.0",
     "papaparse": "^5.5.3",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.9.9"
+    "solid-js": "^1.9.9",
+    "@electric-sql/solid": "0.0.1"
   },
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.10",
