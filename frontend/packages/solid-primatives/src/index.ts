@@ -1,1 +1,1 @@
-export * from './solid-primatives'
+export * from './solid-primatives';
