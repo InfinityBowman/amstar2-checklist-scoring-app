@@ -13,8 +13,8 @@ import NotFound from './NotFound.jsx';
 import Offline from './Offline.jsx';
 import useOnlineStatus from '../primatives/useOnlineStatus';
 import AMSTAR2Merge from './AMSTAR2Merge.jsx';
-import Electric from './Electric.jsx';
-import PGliteComponent from './PGlite.jsx';
+// import Electric from './Electric.jsx';
+// import PGliteComponent from './PGlite.jsx';
 
 export const BASEPATH = '/amstar2-checklist-scoring-app';
 
@@ -31,8 +31,8 @@ export default function AppRoutes() {
       <Route path="/" component={App}>
         <Route path="/" component={Home} />
         <Route path="/dashboard" component={AppDashboard} />
-        <Route path="/electric" component={Electric} />
-        <Route path="/pglite" component={PGliteComponent} />
+        {/* <Route path="/electric" component={Electric} /> */}
+        {/* <Route path="/pglite" component={PGliteComponent} /> */}
         {/* <Route path="/project/new" component={CreateProject} /> */}
         <Route path="/projects/:projectSlug" component={ProjectDashboard} />
         <Route path="/projects/:projectSlug/reviews/:reviewSlug/checklists/:checklistSlug" component={AMSTAR2Checklist} />

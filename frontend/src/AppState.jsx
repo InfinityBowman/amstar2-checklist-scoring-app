@@ -19,6 +19,7 @@ export function StateProvider(props) {
   onMount(async () => {
     try {
       await loadData();
+      localDB.subscribeToDBChanges(loadData);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

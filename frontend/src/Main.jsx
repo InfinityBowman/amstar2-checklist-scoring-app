@@ -39,12 +39,6 @@ function Root() {
       INSERT INTO todo (task, done) VALUES ('Insert some data', true);
       INSERT INTO todo (task) VALUES ('Update a task');
     `);
-
-    await dbGlobal.electric.syncShapeToTable({
-      shape: { url: `http://localhost:3000/v1/shape` },
-      table: 'todo',
-      primaryKey: ['id'],
-    });
     setDb(dbGlobal);
   });
 
