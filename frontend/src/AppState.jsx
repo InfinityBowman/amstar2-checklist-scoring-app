@@ -1,6 +1,7 @@
 import { createStore } from 'solid-js/store';
 import { createContext, useContext, onMount } from 'solid-js';
-import * as localDB from '@offline/localDB.js';
+import * as localDB from '@offline/localDB';
+import * as electricSync from '@offline/electricSync';
 
 // TODO use produce or batch for updates to store
 
@@ -19,7 +20,12 @@ export function StateProvider(props) {
   onMount(async () => {
     try {
       await loadData();
-      localDB.subscribeToDBChanges(loadData);
+      localDB.subscribeToDBChanges(loadData); // reload data if another tab changes it
+
+      // Set up Electric sync
+      electricSync.syncProjects({
+        onUpdate: (projects) => setState('projects', projects),
+      });
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
