@@ -6,6 +6,9 @@ import path from 'path';
 
 export default defineConfig({
   base: '/amstar2-checklist-scoring-app',
+  optimizeDeps: {
+    exclude: ['@electric-sql/pglite'],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
