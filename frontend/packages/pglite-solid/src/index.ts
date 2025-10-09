@@ -1,2 +1,2 @@
-export * from './provider.tsx'
-export * from './primitives.ts'
+export * from './provider.tsx';
+export * from './primitives.ts';
