@@ -115,10 +115,11 @@ Format needs to be updated to create a review, then add checklists to that revie
   - navbar, pdf viewer, edit the review it's part of
 
 Sync Plan
+
 - Use createShape to pull from ElectricSQL when online.
 - Add a layer for ElectricSQL sync that integrates with my state context and indexeddb.
 - ElectricSQL should call AppState methods and those will handle updating indexeddb and
-propogating the state
+  propogating the state
 - Make sure auth is fine, ElectricSQL needs to be integrated with FastAPI or Auth in some way.
 
 _This roadmap is a living document and will be updated as the project evolves._
