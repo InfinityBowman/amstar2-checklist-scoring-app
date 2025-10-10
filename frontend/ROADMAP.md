@@ -132,6 +132,4 @@ Format needs to be updated to create a review, then add checklists to that revie
   - If the user reconnects and is not logged the server would not allow writes
   - If there is some conflict that prevents the write such as a more recent edit timestamp in the server db
 
-
-
 <br><br>_This roadmap is a living document and will be updated as the project evolves._
