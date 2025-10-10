@@ -1,5 +1,7 @@
 import { createShape } from '@electric-sql/solid';
 import { createEffect } from 'solid-js';
+import { API_ENDPOINTS } from '@api/config.js';
+import { useAuth } from '@auth/AuthProvider.jsx';
 
 /**
  * Syncs the projects table from ElectricSQL and calls onUpdate with new data.
@@ -8,9 +10,14 @@ import { createEffect } from 'solid-js';
  */
 export function syncProjects({ onUpdate }) {
   // Set up a live shape subscription for the projects table
+  const { authFetch } = useAuth();
+
   const { data, error } = createShape({
-    url: 'http://localhost:3000/v1/shape',
-    params: { table: 'users' },
+    url: API_ENDPOINTS.ELECTRIC_SHAPE,
+    params: {
+      table: `users`,
+    },
+    fetchClient: authFetch,
   });
 
   // Watch for changes and call onUpdate

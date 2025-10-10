@@ -17,6 +17,7 @@ export default defineConfig({
       '@primitives': path.resolve(__dirname, 'src/primitives'),
       '@auth': path.resolve(__dirname, 'src/auth'),
       '@offline': path.resolve(__dirname, 'src/offline'),
+      '@api': path.resolve(__dirname, 'src/api'),
     },
   },
   build: {

@@ -23,9 +23,9 @@ export function StateProvider(props) {
       localDB.subscribeToDBChanges(loadData); // reload data if another tab changes it
 
       // Set up Electric sync
-      electricSync.syncProjects({
-        onUpdate: (projects) => setState('projects', projects),
-      });
+      // electricSync.syncProjects({
+      //   onUpdate: (projects) => setState('projects', projects),
+      // });
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

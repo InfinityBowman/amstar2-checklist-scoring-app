@@ -22,13 +22,8 @@
   ],
   "dependencies": {
     "@electric-sql/client": "^1.0.14",
-    "@electric-sql/pglite": "^0.3.10",
-    "@electric-sql/pglite-solid": "^0.0.1",
-    "@electric-sql/pglite-sync": "^0.3.14",
     "@electric-sql/solid": "0.0.1",
     "@solidjs/router": "^0.15.3",
-    "@tanstack/electric-db-collection": "^0.1.29",
-    "@tanstack/solid-db": "^0.1.27",
     "@zag-js/password-input": "^1.22.1",
     "@zag-js/pin-input": "^1.24.2",
     "@zag-js/solid": "^1.24.2",
@@ -46,7 +41,7 @@
     "jsdom": "^27.0.0",
     "prettier": "3.6.2",
     "tailwindcss": "^4.1.13",
-    "vite": "^7.0.6",
+    "vite": "^7.1.9",
     "vite-plugin-pwa": "^1.0.2",
     "vite-plugin-solid": "^2.11.8",
     "vitest": "^3.2.4"

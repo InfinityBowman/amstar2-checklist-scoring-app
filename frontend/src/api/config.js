@@ -27,6 +27,8 @@ export const API_ENDPOINTS = {
   // User endpoints
   CURRENT_USER: `${baseUrl}${API_PREFIX}/users/me`,
 
+  ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric/shape`,
+
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,
   HEALTH_DB: `${baseUrl}/healthz/db`,
