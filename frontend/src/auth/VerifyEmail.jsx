@@ -28,8 +28,9 @@ export default function VerifyEmail() {
     }
   });
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e, value) {
     e?.preventDefault && e.preventDefault();
+    if (value) setCode(value);
     setError('');
     setLoading(true);
     try {
@@ -127,7 +128,7 @@ export default function VerifyEmail() {
             <p class="text-gray-500 text-sm sm:text-base">Enter the verification code sent to your email.</p>
           </div>
 
-          <PinInput otp required autocomplete onInput={setCode} isError={!!error()} onComplete={handleSubmit} />
+          <PinInput otp required autocomplete onInput={setCode} isError={!!error()} onComplete={(val) => handleSubmit(null, val)} />
 
           <button
             type="submit"
