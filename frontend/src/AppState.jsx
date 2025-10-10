@@ -48,6 +48,7 @@ export function StateProvider(props) {
   async function loadData() {
     try {
       setState('loading', true);
+
       const allProjects = await localDB.getAllProjects();
       allProjects.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
       setState('projects', allProjects);

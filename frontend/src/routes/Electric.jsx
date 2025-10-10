@@ -3,16 +3,19 @@ import { API_ENDPOINTS } from '@api/config.js';
 import { useAuth } from '@auth/AuthProvider.jsx';
 
 export default function Electric() {
-  // const { authFetch } = useAuth();
+  const { authFetch, user } = useAuth();
 
-  // const { data } = createShape({
-  //   url: API_ENDPOINTS.ELECTRIC_SHAPE,
-  //   params: {
-  //     table: `users`,
-  //   },
-  //   fetchClient: authFetch,
-  // });
+  if (!user()) {
+    return <div>Database access requires an authenticated user.</div>;
+  }
 
-  // return <pre>{JSON.stringify(data(), null, 2)}</pre>;
-  return null;
+  const { data } = createShape({
+    url: API_ENDPOINTS.ELECTRIC_SHAPE,
+    params: {
+      table: `users`,
+    },
+    fetchClient: authFetch,
+  });
+
+  return <pre>{JSON.stringify(data(), null, 2)}</pre>;
 }

@@ -16,8 +16,8 @@ async def electric_proxy(
     background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user)  # Require authentication
 ):
-    print(f"[Electric Proxy] Cookies: {request.cookies}")
-    print(f"[Electric Proxy] Headers: {dict(request.headers)}")
+    # print(f"[Electric Proxy] Cookies: {request.cookies}")
+    # print(f"[Electric Proxy] Headers: {dict(request.headers)}")
     
     # Filter out problematic headers
     safe_headers = {
@@ -28,12 +28,12 @@ async def electric_proxy(
     # Get query parameters and body
     body = await request.body()
     electric_url = f"{ELECTRIC_URL}/v1/{path}"
-    print(f"[Electric Proxy] Proxying to: {electric_url}")
-    print(f"[Electric Proxy] Query params: {dict(request.query_params)}")
+    # print(f"[Electric Proxy] Proxying to: {electric_url}")
+    # print(f"[Electric Proxy] Query params: {dict(request.query_params)}")
     
     # For streaming connections (with live=true), we need special handling
     if request.query_params.get("live") == "true":
-        print("[Electric Proxy] Handling as streaming connection")
+        # print("[Electric Proxy] Handling as streaming connection")
         return await stream_response(electric_url, request.method, safe_headers, body, request.query_params)
     else:
         # Non-streaming response is simpler
@@ -45,7 +45,7 @@ async def electric_proxy(
                 content=body,
                 params=request.query_params,
             )
-            print(f"[Electric Proxy] Response status: {resp.status_code}")
+            # print(f"[Electric Proxy] Response status: {resp.status_code}")
             
             # Filter problematic response headers
             excluded_headers = {
@@ -83,7 +83,7 @@ async def stream_response(url, method, headers, body, params):
                 async with client.stream(
                     method, url, headers=headers, content=body, params=params
                 ) as resp:
-                    print(f"[Electric Producer] Stream response status: {resp.status_code}")
+                    # print(f"[Electric Producer] Stream response status: {resp.status_code}")
                     
                     # Put the status code in the queue first (will be read by consumer)
                     await queue.put((resp.status_code, resp.headers))
@@ -114,7 +114,7 @@ async def stream_response(url, method, headers, body, params):
         except Exception as e:
             print(f"[Electric Consumer] Error: {e}")
             
-        print("[Electric Consumer] Stream complete")
+        # print("[Electric Consumer] Stream complete")
 
     # Start the producer task
     background_task = asyncio.create_task(producer())
