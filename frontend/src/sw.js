@@ -1,6 +1,7 @@
 import { clientsClaim } from 'workbox-core';
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching';
 import { NavigationRoute, registerRoute } from 'workbox-routing';
+import { NetworkOnly } from 'workbox-strategies';
 
 console.log('Service worker loaded');
 
@@ -15,6 +16,11 @@ if (import.meta.env.DEV) allowlist = [/^\/$/];
 
 // to allow work offline
 registerRoute(new NavigationRoute(createHandlerBoundToURL('/amstar2-checklist-scoring-app/index.html'), { allowlist }));
+
+// Add route handler to bypass API requests - let them go to the network
+// Match any URL that includes /api to ensure all API calls go to network
+const apiUrlPattern = /\/api\//;
+registerRoute(({ url }) => apiUrlPattern.test(url.href), new NetworkOnly());
 
 // activate the service worker as soon as it's finished installing
 // don't ask user to accept any prompts
