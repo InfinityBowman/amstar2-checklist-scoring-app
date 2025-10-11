@@ -2765,7 +2765,7 @@ class NavigationRoute extends Route {
 }
 
 console.log("Service worker loaded");
-precacheAndRoute([{"revision":null,"url":"assets/index-Cctcyodo.js"},{"revision":null,"url":"assets/index-DI3sr568.css"},{"revision":"61cafdf499f96cafc83701cba71dcdb4","url":"index.html"},{"revision":"583140937b17754a4b0727098720af0e","url":"registerSW.js"},{"revision":"5d3e0acfe04a12d24de1307fec167172","url":"apple-touch-icon.png"},{"revision":"de11fb7ff41c47fa98878b1c73faa2f5","url":"favicon-16x16.png"},{"revision":"a00092ad4c3f35955796184e7ba8c011","url":"favicon-32x32.png"},{"revision":"a252619223354bc5b54898df190cfd20","url":"manifest.webmanifest"}]);
+precacheAndRoute([{"revision":null,"url":"assets/index-2Laea7_U.js"},{"revision":null,"url":"assets/index-DI3sr568.css"},{"revision":"639df53203ced57e22becfc9b5e97cf1","url":"index.html"},{"revision":"583140937b17754a4b0727098720af0e","url":"registerSW.js"},{"revision":"5d3e0acfe04a12d24de1307fec167172","url":"apple-touch-icon.png"},{"revision":"de11fb7ff41c47fa98878b1c73faa2f5","url":"favicon-16x16.png"},{"revision":"a00092ad4c3f35955796184e7ba8c011","url":"favicon-32x32.png"},{"revision":"a252619223354bc5b54898df190cfd20","url":"manifest.webmanifest"}]);
 cleanupOutdatedCaches();
 let allowlist;
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/amstar2-checklist-scoring-app/index.html"), { allowlist }));
