@@ -4,11 +4,12 @@
   "description": "An app for managing and scoring AMSTAR 2 checklists",
   "homepage": "https://InfinityBowman.github.io/amstar2-checklist-scoring-app",
   "scripts": {
-    "dev": "docker compose up --build backend db -d && vite dev",
+    "dev": "vite dev",
+    "dev:up": "docker compose up --build backend postgres electric -d && vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "sw": "SOURCE_MAP=true SW_DEV=true vite build && vite preview",
-    "deploy": "gh-pages -d frontend/dist",
+    "deploy": "gh-pages -d dist",
     "format": "prettier --write .",
     "test": "vitest"
   },
@@ -16,7 +17,12 @@
   "author": "Jacob Maynard",
   "license": "MIT",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
+    "@electric-sql/client": "^1.0.14",
+    "@electric-sql/solid": "0.0.1",
     "@solidjs/router": "^0.15.3",
     "@zag-js/password-input": "^1.22.1",
     "@zag-js/pin-input": "^1.24.2",
@@ -35,7 +41,7 @@
     "jsdom": "^27.0.0",
     "prettier": "3.6.2",
     "tailwindcss": "^4.1.13",
-    "vite": "^7.0.6",
+    "vite": "^7.1.9",
     "vite-plugin-pwa": "^1.0.2",
     "vite-plugin-solid": "^2.11.8",
     "vitest": "^3.2.4"

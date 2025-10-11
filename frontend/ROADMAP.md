@@ -114,4 +114,22 @@ Format needs to be updated to create a review, then add checklists to that revie
 - Polish up the checklist page
   - navbar, pdf viewer, edit the review it's part of
 
-_This roadmap is a living document and will be updated as the project evolves._
+## Sync Plan
+
+### Read
+
+- Use createShape to pull from ElectricSQL when online.
+- Add a layer for ElectricSQL sync that integrates with my state context and indexeddb.
+- ElectricSQL should call AppState methods and those will handle updating indexeddb and
+  propogating the state
+- Make sure auth is fine, ElectricSQL needs to be integrated with FastAPI or Auth in some way.
+
+### Write
+
+- Need another indexeddb database to track changes and make POST requests when connectivity is regained
+- This extra table has things removed from it on successful writes
+- We need to be able to handle rejected writes.
+  - If the user reconnects and is not logged the server would not allow writes
+  - If there is some conflict that prevents the write such as a more recent edit timestamp in the server db
+
+<br><br>_This roadmap is a living document and will be updated as the project evolves._

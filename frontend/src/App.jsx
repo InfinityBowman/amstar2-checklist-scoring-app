@@ -14,12 +14,14 @@ import { AnimatedShow } from './components/AnimatedShow.jsx';
  * black and white export option for d3
  * search pdf
  */
+// let dbGlobal;
 export default function App(props) {
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
+  const [db, setDb] = createSignal(null);
   const { authLoading } = useAuth();
 
   const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppState();
