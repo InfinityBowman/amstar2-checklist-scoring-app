@@ -62,7 +62,7 @@ const logger = (() => {
   license that can be found in the LICENSE file or at
   https://opensource.org/licenses/MIT.
 */
-const messages = {
+const messages$1 = {
     'invalid-value': ({ paramName, validValueDescription, value }) => {
         if (!paramName || !validValueDescription) {
             throw new Error(`Unexpected input to 'invalid-value' error.`);
@@ -284,7 +284,7 @@ const messages = {
 };
 
 const generatorFunction = (code, details = {}) => {
-  const message = messages[code];
+  const message = messages$1[code];
   if (!message) {
     throw new Error(`Unable to find message for code '${code}'.`);
   }
@@ -2764,11 +2764,102 @@ class NavigationRoute extends Route {
   }
 }
 
+/*
+  Copyright 2018 Google LLC
+
+  Use of this source code is governed by an MIT-style
+  license that can be found in the LICENSE file or at
+  https://opensource.org/licenses/MIT.
+*/
+const messages = {
+    strategyStart: (strategyName, request) => `Using ${strategyName} to respond to '${getFriendlyURL(request.url)}'`,
+    printFinalResponse: (response) => {
+        if (response) {
+            logger.groupCollapsed(`View the final response here.`);
+            logger.log(response || '[No response returned]');
+            logger.groupEnd();
+        }
+    },
+};
+
+class NetworkOnly extends Strategy {
+  /**
+   * @param {Object} [options]
+   * @param {Array<Object>} [options.plugins] [Plugins]{@link https://developers.google.com/web/tools/workbox/guides/using-plugins}
+   * to use in conjunction with this caching strategy.
+   * @param {Object} [options.fetchOptions] Values passed along to the
+   * [`init`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters)
+   * of [non-navigation](https://github.com/GoogleChrome/workbox/issues/1796)
+   * `fetch()` requests made by this strategy.
+   * @param {number} [options.networkTimeoutSeconds] If set, any network requests
+   * that fail to respond within the timeout will result in a network error.
+   */
+  constructor(options = {}) {
+    super(options);
+    this._networkTimeoutSeconds = options.networkTimeoutSeconds || 0;
+  }
+  /**
+   * @private
+   * @param {Request|string} request A request to run this strategy for.
+   * @param {workbox-strategies.StrategyHandler} handler The event that
+   *     triggered the request.
+   * @return {Promise<Response>}
+   */
+  async _handle(request, handler) {
+    {
+      finalAssertExports.isInstance(request, Request, {
+        moduleName: "workbox-strategies",
+        className: this.constructor.name,
+        funcName: "_handle",
+        paramName: "request"
+      });
+    }
+    let error = void 0;
+    let response;
+    try {
+      const promises = [
+        handler.fetch(request)
+      ];
+      if (this._networkTimeoutSeconds) {
+        const timeoutPromise = timeout(this._networkTimeoutSeconds * 1e3);
+        promises.push(timeoutPromise);
+      }
+      response = await Promise.race(promises);
+      if (!response) {
+        throw new Error(`Timed out the network response after ${this._networkTimeoutSeconds} seconds.`);
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        error = err;
+      }
+    }
+    {
+      logger.groupCollapsed(messages.strategyStart(this.constructor.name, request));
+      if (response) {
+        logger.log(`Got response from network.`);
+      } else {
+        logger.log(`Unable to get a response from the network.`);
+      }
+      messages.printFinalResponse(response);
+      logger.groupEnd();
+    }
+    if (!response) {
+      throw new WorkboxError("no-response", { url: request.url, error });
+    }
+    return response;
+  }
+}
+
 console.log("Service worker loaded");
 precacheAndRoute([{"revision":null,"url":"assets/index-2Laea7_U.js"},{"revision":null,"url":"assets/index-DI3sr568.css"},{"revision":"639df53203ced57e22becfc9b5e97cf1","url":"index.html"},{"revision":"583140937b17754a4b0727098720af0e","url":"registerSW.js"},{"revision":"5d3e0acfe04a12d24de1307fec167172","url":"apple-touch-icon.png"},{"revision":"de11fb7ff41c47fa98878b1c73faa2f5","url":"favicon-16x16.png"},{"revision":"a00092ad4c3f35955796184e7ba8c011","url":"favicon-32x32.png"},{"revision":"a252619223354bc5b54898df190cfd20","url":"manifest.webmanifest"}]);
 cleanupOutdatedCaches();
 let allowlist;
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/amstar2-checklist-scoring-app/index.html"), { allowlist }));
+const apiUrlPattern = /\/api\/v1\//;
+registerRoute(
+  ({ url }) => apiUrlPattern.test(url.href),
+  new NetworkOnly()
+);
 self.skipWaiting();
 clientsClaim();
 self.addEventListener("online", () => {
