@@ -169,3 +169,80 @@ Delete from projects:
 |--(Create Review)--> (Review Management) --> [Reviews & Review Assignments]  
 |--(Fill Checklist)--> (Checklist Completion) --> [Checklists & Checklist Answers]  
 |<--(View Projects/Reviews/Checklists)--|
+
+Schema  
+Use DBML to define your database structure  
+[Paste the following here](https://dbdiagram.io/d)
+
+```Sql
+Table users {
+  id uuid [primary key]
+  name text [not null]
+  email text [unique, not null]
+  password_hash text [not null]
+  created_at timestamp [default: `now()`]
+  email_verified_at timestamp
+  email_verification_code text
+  email_verification_requested_at timestamp
+  password_reset_at timestamp
+  password_reset_code text
+  password_reset_requested_at timestamp
+  timezone text [default: 'UTC']
+  locale text [default: 'en-US']
+}
+
+Table projects {
+  id uuid [primary key]
+  owner_id uuid [not null]
+  name text [not null]
+  updated_at timestamp [default: `now()`]
+}
+
+Table project_members {
+  project_id uuid [not null]
+  user_id uuid [not null]
+  role text [not null, default: 'member', note: 'owner or member']
+  Note: 'Primary key (project_id, user_id)'
+}
+
+Table reviews {
+  id uuid [primary key]
+  project_id uuid [not null]
+  name text [not null]
+  created_at timestamp [default: `now()`]
+}
+
+Table review_assignments {
+  review_id uuid [not null]
+  user_id uuid [not null]
+  Note: 'Primary key (review_id, user_id)'
+}
+
+Table checklists {
+  id uuid [primary key]
+  review_id uuid [not null]
+  reviewer_id uuid
+  type text [not null, default: 'amstar', note: 'support for other formats later']
+  completed_at timestamp
+  updated_at timestamp
+}
+
+Table checklist_answers {
+  id uuid [primary key]
+  checklist_id uuid [not null]
+  question_key text [not null]
+  answers jsonb [not null]
+  critical boolean [not null, default: false]
+  updated_at timestamp
+}
+
+Ref: projects.owner_id > users.id
+Ref: project_members.project_id > projects.id
+Ref: project_members.user_id > users.id
+Ref: reviews.project_id > projects.id
+Ref: review_assignments.review_id > reviews.id
+Ref: review_assignments.user_id > users.id
+Ref: checklists.review_id > reviews.id
+Ref: checklists.reviewer_id > users.id
+Ref: checklist_answers.checklist_id > checklists.id
+```

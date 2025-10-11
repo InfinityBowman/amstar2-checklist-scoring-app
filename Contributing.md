@@ -34,7 +34,7 @@
 3. **Access the Application**
    - **Backend API**: http://localhost:8000
    - **API Documentation**: http://localhost:8000/docs
-   - **Database**: localhost:5433 (PostgreSQL)
+   - **Database**: localhost:54321 (PostgreSQL)
    - **Frontend**: [http://localhost:5173/amstar2-checklist-scoring-app/](http://localhost:5173/amstar2-checklist-scoring-app/)
 
 ---
@@ -63,7 +63,7 @@ docker-compose restart backend
 The PostgreSQL database runs in a Docker container with:
 
 - **Host**: localhost
-- **Port**: 5433
+- **Port**: 54321
 - **Database**: amstar
 - **Username**: amstar
 - **Password**: amstar_password
@@ -74,7 +74,7 @@ The PostgreSQL database runs in a Docker container with:
 # Using Docker
 docker-compose exec db psql -U amstar -d amstar
 
-# Host: localhost, Port: 5433
+# Host: localhost, Port: 54321
 ```
 
 ## Docker Commands

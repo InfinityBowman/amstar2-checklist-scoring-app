@@ -1,8 +1,10 @@
-import { createSignal, createEffect, onMount } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 import { AMSTAR_CHECKLIST } from '@offline/checklistMap.js';
 import { useAppState } from '@/AppState.jsx';
 import { useParams, useNavigate } from '@solidjs/router';
 import { slugify } from './Routes.jsx';
+import { generateUUID } from '@offline/localDB.js';
+import { createChecklist as createAMSTARChecklist } from '@offline/AMSTAR2Checklist.js';
 
 export function Question1(props) {
   const state = () => props.checklistState().q1;
@@ -653,12 +655,38 @@ export default function AMSTAR2Checklist() {
   const [reviewName, setReviewName] = createSignal('');
   const [reviewerName, setReviewerName] = createSignal('');
   const [reviewDate, setReviewDate] = createSignal('');
-  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading } = useAppState();
+  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading, createChecklist } = useAppState();
   const params = useParams();
   const navigate = useNavigate();
 
-  createEffect(() => {
-    if (params.checklistSlug !== undefined) {
+  // createEffect(async () => {
+  //   const checklist = createChecklist({
+  //     name: 'New AMSTAR 2 Checklist',
+  //     id: await generateUUID(),
+  //     createdAt: Date.now(),
+  //     reviewerName: 'Unassigned',
+  //   });
+  // });
+
+  createEffect(async () => {
+    if (params.checklistSlug === 'new') {
+      // Create a new checklist
+      const newChecklist = createAMSTARChecklist({
+        name: 'New AMSTAR 2 Checklist',
+        id: await generateUUID(),
+        createdAt: Date.now(),
+        reviewerName: '',
+        reviewDate: '',
+      });
+      setCurrentChecklist(newChecklist);
+      // Optionally, update the route to the new checklist's slug
+      if (params.projectSlug && params.reviewSlug) {
+        const newChecklistSlug = slugify(newChecklist.name) + '-' + newChecklist.id;
+        navigate(`/projects/${params.projectSlug}/reviews/${params.reviewSlug}/checklists/${newChecklistSlug}`, {
+          replace: true,
+        });
+      }
+    } else if (params.checklistSlug !== undefined) {
       const lastDash = params.checklistSlug.lastIndexOf('-');
       let id = lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
       setCurrentChecklist({ id });

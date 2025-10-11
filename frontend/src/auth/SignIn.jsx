@@ -13,19 +13,6 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { signin } = useAuth();
 
-  async function handleSignin() {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          await signin(email(), password());
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      }, 200);
-    });
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
@@ -35,8 +22,9 @@ export default function SignIn() {
     }
     setLoading(true);
     try {
-      // await signin(email(), password());
-      await handleSignin();
+      await signin(email(), password());
+      await new Promise((resolve) => setTimeout(resolve, 200)); // Simulate delay for UX
+
       navigate('/dashboard', { replace: true });
       setLoading(false);
     } catch (err) {

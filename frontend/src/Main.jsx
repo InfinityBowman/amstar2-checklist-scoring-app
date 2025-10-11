@@ -3,13 +3,14 @@ import AppRoutes from './routes/Routes.jsx';
 import { StateProvider } from './AppState.jsx';
 import { AuthProvider } from './auth/AuthProvider.jsx';
 
-render(
-  () => (
+function Root() {
+  return (
     <StateProvider>
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
     </StateProvider>
-  ),
-  document.getElementById('root'),
-);
+  );
+}
+
+render(() => <Root />, document.getElementById('root'));
