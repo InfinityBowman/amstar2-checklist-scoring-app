@@ -5,8 +5,9 @@
   "homepage": "https://InfinityBowman.github.io/amstar2-checklist-scoring-app",
   "scripts": {
     "dev": "vite dev",
-    "dev:up": "docker compose up --build backend postgres electric -d && vite dev",
-    "build": "vite build",
+    "up": "docker compose up --build backend postgres electric -d",
+    "build": "npm run build:packages && vite build",
+    "build:packages": "for d in packages/*; do (cd \"$d\" && npm run build); done",
     "preview": "vite preview",
     "sw": "SOURCE_MAP=true SW_DEV=true vite build && vite preview",
     "deploy": "gh-pages -d dist",
