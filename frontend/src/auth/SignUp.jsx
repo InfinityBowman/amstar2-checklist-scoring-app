@@ -1,4 +1,4 @@
-import { createSignal, Show, createEffect } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 import StrengthIndicator from './StrengthIndicator.jsx';
 import PasswordInput from './PasswordInput.jsx';
 import { useNavigate } from '@solidjs/router';
@@ -38,13 +38,19 @@ export default function SignUp() {
     setLoading(true);
     try {
       await signup(email(), password(), name());
+      await new Promise((resolve) => setTimeout(resolve, 200)); // Simulate delay for UX
       navigate('/verify-email', { replace: true });
+      setLoading(false);
     } catch (err) {
       console.error('Signup error:', err);
-      // TODO more specific error messages based on error code
-      setError('Sign up failed');
-    } finally {
-      setLoading(false);
+      let msg = JSON.parse(err.message).detail;
+
+      if (msg.includes('Email not verified')) {
+        navigate('/verify-email', { replace: true });
+      } else {
+        setLoading(false);
+        setError('Sign up failed');
+      }
     }
   }
 
@@ -55,21 +61,21 @@ export default function SignUp() {
   });
 
   return (
-    <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-2 sm:px-4 py-6 sm:py-12">
+    <div class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-6 sm:py-12">
       <form
         aria-labelledby="signup-heading"
         onSubmit={handleSubmit}
-        class="w-full max-w-md sm:max-w-2xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-4 sm:p-12 space-y-4 border border-gray-100"
+        class="w-full max-w-md sm:max-w-xl bg-white rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-12 space-y-4 border border-gray-100"
         autocomplete="off"
       >
         <div class="mb-2 text-center">
-          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2" id="signup-heading">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2" id="signup-heading">
             Get Started
           </h2>
           <p class="text-gray-500 text-xs sm:text-sm">Create a new account.</p>
         </div>
         <div>
-          <label class="block text-sm sm:text-base font-semibold text-gray-700 mb-1 sm:mb-2" for="name-input">
+          <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2" for="name-input">
             Name
           </label>
           <div class="relative">
@@ -88,7 +94,7 @@ export default function SignUp() {
           </div>
         </div>
         <div>
-          <label class="block text-sm sm:text-base font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
+          <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2" for="email-input">
             Email
           </label>
           <div class="relative">
@@ -114,7 +120,7 @@ export default function SignUp() {
           <StrengthIndicator password={password()} onUnmet={setUnmetRequirements} />
         </div>
         <div>
-          <label class="block text-sm sm:text-base font-semibold text-gray-700 mb-1 sm:mb-2" for="confirm-password-input">
+          <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2" for="confirm-password-input">
             Confirm Password
           </label>
           <div class="relative">

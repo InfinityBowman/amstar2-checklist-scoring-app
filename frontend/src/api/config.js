@@ -21,9 +21,13 @@ export const API_ENDPOINTS = {
   SIGNIN: `${baseUrl}${API_PREFIX}/auth/signin`,
   SIGNOUT: `${baseUrl}${API_PREFIX}/auth/signout`,
   REFRESH: `${baseUrl}${API_PREFIX}/auth/refresh`,
+  SEND_VERIFICATION: `${baseUrl}${API_PREFIX}/auth/send-verification`,
+  VERIFY_EMAIL: `${baseUrl}${API_PREFIX}/auth/verify-email`,
 
   // User endpoints
   CURRENT_USER: `${baseUrl}${API_PREFIX}/users/me`,
+
+  ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric/shape`,
 
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,

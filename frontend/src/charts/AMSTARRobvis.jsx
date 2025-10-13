@@ -10,7 +10,7 @@ import * as d3 from 'd3';
  */
 export default function AMSTARRobvis(props) {
   let ref;
-  const [containerSize, setContainerSize] = createSignal({ width: 900, height: 600 });
+  const [containerSize, setContainerSize] = createSignal({ width: 800, height: 500 });
 
   // Responsive: observe parent container size
   createEffect(() => {
@@ -64,9 +64,6 @@ export default function AMSTARRobvis(props) {
       .style('font-family', '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif');
 
     svg.selectAll('*').remove();
-
-    // Add subtle background grid
-    const gridGroup = svg.append('g').attr('class', 'grid');
 
     // Column headers at bottom
     const footerGroup = svg.append('g').attr('class', 'footer');

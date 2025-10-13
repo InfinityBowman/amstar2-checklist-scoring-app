@@ -1,10 +1,11 @@
 import { createSignal, Show, For } from 'solid-js';
-import { useAppState } from '../AppState.jsx';
+import { useAppState } from '@/AppState.jsx';
 import { useNavigate } from '@solidjs/router';
-import { createExampleProject } from '../offline/createExampleProject.js';
-import { createProject } from '../offline/project.js';
-import { generateUUID } from '../offline/localDB.js';
+import { createExampleProject } from '@offline/createExampleProject.js';
+import { createProject } from '@offline/project.js';
+import { generateUUID } from '@offline/localDB.js';
 import { checkHealth, checkHealthDb } from '../api/authService.js';
+import { slugify } from './Routes.jsx';
 
 export default function AppDashboard() {
   const { projects, currentProject, addProject, deleteProject } = useAppState();
@@ -12,16 +13,15 @@ export default function AppDashboard() {
   const [projectName, setProjectName] = createSignal('');
 
   const handleProjectClick = (project) => {
-    const matches = projects().filter((p) => p.name === project.name);
-    const index = matches.findIndex((p) => p.id === project.id);
-    navigate(`/project/${encodeURIComponent(project.name)}/${index}`);
+    const slug = slugify(project.name);
+    navigate(`/projects/${slug}-${project.id}`);
   };
 
   const handleAddProject = async () => {
     if (!projectName().trim()) return;
     const newProject = await addProject(
       createProject({
-        id: generateUUID(),
+        id: await generateUUID(),
         name: projectName().trim(),
         createdAt: Date.now(),
         checklists: [],

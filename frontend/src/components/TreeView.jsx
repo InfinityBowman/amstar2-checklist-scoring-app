@@ -47,12 +47,7 @@ export default function TreeView(props) {
           </svg>
         </button>
       </div>
-      {/* <Show when={isExpanded() && project().checklists?.length > 0}>
-        <div class="border-l border-gray-100 pl-2 mt-1 space-y-1">
-          <For each={project().checklists}>{(checklist) => props.children(checklist)}</For>
-        </div>
-      </Show> */}
-      <Show when={project().checklists?.length > 0}>
+      <Show when={(project().reviews || []).some((r) => (r.checklists || []).length > 0)}>
         <div
           class={`overflow-y-scroll`}
           style={{
@@ -61,7 +56,9 @@ export default function TreeView(props) {
             transition: 'max-height 0.25s ease-in-out, opacity 0.25s ease-in-out',
           }}
         >
-          <For each={project().checklists}>{(checklist) => props.children(checklist)}</For>
+          <For each={project().reviews || []}>
+            {(review) => <For each={review.checklists || []}>{(checklist) => props.children(checklist, review)}</For>}
+          </For>
         </div>
       </Show>
     </>

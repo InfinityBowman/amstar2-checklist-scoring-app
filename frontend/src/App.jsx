@@ -10,37 +10,21 @@ import { AnimatedShow } from './components/AnimatedShow.jsx';
 /**
  * TODO
  * Save review title, name, date for each checklist
- * Implement my own service worker instead of vite pwa
  * pdfs might need to be linked to or owned by checklists
- * ensure scorechecklist is correct
- * AMSTAR folder for all AMSTAR stuff
  * black and white export option for d3
- * finish handling of different projects
  * search pdf
- *
- * Change from using checklists in the state to just using projects
  */
+// let dbGlobal;
 export default function App(props) {
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
+  const [db, setDb] = createSignal(null);
   const { authLoading } = useAuth();
 
-  const {
-    projects,
-    dataLoading,
-    loadData,
-    setProjects,
-    currentProject,
-    addProject,
-    deleteChecklist,
-    currentChecklist,
-    setCurrentChecklist,
-    updateChecklist,
-    getChecklist,
-  } = useAppState();
+  const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppState();
 
   // Handlers for delete all checklists dialog
   const handleDeleteAll = () => {

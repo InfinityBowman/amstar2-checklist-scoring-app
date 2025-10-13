@@ -11,11 +11,8 @@ class UserResponse(BaseModel):
     id: UUID
     email: EmailStr
     name: str
-    is_active: bool
     created_at: datetime
 
 class UserLogin(BaseModel):
     email: EmailStr = Field(..., description="User's email address")
     password: str = Field(..., description="User's password")
-
-

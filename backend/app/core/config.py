@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = Field(..., description="SQLAlchemy async URL, e.g. postgresql+asyncpg://user:pass@host:5432/db")
 
+    # ElectricSQL
+    ELECTRIC_URL: str = "http://electric:3000"
+
     # API
     API_PREFIX: str = "/api/v1"
     ENV: str = "dev"
@@ -47,4 +50,3 @@ def get_settings() -> Settings:
 
 # Singleton-style export for convenience
 settings = get_settings()
-

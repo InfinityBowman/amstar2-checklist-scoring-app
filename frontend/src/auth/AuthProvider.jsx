@@ -1,6 +1,6 @@
 import { createContext, useContext, createSignal, onMount, createEffect } from 'solid-js';
-import * as authService from '../api/authService.js';
-import useOnlineStatus from '../primatives/useOnlineStatus.js';
+import * as authService from '@api/authService.js';
+import useOnlineStatus from '@primitives/useOnlineStatus.js';
 
 const AuthContext = createContext();
 
@@ -22,7 +22,6 @@ export function AuthProvider(props) {
   });
 
   createEffect(() => {
-    // console.log('Online status changed:', isOnline(), 'wasonline:', wasOnline, 'User:', user());
     // Only run when online status changes
     if (isOnline() && !wasOnline && !user()) {
       initializeAuth();
@@ -46,19 +45,23 @@ export function AuthProvider(props) {
 
   async function signup(email, password, name) {
     await authService.signup(email, password, name);
+    localStorage.setItem('pendingEmail', email); // Store for verification
     // We do not auto login because we want email verification first
   }
 
-  async function sendEmailVerification(email) {
-    await authService.sendEmailVerification(email);
+  async function sendEmailVerification() {
+    await authService.sendEmailVerification(localStorage.getItem('pendingEmail'));
   }
 
-  async function verifyEmail(email, code) {
-    await authService.verifyEmail(email, code);
+  async function verifyEmail(code) {
+    await authService.verifyEmail(localStorage.getItem('pendingEmail'), code);
+    localStorage.removeItem('pendingEmail');
   }
 
   async function signin(email, password) {
+    localStorage.setItem('pendingEmail', email); // Store in case signin needs verification
     await authService.signin(email, password);
+    localStorage.removeItem('pendingEmail'); // Clear pending email on successful signin
     setIsLoggedIn(true);
     setUser(await authService.getCurrentUser());
   }
@@ -84,6 +87,10 @@ export function AuthProvider(props) {
     return await authService.authFetch(url, options);
   }
 
+  function getPendingEmail() {
+    return localStorage.getItem('pendingEmail');
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -98,6 +105,7 @@ export function AuthProvider(props) {
         authLoading,
         sendEmailVerification,
         verifyEmail,
+        getPendingEmail,
       }}
     >
       {props.children}

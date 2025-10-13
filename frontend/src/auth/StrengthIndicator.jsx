@@ -25,7 +25,7 @@ export default function StrengthIndicator(props) {
   });
 
   return (
-    <div class="w-full mt-3 sm:mt-4">
+    <div class="w-full mt-2">
       {/* Requirements */}
       <div class="text-xs text-gray-700" id="password-requirements" aria-live="polite">
         <ul class="pace-y-0.5 sm:space-y-1">

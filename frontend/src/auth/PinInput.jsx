@@ -11,13 +11,12 @@ export default function PinInput(props) {
     onValueChange(value) {
       props.onInput && props.onInput(value.valueAsString);
     },
+    onValueComplete(details) {
+      props.onComplete && props.onComplete(details.valueAsString);
+    },
   });
 
   const api = createMemo(() => pinInput.connect(service, normalizeProps));
-
-  // const inputClass =
-  //   props.inputClass ||
-  //   'w-10 h-12 sm:w-14 sm:h-14 rounded-lg border-2 border-gray-300 bg-gray-50 text-center text-xl font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-400 outline-none';
 
   const inputClass = () =>
     'w-10 h-12 sm:w-14 sm:h-14 rounded-lg border-2 ' +
@@ -28,7 +27,6 @@ export default function PinInput(props) {
 
   return (
     <div class="flex flex-col items-center">
-      {/* Pin Input Boxes */}
       <div {...api().getRootProps()} class="flex justify-center gap-1 sm:gap-3 my-6">
         <input required={props.required ?? true} {...api().getInputProps({ index: 0 })} class={inputClass()} />
         <input required={props.required ?? true} {...api().getInputProps({ index: 1 })} class={inputClass()} />
