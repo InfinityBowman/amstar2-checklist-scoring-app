@@ -25,7 +25,7 @@
    cd frontend
    npm run docker
    npm install
-   npm run build
+   npm run build # this is needed to build custom packages
    npm run dev
 
    # View logs (optional)

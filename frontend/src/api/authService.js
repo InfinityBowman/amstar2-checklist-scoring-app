@@ -130,7 +130,7 @@ export async function verifyEmail(email, code) {
 }
 
 export async function requestPasswordReset(email) {
-  const res = await fetch('http://localhost:8000/auth/request-password-reset', {
+  const res = await fetch(API_ENDPOINTS.REQUEST_PASSWORD_RESET, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
@@ -141,10 +141,13 @@ export async function requestPasswordReset(email) {
     console.error('Request password reset error:', errorText);
     throw new Error(errorText || 'Failed to request password reset');
   }
+
+  // Return the response data (contains the code in dev mode)
+  return await res.json();
 }
 
 export async function resetPassword(email, code, newPassword) {
-  const res = await fetch('http://localhost:8000/auth/reset-password', {
+  const res = await fetch(API_ENDPOINTS.RESET_PASSWORD, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, code, new_password: newPassword }),
@@ -155,6 +158,9 @@ export async function resetPassword(email, code, newPassword) {
     console.error('Reset password error:', errorText);
     throw new Error(errorText || 'Failed to reset password');
   }
+
+  // Return the response data
+  return await res.json();
 }
 
 export async function checkHealth() {

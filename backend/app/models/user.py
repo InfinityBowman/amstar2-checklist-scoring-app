@@ -20,6 +20,9 @@ class User(Base):
     email_verified_at = Column(DateTime(timezone=True), nullable=True)
     email_verification_code = Column(Text, nullable=True)
     email_verification_requested_at = Column(DateTime(timezone=True), nullable=True)
+    password_reset_code = Column(Text, nullable=True)
+    password_reset_at = Column(DateTime(timezone=True), nullable=True)
+    password_reset_requested_at = Column(DateTime(timezone=True), nullable=True)
 
     # Create a composite index on email for faster lookups
     __table_args__ = (
