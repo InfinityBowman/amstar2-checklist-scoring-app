@@ -56,11 +56,11 @@ class SendVerificationResponse(BaseModel):
 
 
 class RequestPasswordResetRequest(BaseModel):
-    email: str
+    email: EmailStr
 
 
 class ResetPasswordRequest(BaseModel):
-    email: str
+    email: EmailStr
     code: str
     password: str  # The new password
 
