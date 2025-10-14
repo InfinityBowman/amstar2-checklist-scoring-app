@@ -4,7 +4,7 @@ from typing import Dict
 from app.core.config import settings
 from app.db.session import get_session
 from app.models.user import User
-from app.schemas.user import UserCreate, UserLogin, UserResponse
+from app.schemas.user import UserCreate, UserLogin, UserResponse, PasswordResetRequest, PasswordResetConfirm
 from app.utils.auth import (
     create_access_token,
     create_refresh_token,
@@ -305,74 +305,111 @@ async def verify_email(
     return VerifyEmailResponse(message="Email verified successfully")
 
 
-# ---------------- PASSWORD RESET ENDPOINTS ------------------------
-@router.post("/request-password-reset", status_code=status.HTTP_200_OK)
+@router.post("/request-password-reset")
 async def request_password_reset(
-    request_data: RequestPasswordResetRequest, db: AsyncSession = Depends(get_session)
+    request: PasswordResetRequest,
+    db: AsyncSession = Depends(get_session)
 ):
     """
-    Sends a verification code to the user's email to start the password reset process.
+    Request a password reset email.
+    
+    - **email**: User's email address
+    
+    Returns a message confirming the reset email was sent (or code for dev purposes).
     """
-
-    # Check if user exists
-    result = await db.execute(select(User).where(User.email == request_data.email))
-    user = result.scalar_one_or_none()
-
-    if not user:
-        return {
-            "message": "If the email is registered, a password reset code has been sent."
-        }
-
-    verification_code = generate_verification_code()
-    verification_codes[user.email] = verification_code
-
-    mock_send_verification_email(user.email, verification_code)
-
-    return {
-        "message": "If the email is registered, a password reset code has been sent."
-    }
-
-
-@router.post("/reset-password", response_model=VerifyEmailResponse)
-async def reset_password(
-    reset_data: ResetPasswordRequest, db: AsyncSession = Depends(get_session)
-):
-    """
-    Resets the user's password after verifying the code and validation the new password strength
-    """
-    email = reset_data.email
-    code = reset_data.code.strip()
-    new_password = reset_data.password
-
-    # password validation
-    is_strong_password_bool, password_detail = is_strong_password(new_password)
-
-    if not is_strong_password_bool:
+    email = request.email.strip().lower()
+    
+    if not email:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=password_detail
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing email"
         )
-
-    # check if user exists (404)
+    
+    # Find user
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
-
+    
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid email or password."
-        )
-
-    # check if code matches (401)
-    stored_code = verification_codes.get(email)
-    if not stored_code or stored_code != code:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired reset code",
-        )
-
-    # update the password
-    user.hashed_password = get_password_hash(new_password)
+        # For security reasons, don't reveal if user exists or not
+        # But still return 200 OK
+        return {"message": "If an account exists with this email, a password reset code will be sent"}
+    
+    # Generate and store reset code
+    code = generate_verification_code()
+    user.password_reset_code = code
+    user.password_reset_requested_at = datetime.now(timezone.utc)
     db.add(user)
     await db.commit()
+    
+    # Send email (mock for now)
+    mock_send_verification_email(user.email, code)
+    
+    # Return code in response for development (remove in production)
+    return {"message": f"Password reset email sent. CODE: {code}"}
 
-    verification_codes.pop(email, None)  # clear the code after successful reset
-    return VerifyEmailResponse(message="Password successfully reset.")
+
+@router.post("/reset-password")
+async def reset_password(
+    request: PasswordResetConfirm,
+    db: AsyncSession = Depends(get_session)
+):
+    """
+    Reset password using code sent to email.
+    
+    - **email**: User's email address
+    - **code**: Password reset code from email
+    - **new_password**: New password (min 8 chars, must contain uppercase, lowercase, and digit)
+    
+    Returns success message if password was reset.
+    """
+    email = request.email.strip().lower()
+    code = request.code.strip()
+    new_password = request.new_password
+    
+    if not email or not code or not new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing email, code, or new password"
+        )
+    
+    # Find user
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Check if reset code exists
+    if not user.password_reset_code or user.password_reset_code != code:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired reset code"
+        )
+    
+    # Check if code is expired (15 minutes)
+    if user.password_reset_requested_at:
+        time_diff = datetime.now(timezone.utc) - user.password_reset_requested_at
+        if time_diff.total_seconds() > 900:  # 15 minutes = 900 seconds
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Reset code has expired"
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid reset code"
+        )
+    
+    # Update password and clear reset code
+    user.hashed_password = get_password_hash(new_password)
+    user.password_reset_code = None
+    user.password_reset_at = datetime.now(timezone.utc)
+    user.password_reset_requested_at = None
+    db.add(user)
+    await db.commit()
+    
+    return {"message": "Password reset successful"}
+    

@@ -23,6 +23,8 @@ export const API_ENDPOINTS = {
   REFRESH: `${baseUrl}${API_PREFIX}/auth/refresh`,
   SEND_VERIFICATION: `${baseUrl}${API_PREFIX}/auth/send-verification`,
   VERIFY_EMAIL: `${baseUrl}${API_PREFIX}/auth/verify-email`,
+  REQUEST_PASSWORD_RESET: `${baseUrl}${API_PREFIX}/auth/request-password-reset`,
+  RESET_PASSWORD: `${baseUrl}${API_PREFIX}/auth/reset-password`,
 
   // User endpoints
   CURRENT_USER: `${baseUrl}${API_PREFIX}/users/me`,
