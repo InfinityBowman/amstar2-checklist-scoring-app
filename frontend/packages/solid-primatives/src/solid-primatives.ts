@@ -14,7 +14,6 @@ export async function preloadShape<T extends Row<unknown> = Row>(options: ShapeS
   return shape;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function sortObjectKeys(obj: any): any {
   if (typeof obj === `function`) return Function.prototype.toString.call(obj);
   if (typeof obj !== `object` || obj === null) return obj;
@@ -23,18 +22,15 @@ function sortObjectKeys(obj: any): any {
     return obj.map(sortObjectKeys);
   }
 
-  return (
-    Object.keys(obj)
-      .sort()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .reduce<Record<string, any>>((sorted, key) => {
-        sorted[key] = sortObjectKeys(obj[key]);
-        return sorted;
-      }, {})
-  );
+  return Object.keys(obj)
+    .sort()
+    .reduce<Record<string, any>>((sorted, key) => {
+      sorted[key] = sortObjectKeys(obj[key]);
+      return sorted;
+    }, {});
 }
 
-export function sortedOptionsHash<T>(options: ShapeStreamOptions<T>): string {
+export function sortedOptionsHash<T = unknown>(options: ShapeStreamOptions<T>): string {
   return JSON.stringify(sortObjectKeys(options));
 }
 
@@ -79,14 +75,15 @@ export function getShape<T extends Row<unknown>>(shapeStream: ShapeStream<T>): S
   return newShape;
 }
 
-export interface UseShapeResult<T extends Row<unknown> = Row> {
+// Result type for internal data processing
+export interface ShapeDataResult<T extends Row<unknown> = Row> {
   /**
    * The array of rows that make up the Shape.
    * @type {T[]}
    */
   data: T[];
   /**
-   * The Shape instance used by this useShape
+   * The Shape instance used by this createShape
    * @type {Shape<T>}
    */
   shape: Shape<T>;
@@ -103,14 +100,53 @@ export interface UseShapeResult<T extends Row<unknown> = Row> {
   isError: boolean;
 }
 
-function shapeSubscribe<T extends Row<unknown>>(shape: Shape<T>, callback: () => void) {
-  const unsubscribe = shape.subscribe(callback);
-  return () => {
-    unsubscribe();
-  };
+// Type for the exported accessor functions
+export interface CreateShapeResult<T extends Row<unknown> = Row> {
+  /**
+   * Accessor function that returns the array of rows.
+   */
+  data: () => T[];
+  /**
+   * Accessor function that returns whether the shape is loading.
+   */
+  isLoading: () => boolean;
+  /**
+   * Accessor function that returns whether the shape has an error.
+   */
+  isError: () => boolean;
+  /**
+   * Accessor function that returns the error, if any.
+   */
+  error: () => Shape<T>[`error`];
+  /**
+   * Accessor function that returns the timestamp of the last sync.
+   */
+  lastSyncedAt: () => number | undefined;
+  /**
+   * The Shape instance used by this createShape.
+   */
+  shape: Shape<T>;
+  /**
+   * The ShapeStream instance used by this Shape.
+   */
+  stream: ShapeStream<T>;
+  /**
+   * Legacy accessor for getting all values in one object.
+   */
+  get: () => ShapeDataResult<T>;
 }
 
-function parseShapeData<T extends Row<unknown>>(shape: Shape<T>): UseShapeResult<T> {
+// function shapeSubscribe<T extends Row<unknown>>(
+//   shape: Shape<T>,
+//   callback: () => void
+// ) {
+//   const unsubscribe = shape.subscribe(callback)
+//   return () => {
+//     unsubscribe()
+//   }
+// }
+
+function parseShapeData<T extends Row<unknown>>(shape: Shape<T>): ShapeDataResult<T> {
   return {
     data: shape.currentRows,
     isLoading: shape.isLoading(),
@@ -122,7 +158,7 @@ function parseShapeData<T extends Row<unknown>>(shape: Shape<T>): UseShapeResult
   };
 }
 
-function shapeResultChanged<T extends Row<unknown>>(oldRes: UseShapeResult<T> | undefined, newRes: UseShapeResult<T>): boolean {
+function shapeResultChanged<T extends Row<unknown>>(oldRes: ShapeDataResult<T> | undefined, newRes: ShapeDataResult<T>): boolean {
   return (
     !oldRes ||
     oldRes.isLoading !== newRes.isLoading ||
@@ -138,11 +174,14 @@ function identity<T>(arg: T): T {
   return arg;
 }
 
-interface UseShapeOptions<SourceData extends Row<unknown>, Selection> extends ShapeStreamOptions<GetExtensions<SourceData>> {
-  selector?: (value: UseShapeResult<SourceData>) => Selection;
+interface CreateShapeOptions<SourceData extends Row<unknown>, Selection> extends ShapeStreamOptions<GetExtensions<SourceData>> {
+  selector?: (value: CreateShapeResult<SourceData>) => Selection;
 }
 
-export function createShape<SourceData extends Row<unknown> = Row>(options: ShapeStreamOptions<GetExtensions<SourceData>>) {
+export function createShape<SourceData extends Row<unknown> = Row, Selection = CreateShapeResult<SourceData>>({
+  selector = identity as (arg: CreateShapeResult<SourceData>) => Selection,
+  ...options
+}: CreateShapeOptions<SourceData, Selection>) {
   const shapeStream = getShapeStream<SourceData>(options);
   const shape = getShape<SourceData>(shapeStream);
 
@@ -160,27 +199,54 @@ export function createShape<SourceData extends Row<unknown> = Row>(options: Shap
   setError(initial.error);
   setLastSyncedAt(initial.lastSyncedAt);
 
+  // Keep track of the latest result for better change detection
+  let latestResult = initial;
+
   // subscription
   const unsubscribe = shape.subscribe(() => {
     const newRes = parseShapeData(shape);
-    if (shapeResultChanged(initial, newRes)) {
+    if (shapeResultChanged(latestResult, newRes)) {
       setData(newRes.data);
       setIsLoading(newRes.isLoading);
       setIsError(newRes.isError);
       setError(newRes.error);
       setLastSyncedAt(newRes.lastSyncedAt);
+      latestResult = newRes;
     }
   });
 
   onCleanup(() => unsubscribe());
 
-  return {
+  // Create an object of accessor functions that can be destructured
+  const result: CreateShapeResult<SourceData> = {
+    // Data accessors
     data,
     isLoading,
     isError,
-    error,
+    error: error as () => Shape<SourceData>[`error`],
     lastSyncedAt,
+
+    // Non-reactive properties
     shape,
     stream: shapeStream,
+
+    // Original accessor pattern preserved for backward compatibility
+    get: () => {
+      return {
+        data: data(),
+        isLoading: isLoading(),
+        isError: isError(),
+        error: error() as Shape<SourceData>[`error`],
+        lastSyncedAt: lastSyncedAt(),
+        shape,
+        stream: shapeStream,
+      };
+    },
   };
+
+  // Apply selector if provided (for advanced use cases)
+  const selected = selector(result);
+
+  // Return the object with accessors
+  return selected;
 }
