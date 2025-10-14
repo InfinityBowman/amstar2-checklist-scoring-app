@@ -1,29 +1,35 @@
-def is_valid_email(email: str) -> bool:
+from typing import Tuple
+
+def is_valid_email(email: str) -> Tuple[bool, str]:
     """
     Checks if the email string is valid
+
+    Returns (True, "") on success, or (False, detailed error message) on failure.
     """
     sanitized_email = email.strip()
     if not sanitized_email():
-        return False
+        return (False, "Email is missing.")
     
-    email_chars = set(sanitized_email)
+    parts = email.split("@")
 
-    # Check if @ and . is in the email
-    if ("@" not in email_chars) or ("." not in email_chars):
-        return False
+    if len(parts) != 2:
+        return (False, "Email must contain exactly one '@' symbol.")
     
-    # Ensure there is content before/after @ and .
-    parts = email_chars.split("@")
-    if len(parts) != 2 or not parts[0] or not parts[1]:
-        return False
+    local_part, domain_part = parts
     
-    if not parts[1].split(".")[-1]:
-        return False
+    if not local_part or not domain_part:
+        return (False, "Email must have content before and after the '@' symbol.")
+    
+    if "." not in domain_part:
+        return (False, "Email domain must contain a '.' symbol.")
+    
+    if not domain_part.split(".")[-1]:
+        return (False, "Email domain must have a top-level extension (e.g., .com).")
+    
+    return (True, "")
 
-    return True
 
-
-def is_strong_password(password: str) -> bool:
+def is_strong_password(password: str) -> Tuple[bool, str]:
     """
     Checks if the password meets the minimum criteria.
 
@@ -33,25 +39,31 @@ def is_strong_password(password: str) -> bool:
     - At least one lowercase letter
     - At least one digit
     - At least one special character
+
+    Returns (True, "") on success, or (False, detailed error message) on failure.
     """
-    if not password:
-        return False
+    if not password.strip():
+        return (False, "Password is required.")
     
     # Minimum length check
     if len(password) < 8:
-        return False
+        return (False, "Password must be at least 8 characters long.")
     
     # At least one uppercase letter
-    has_uppercase = any(chr.isupper() for chr in password)
+    if not any(chr.isupper() for chr in password):
+        return (False, "Password must contain at least one uppercase letter.")
 
     # At least one lowercase letter
-    has_lowercase = any(chr.islower() for chr in password)
+    if not any(chr.islower() for chr in password):
+        return (False, "Password must contain at least one lowercase letter.")
 
     # At least one digit
-    has_digit = any(chr.isdigit() for chr in password)
+    if not any(chr.isdigit() for chr in password):
+        return (False, "Password must contain at least one digit.")
 
     # At least one special character
-    has_special_char = any(not chr.isalnum() and not chr.isspace() for chr in password)
+    if not any(not chr.isalnum() and not chr.isspace() for chr in password):
+        return (False, "Password must contain at least one special character (symbol or punctuation)")
 
-    return has_uppercase and has_lowercase and has_digit and has_special_char
+    return (True, "")
         
