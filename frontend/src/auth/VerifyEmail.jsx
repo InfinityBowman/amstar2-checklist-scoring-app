@@ -30,7 +30,7 @@ export default function VerifyEmail() {
 
   async function handleSubmit(e, pinCode) {
     e?.preventDefault && e.preventDefault();
-    if (value) setCode(value);
+    if (pinCode) setCode(pinCode);
     setError('');
     setLoading(true);
     try {
