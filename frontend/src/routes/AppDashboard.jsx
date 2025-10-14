@@ -1,5 +1,5 @@
 import { createSignal, Show, For } from 'solid-js';
-import { useAppState } from '@/AppState.jsx';
+import { useAppStore } from '@/AppStore.js';
 import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
 import { createProject } from '@offline/project.js';
@@ -8,7 +8,7 @@ import { checkHealth, checkHealthDb } from '../api/authService.js';
 import { slugify } from './Routes.jsx';
 
 export default function AppDashboard() {
-  const { projects, currentProject, addProject, deleteProject } = useAppState();
+  const { projects, currentProject, addProject, deleteProject } = useAppStore();
   const navigate = useNavigate();
   const [projectName, setProjectName] = createSignal('');
 

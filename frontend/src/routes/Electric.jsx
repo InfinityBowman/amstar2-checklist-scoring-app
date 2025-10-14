@@ -1,6 +1,6 @@
 import { createShape } from '@electric-sql/solid';
 import { API_ENDPOINTS } from '@api/config.js';
-import { useAuth } from '@auth/AuthProvider.jsx';
+import { useAuth } from '@/auth/AuthStore.js';
 
 export default function Electric() {
   const { authFetch, user } = useAuth();

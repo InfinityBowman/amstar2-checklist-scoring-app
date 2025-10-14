@@ -1,7 +1,7 @@
 import { createSignal, For, Show } from 'solid-js';
 import { useParams } from '@solidjs/router';
 import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
-import { useAppState } from '../AppState.jsx';
+import { useAppStore } from '../AppStore.js';
 
 /**
  * Maybe the interface should be like separate pages for each question with differences highlighted?
@@ -9,7 +9,7 @@ import { useAppState } from '../AppState.jsx';
  */
 export default function AMSTAR2Merge(props) {
   const params = useParams();
-  const { getChecklist } = useAppState();
+  const { getChecklist } = useAppStore();
   console.log('Route params:', decodeURIComponent(params.nameA), params.indexA, decodeURIComponent(params.nameB), params.indexB);
 
   // Load checklists based on route params

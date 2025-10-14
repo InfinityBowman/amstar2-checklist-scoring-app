@@ -11,7 +11,7 @@ const mockSendEmailVerification = vi.fn();
 const mockGetPendingEmail = vi.fn(() => 'test@example.com');
 
 // Mock dependencies
-vi.mock('../auth/AuthProvider.jsx', () => {
+vi.mock('../auth/AuthStore.js', () => {
   return {
     useAuth: () => ({
       verifyEmail: mockVerifyEmail,

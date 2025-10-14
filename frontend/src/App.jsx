@@ -2,9 +2,9 @@ import { createSignal, Show } from 'solid-js';
 import Sidebar from './Sidebar.jsx';
 import Dialog from './components/Dialog.jsx';
 import Resizable from './components/Resizable.jsx';
-import { useAppState } from './AppState.jsx';
+import { useAppStore } from './AppStore.js';
 import Navbar from './Navbar.jsx';
-import { useAuth } from './auth/AuthProvider.jsx';
+import { useAuth } from './auth/AuthStore.js';
 import { AnimatedShow } from './components/AnimatedShow.jsx';
 
 /**
@@ -14,7 +14,6 @@ import { AnimatedShow } from './components/AnimatedShow.jsx';
  * black and white export option for d3
  * search pdf
  */
-// let dbGlobal;
 export default function App(props) {
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
@@ -24,7 +23,7 @@ export default function App(props) {
   const [db, setDb] = createSignal(null);
   const { authLoading } = useAuth();
 
-  const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppState();
+  const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppStore();
 
   // Handlers for delete all checklists dialog
   const handleDeleteAll = () => {

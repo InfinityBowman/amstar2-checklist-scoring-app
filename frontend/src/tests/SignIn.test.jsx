@@ -7,7 +7,7 @@ const mockNavigate = vi.fn();
 const mockSignin = vi.fn();
 
 // Mock dependencies
-vi.mock('../auth/AuthProvider.jsx', () => {
+vi.mock('../auth/AuthStore.js', () => {
   return {
     useAuth: () => ({
       signin: mockSignin,

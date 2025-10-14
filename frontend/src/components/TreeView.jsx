@@ -1,10 +1,10 @@
 import { createSignal, Show, For } from 'solid-js';
-import { useAppState } from '../AppState.jsx';
+import { useAppStore } from '../AppStore.js';
 
 export default function TreeView(props) {
   // Store expanded state with project ID as key for persistence
   const [expandedMap, setExpandedMap] = createSignal({});
-  const { projects, currentProject } = useAppState();
+  const { projects, currentProject } = useAppStore();
   const project = () => projects().find((p) => p.id === props.projectId);
 
   // Helper to get/set expanded state for current project

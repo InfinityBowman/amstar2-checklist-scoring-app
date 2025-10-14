@@ -1,6 +1,6 @@
 import { A, useLocation } from '@solidjs/router';
 import { Show, createEffect } from 'solid-js';
-import { useAuth } from './auth/AuthProvider.jsx';
+import { useAuth } from './auth/AuthStore.js';
 import { BASEPATH } from './routes/Routes.jsx';
 import { FiMenu } from 'solid-icons/fi';
 

@@ -1,12 +1,12 @@
 import { Show, For, createSignal, createEffect } from 'solid-js';
 import { scoreChecklist } from '@offline/AMSTAR2Checklist.js';
 import TreeView from '@components/TreeView.jsx';
-import { useAppState } from './AppState.jsx';
+import { useAppStore } from './AppStore.js';
 import { useParams, useNavigate } from '@solidjs/router';
 import { slugify } from '@routes/Routes.jsx';
 
 export default function Sidebar(props) {
-  const { projects, checklists, getChecklist } = useAppState();
+  const { projects, checklists, getChecklist } = useAppStore();
   const [currentChecklist, setCurrentChecklist] = createSignal(null);
   const navigate = useNavigate();
   const params = useParams();

@@ -1,6 +1,6 @@
 import { Show, createSignal, createEffect, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { useAuth } from './AuthProvider.jsx';
+import { useAuth } from './AuthStore.js';
 import { AnimatedShow } from '../components/AnimatedShow.jsx';
 import { AiOutlineLoading3Quarters } from 'solid-icons/ai';
 import { useSearchParams } from '@solidjs/router';

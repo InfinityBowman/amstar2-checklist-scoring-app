@@ -1,6 +1,6 @@
 import { createSignal, createEffect } from 'solid-js';
 import { AMSTAR_CHECKLIST } from '@offline/checklistMap.js';
-import { useAppState } from '@/AppState.jsx';
+import { useAppStore } from '@/AppStore.js';
 import { useParams, useNavigate } from '@solidjs/router';
 import { slugify } from './Routes.jsx';
 import { generateUUID } from '@offline/localDB.js';
@@ -655,7 +655,7 @@ export default function AMSTAR2Checklist() {
   const [reviewName, setReviewName] = createSignal('');
   const [reviewerName, setReviewerName] = createSignal('');
   const [reviewDate, setReviewDate] = createSignal('');
-  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading, createChecklist } = useAppState();
+  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading, createChecklist } = useAppStore();
   const params = useParams();
   const navigate = useNavigate();
 

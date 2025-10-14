@@ -1,6 +1,6 @@
 import AMSTARRobvis from '@/charts/AMSTARRobvis.jsx';
 import AMSTARDistribution from '@/charts/AMSTARDistribution.jsx';
-import { useAppState } from '@/AppState.jsx';
+import { useAppStore } from '@/AppStore.js';
 import { createEffect, Show, createSignal, For } from 'solid-js';
 import { useNavigate, useParams } from '@solidjs/router';
 import { createChecklist, getAnswers } from '@offline/AMSTAR2Checklist.js';
@@ -11,7 +11,7 @@ import { slugify } from './Routes.jsx';
 
 export default function ProjectDashboard() {
   const { currentProject, setCurrentProject, deleteProject, addReview, deleteReview, addChecklistToReview, deleteChecklistFromReview } =
-    useAppState();
+    useAppStore();
   const params = useParams();
   const navigate = useNavigate();
   const [reviewName, setReviewName] = createSignal('');

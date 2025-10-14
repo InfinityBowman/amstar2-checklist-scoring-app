@@ -1,7 +1,7 @@
 import { createShape } from '@electric-sql/solid';
 import { createEffect } from 'solid-js';
 import { API_ENDPOINTS } from '@api/config.js';
-import { useAuth } from '@auth/AuthProvider.jsx';
+import { useAuth } from '@/auth/AuthStore.js';
 
 /**
  * Syncs the projects table from ElectricSQL and calls onUpdate with new data.
