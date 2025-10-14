@@ -4,6 +4,7 @@ from sqlalchemy import Column, String, Boolean, DateTime, Index
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from sqlalchemy import Text
+from sqlalchemy.orm import relationship
 
 from app.db.base import Base
 
@@ -23,6 +24,10 @@ class User(Base):
     password_reset_code = Column(Text, nullable=True)
     password_reset_at = Column(DateTime(timezone=True), nullable=True)
     password_reset_requested_at = Column(DateTime(timezone=True), nullable=True)
+
+    # Relationships
+    projects = relationship("Project", back_populates="owner", cascade="all, delete-orphan")
+    checklists = relationship("Checklist", back_populates="reviewer")
 
     # Create a composite index on email for faster lookups
     __table_args__ = (
