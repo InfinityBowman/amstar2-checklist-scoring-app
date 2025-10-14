@@ -3,6 +3,20 @@ const CHECKLIST_STORE_NAME = 'checklists';
 const PROJECT_STORE_NAME = 'projects';
 const DB_VERSION = 1;
 
+// This lets us notify other tabs of changes
+// so they can sync their state if a user has multiple tabs open
+const channel = new BroadcastChannel('corates-sync');
+
+function initiateSync() {
+  channel.postMessage('initiate-sync');
+}
+
+export function subscribeToDBChanges(callback) {
+  channel.onmessage = (event) => {
+    if (event.data === 'initiate-sync') callback();
+  };
+}
+
 function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -30,7 +44,10 @@ export async function saveChecklist(checklist) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(CHECKLIST_STORE_NAME, 'readwrite');
     tx.objectStore(CHECKLIST_STORE_NAME).put(checklist);
-    tx.oncomplete = () => resolve();
+    tx.oncomplete = () => {
+      resolve();
+      initiateSync();
+    };
     tx.onerror = () => reject(tx.error);
   });
 }
@@ -61,7 +78,10 @@ export async function deleteChecklist(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(CHECKLIST_STORE_NAME, 'readwrite');
     tx.objectStore(CHECKLIST_STORE_NAME).delete(id);
-    tx.oncomplete = () => resolve();
+    tx.oncomplete = () => {
+      resolve();
+      initiateSync();
+    };
     tx.onerror = () => reject(tx.error);
   });
 }
@@ -83,7 +103,10 @@ export async function saveProject(project) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(PROJECT_STORE_NAME, 'readwrite');
     tx.objectStore(PROJECT_STORE_NAME).put(project);
-    tx.oncomplete = () => resolve();
+    tx.oncomplete = () => {
+      resolve();
+      initiateSync();
+    };
     tx.onerror = () => reject(tx.error);
   });
 }
@@ -263,7 +286,10 @@ export async function deleteProject(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(PROJECT_STORE_NAME, 'readwrite');
     tx.objectStore(PROJECT_STORE_NAME).delete(id);
-    tx.oncomplete = () => resolve();
+    tx.oncomplete = () => {
+      resolve();
+      initiateSync();
+    };
     tx.onerror = () => reject(tx.error);
   });
 }

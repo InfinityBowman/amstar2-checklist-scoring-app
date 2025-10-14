@@ -22,9 +22,10 @@
    docker-compose up --build -d
 
    # Alternatively, for frontend dev (--build is needed to pull in new changes to docker, if no changes are made, then it can be left out)
-   docker compose up --build backend db -d
    cd frontend
+   npm run docker
    npm install
+   npm run build # this is needed to build custom packages
    npm run dev
 
    # View logs (optional)
@@ -34,7 +35,7 @@
 3. **Access the Application**
    - **Backend API**: http://localhost:8000
    - **API Documentation**: http://localhost:8000/docs
-   - **Database**: localhost:5433 (PostgreSQL)
+   - **Database**: localhost:54321 (PostgreSQL)
    - **Frontend**: [http://localhost:5173/amstar2-checklist-scoring-app/](http://localhost:5173/amstar2-checklist-scoring-app/)
 
 ---
@@ -63,7 +64,7 @@ docker-compose restart backend
 The PostgreSQL database runs in a Docker container with:
 
 - **Host**: localhost
-- **Port**: 5433
+- **Port**: 54321
 - **Database**: amstar
 - **Username**: amstar
 - **Password**: amstar_password
@@ -74,7 +75,7 @@ The PostgreSQL database runs in a Docker container with:
 # Using Docker
 docker-compose exec db psql -U amstar -d amstar
 
-# Host: localhost, Port: 5433
+# Host: localhost, Port: 54321
 ```
 
 ## Docker Commands

@@ -1,0 +1,18 @@
+{
+  "name": "@electric-sql/solid",
+  "version": "0.0.1",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "scripts": {
+    "build": "rm -rf dist && tsup src/index.ts --dts --format esm"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@electric-sql/client": "^1.0.14",
+    "solid-js": "^1.9.0"
+  }
+}

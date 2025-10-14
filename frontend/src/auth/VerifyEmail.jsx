@@ -15,6 +15,7 @@ export default function VerifyEmail() {
   const [error, setError] = createSignal('');
   const [loading, setLoading] = createSignal(false);
   const [success, setSuccess] = createSignal(false);
+  const [resendLoading, setResendLoading] = createSignal(false);
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,25 +28,14 @@ export default function VerifyEmail() {
     }
   });
 
-  async function handleVerifyWithDelay(code) {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          await verifyEmail(code);
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      }, 200);
-    });
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(e, pinCode) {
+    e?.preventDefault && e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await handleVerifyWithDelay(code());
+      const codeToVerify = pinCode ?? code();
+      await verifyEmail(codeToVerify);
+      await new Promise((resolve) => setTimeout(resolve, 200)); // Simulate delay for UX
       setSuccess(true);
       navigate('/signin', { replace: true });
       setLoading(false);
@@ -56,29 +46,20 @@ export default function VerifyEmail() {
     }
   }
 
-  async function sendCodeWithDelay() {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          await sendEmailVerification(); // server generates and sends code
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      }, 200);
-    });
-  }
-
-  async function sendCode() {
+  async function sendCode({ resend = false }) {
     setError('');
-    setLoading(true);
+    if (resend) setResendLoading(true);
+    else setLoading(true);
     try {
-      await sendCodeWithDelay();
+      await sendEmailVerification();
+      await new Promise((resolve) => setTimeout(resolve, resend ? 1000 : 200)); // Simulate delay for UX
       setLoading(false);
+      setResendLoading(false);
       setSearchParams({ codeSent: 'true' });
       setCodeSent(true);
     } catch (err) {
       setLoading(false);
+      setResendLoading(false);
       setError('Error sending code. Please try again later.');
     }
   }
@@ -130,7 +111,7 @@ export default function VerifyEmail() {
                 class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
                 disabled={loading()}
                 type="button"
-                onClick={() => sendCode()}
+                onClick={sendCode}
               >
                 <AnimatedShow when={loading()} fallback={'Send Code'}>
                   <div class="flex items-center">
@@ -146,7 +127,14 @@ export default function VerifyEmail() {
             <p class="text-gray-500 text-sm sm:text-base">Enter the verification code sent to your email.</p>
           </div>
 
-          <PinInput otp required autocomplete onInput={setCode} isError={!!error()} />
+          <PinInput
+            otp
+            required
+            autocomplete
+            onInput={setCode}
+            isError={!!error()}
+            onComplete={(value) => handleSubmit(undefined, value)}
+          />
 
           <button
             type="submit"
@@ -162,9 +150,20 @@ export default function VerifyEmail() {
           </button>
           <div class="text-center text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4">
             Didn't get a code?{' '}
-            <a href="#" class="text-indigo-600 hover:underline font-semibold">
-              Resend
-            </a>
+            <button
+              type="button"
+              class="text-indigo-600 hover:underline font-semibold bg-transparent border-none p-0 m-0 cursor-pointer inline-flex items-center"
+              onClick={() => sendCode({ resend: true })}
+              disabled={resendLoading()}
+              aria-disabled={resendLoading()}
+            >
+              <Show when={resendLoading()} fallback={'Resend'}>
+                <div class="flex items-center">
+                  Sending...
+                  <AiOutlineLoading3Quarters class="animate-spin mr-1" size={16} />
+                </div>
+              </Show>
+            </button>
           </div>
         </Show>
         <AnimatedShow when={!!error()} class="absolute left-10 right-0 bottom-2 sm:bottom-6">

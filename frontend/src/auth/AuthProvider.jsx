@@ -1,6 +1,6 @@
 import { createContext, useContext, createSignal, onMount, createEffect } from 'solid-js';
-import * as authService from '../api/authService.js';
-import useOnlineStatus from '../primatives/useOnlineStatus.js';
+import * as authService from '@api/authService.js';
+import useOnlineStatus from '@primitives/useOnlineStatus.js';
 
 const AuthContext = createContext();
 
@@ -22,7 +22,6 @@ export function AuthProvider(props) {
   });
 
   createEffect(() => {
-    // console.log('Online status changed:', isOnline(), 'wasonline:', wasOnline, 'User:', user());
     // Only run when online status changes
     if (isOnline() && !wasOnline && !user()) {
       initializeAuth();

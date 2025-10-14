@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from app.core.config import settings
 from app.db.session import get_session
 from app.models.user import User
-from app.schemas.user import UserCreate, UserLogin, UserResponse
+from app.schemas.user import UserCreate, UserLogin, UserResponse, PasswordResetRequest, PasswordResetConfirm
 from app.utils.auth import (
     get_password_hash,
     verify_password,
@@ -37,7 +37,7 @@ class SignupResponse(BaseModel):
     user: UserResponse
 
 class VerifyEmailRequest(BaseModel):
-    email: str
+    email: EmailStr
     code: str
 
 
@@ -62,6 +62,9 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_session))
     - **name**: User's display name
     - **password**: User's password (will be hashed)
     """
+    # Normalize email
+    user_data.email = user_data.email.strip().lower()
+
     # Check if user already exists
     result = await db.execute(select(User).where(User.email == user_data.email))
     existing_user = result.scalar_one_or_none()
@@ -118,6 +121,9 @@ async def signin(
     
     Returns access token and sets refresh token as HttpOnly cookie.
     """
+    # Normalize email
+    user_data.email = user_data.email.strip().lower()
+
     # Find user by email
     result = await db.execute(select(User).where(User.email == user_data.email))
     user = result.scalar_one_or_none()
@@ -184,9 +190,14 @@ async def refresh_token(
                 detail="Invalid refresh token"
             )
         
-        # Check if user still exists and is active
+        # Check if user still exists
         result = await db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found"
+            )
         
         # Create new access token
         new_access_token = create_access_token({"sub": str(user.id)})
@@ -289,4 +300,113 @@ async def verify_email(
     await db.commit()
 
     return VerifyEmailResponse(message="Email verified successfully")
+
+
+@router.post("/request-password-reset")
+async def request_password_reset(
+    request: PasswordResetRequest,
+    db: AsyncSession = Depends(get_session)
+):
+    """
+    Request a password reset email.
+    
+    - **email**: User's email address
+    
+    Returns a message confirming the reset email was sent (or code for dev purposes).
+    """
+    email = request.email.strip().lower()
+    
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing email"
+        )
+    
+    # Find user
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        # For security reasons, don't reveal if user exists or not
+        # But still return 200 OK
+        return {"message": "If an account exists with this email, a password reset code will be sent"}
+    
+    # Generate and store reset code
+    code = generate_verification_code()
+    user.password_reset_code = code
+    user.password_reset_requested_at = datetime.now(timezone.utc)
+    db.add(user)
+    await db.commit()
+    
+    # Send email (mock for now)
+    mock_send_verification_email(user.email, code)
+    
+    # Return code in response for development (remove in production)
+    return {"message": f"Password reset email sent. CODE: {code}"}
+
+
+@router.post("/reset-password")
+async def reset_password(
+    request: PasswordResetConfirm,
+    db: AsyncSession = Depends(get_session)
+):
+    """
+    Reset password using code sent to email.
+    
+    - **email**: User's email address
+    - **code**: Password reset code from email
+    - **new_password**: New password (min 8 chars, must contain uppercase, lowercase, and digit)
+    
+    Returns success message if password was reset.
+    """
+    email = request.email.strip().lower()
+    code = request.code.strip()
+    new_password = request.new_password
+    
+    if not email or not code or not new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing email, code, or new password"
+        )
+    
+    # Find user
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Check if reset code exists
+    if not user.password_reset_code or user.password_reset_code != code:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired reset code"
+        )
+    
+    # Check if code is expired (15 minutes)
+    if user.password_reset_requested_at:
+        time_diff = datetime.now(timezone.utc) - user.password_reset_requested_at
+        if time_diff.total_seconds() > 900:  # 15 minutes = 900 seconds
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Reset code has expired"
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid reset code"
+        )
+    
+    # Update password and clear reset code
+    user.hashed_password = get_password_hash(new_password)
+    user.password_reset_code = None
+    user.password_reset_at = datetime.now(timezone.utc)
+    user.password_reset_requested_at = None
+    db.add(user)
+    await db.commit()
+    
+    return {"message": "Password reset successful"}
     
