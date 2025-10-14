@@ -14,7 +14,7 @@ from app.utils.auth import (
     verify_password,
     verify_token,
 )
-from app.utils.validation import is_strong_password, is_valid_email
+from app.utils.validation import is_strong_password
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, EmailStr
@@ -56,11 +56,11 @@ class SendVerificationResponse(BaseModel):
 
 
 class RequestPasswordResetRequest(BaseModel):
-    email: EmailStr
+    email: str
 
 
 class ResetPasswordRequest(BaseModel):
-    email: EmailStr
+    email: str
     code: str
     password: str  # The new password
 
@@ -81,11 +81,10 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_session))
     user_data.email = user_data.email.strip().lower()
 
     # validate the user details
-    if not is_strong_password(user_data.password) or not is_valid_email(
-        user_data.email
-    ):
+    is_strong_password_bool, password_detail = is_strong_password(user_data.password)
+    if not is_strong_password_bool:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email or password 12334"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=password_detail
         )
 
     # Check if user already exists
@@ -317,7 +316,7 @@ async def request_password_reset(
 
     # Check if user exists
     result = await db.execute(select(User).where(User.email == request_data.email))
-    user = result.scalar_one_or_more()
+    user = result.scalar_one_or_none()
 
     if not user:
         return {
@@ -346,10 +345,11 @@ async def reset_password(
     new_password = reset_data.password
 
     # password validation
-    if not is_strong_password(new_password):
+    is_strong_password_bool, password_detail = is_strong_password(new_password)
+
+    if not is_strong_password_bool:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid email or password format",
+            status_code=status.HTTP_400_BAD_REQUEST, detail=password_detail
         )
 
     # check if user exists (404)
