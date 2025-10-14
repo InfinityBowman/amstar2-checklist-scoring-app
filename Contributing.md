@@ -22,9 +22,10 @@
    docker-compose up --build -d
 
    # Alternatively, for frontend dev (--build is needed to pull in new changes to docker, if no changes are made, then it can be left out)
-   docker compose up --build backend db -d
    cd frontend
+   npm run docker
    npm install
+   npm run build
    npm run dev
 
    # View logs (optional)
