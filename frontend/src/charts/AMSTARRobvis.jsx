@@ -9,7 +9,7 @@ import * as d3 from 'd3';
  * - title: string (default: "AMSTAR-2 Quality Assessment")
  */
 export default function AMSTARRobvis(props) {
-  let ref;
+  let ref = null;
   const [containerSize, setContainerSize] = createSignal({ width: 800, height: 500 });
 
   // Responsive: observe parent container size

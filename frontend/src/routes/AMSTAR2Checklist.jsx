@@ -655,7 +655,7 @@ export default function AMSTAR2Checklist() {
   const [reviewName, setReviewName] = createSignal('');
   const [reviewerName, setReviewerName] = createSignal('');
   const [reviewDate, setReviewDate] = createSignal('');
-  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading, createChecklist } = useAppStore();
+  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading, _createChecklist } = useAppStore();
   const params = useParams();
   const navigate = useNavigate();
 

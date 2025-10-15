@@ -22,6 +22,10 @@ export function createReview({ id, name, createdAt = Date.now(), checklists = []
 }
 
 // TODO: Implement CSV import/export for review
-export function exportReviewToCSV(review) {}
+export function exportReviewToCSV(review) {
+  throw new Error('Not implemented yet', review);
+}
 
-export function importReviewFromCSV(csvString) {}
+export function importReviewFromCSV(csvString) {
+  throw new Error('Not implemented yet', csvString);
+}

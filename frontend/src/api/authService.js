@@ -51,7 +51,7 @@ export async function getCurrentUser() {
 export async function authFetch(url, options = {}) {
   // Attach Authorization header if accessToken exists
   options.headers = {
-    ...(options.headers || {}),
+    ...options.headers,
     Authorization: `Bearer ${accessToken}`,
   };
   options.credentials = 'include'; // ensure cookies are sent
@@ -69,7 +69,7 @@ export async function authFetch(url, options = {}) {
     } catch (err) {
       // Refresh failed, sign out user
       await signout();
-      throw new Error('Session expired. Please log in again.');
+      throw new Error('Session expired. Please log in again. Error:', err);
     }
   }
 

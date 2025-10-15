@@ -1,6 +1,6 @@
 import { createStore } from 'solid-js/store';
 import * as localDB from '@offline/localDB';
-import * as electricSync from '@offline/electricSync';
+// import * as electricSync from '@offline/electricSync';
 
 // TODO use produce or batch for updates to store
 

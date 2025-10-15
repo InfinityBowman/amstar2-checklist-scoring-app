@@ -29,7 +29,7 @@ export default function VerifyEmail() {
   });
 
   async function handleSubmit(e, pinCode) {
-    e?.preventDefault && e.preventDefault();
+    if (e?.preventDefault) e.preventDefault();
     setError('');
     setLoading(true);
     try {
@@ -58,6 +58,7 @@ export default function VerifyEmail() {
       setSearchParams({ codeSent: 'true' });
       setCodeSent(true);
     } catch (err) {
+      console.error('Send verification code error:', err);
       setLoading(false);
       setResendLoading(false);
       setError('Error sending code. Please try again later.');
@@ -75,6 +76,7 @@ export default function VerifyEmail() {
           navigate('/signin', { replace: true });
           setLoading(false);
         } catch (err) {
+          console.error('Verify email error with URL code:', err);
           setLoading(false);
           setError('Invalid or expired link.');
         }
@@ -82,8 +84,10 @@ export default function VerifyEmail() {
     }
   });
 
+  // Clear error when user changes code
   createEffect(() => {
-    code() && setError('');
+    code();
+    setError('');
   });
 
   return (

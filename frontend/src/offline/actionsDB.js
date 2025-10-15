@@ -1,8 +1,8 @@
 const DB_NAME = 'corates-app-db';
 const ACTIONS_STORE_NAME = 'actions';
 const DB_VERSION = 1;
-const CHECKLIST_STORE_NAME = 'checklists';
-const PROJECT_STORE_NAME = 'projects';
+// const CHECKLIST_STORE_NAME = 'checklists';
+// const PROJECT_STORE_NAME = 'projects';
 
 function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));

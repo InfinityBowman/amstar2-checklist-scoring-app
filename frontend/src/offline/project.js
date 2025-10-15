@@ -21,6 +21,10 @@ export function createProject({ id, name, createdAt = Date.now(), reviews = [] }
 }
 
 // TODO: Implement CSV import/export for projects
-export function exportProjectToCSV(project) {}
+export function exportProjectToCSV(project) {
+  throw new Error('Not implemented yet', project);
+}
 
-export function importProjectFromCSV(csvString) {}
+export function importProjectFromCSV(csvString) {
+  throw new Error('Not implemented yet', csvString);
+}

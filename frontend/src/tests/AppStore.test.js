@@ -1,6 +1,5 @@
 import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest';
 import * as localDB from '@offline/localDB';
-import * as electricSync from '@offline/electricSync';
 
 // Mock the localDB and electricSync modules
 vi.mock('@offline/localDB');
@@ -302,7 +301,6 @@ describe('AppStore', () => {
       it('should update a project checklist and return the updated checklist', async () => {
         const store = useAppStore();
         const project = createTestProject('p1');
-        const reviewId = project.reviews[0].id;
         const checklist = { ...project.reviews[0].checklists[0], name: 'Updated Project Checklist' };
 
         // Setup project in store

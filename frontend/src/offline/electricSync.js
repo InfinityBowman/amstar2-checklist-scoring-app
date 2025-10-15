@@ -8,6 +8,7 @@ import { useAuth } from '@/auth/AuthStore.js';
  * @param {Object} opts
  * @param {(projects: any[]) => void} opts.onUpdate - Called with new projects array when data changes.
  */
+// eslint-disable-next-line
 export function syncProjects({ onUpdate }) {
   // Set up a live shape subscription for the projects table
   const { authFetch } = useAuth();
