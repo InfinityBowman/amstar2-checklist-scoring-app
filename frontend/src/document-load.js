@@ -1,3 +1,4 @@
+// eslint-disable
 // const navEntry = performance.getEntriesByType('navigation')[0];
 
 // function toOtelTime(msSinceNavStart) {

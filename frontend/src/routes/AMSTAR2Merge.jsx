@@ -1,24 +1,27 @@
 import { createSignal, For, Show } from 'solid-js';
 import { useParams } from '@solidjs/router';
-import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
-import { useAppState } from '../AppState.jsx';
+// import { AMSTAR_CHECKLIST } from '../offline/checklistMap.js';
+import { useAppStore } from '../AppStore.js';
 
 /**
  * Maybe the interface should be like separate pages for each question with differences highlighted?
  * with a navbar at the top with question numbers to jump to each question and a next/prev
  */
-export default function AMSTAR2Merge(props) {
+export default function AMSTAR2Merge() {
   const params = useParams();
-  const { getChecklist } = useAppState();
-  console.log('Route params:', decodeURIComponent(params.nameA), params.indexA, decodeURIComponent(params.nameB), params.indexB);
+  const { getChecklist } = useAppStore();
+  console.log(
+    'Route params:',
+    decodeURIComponent(params.nameA),
+    params.indexA,
+    decodeURIComponent(params.nameB),
+    params.indexB,
+  );
 
   // Load checklists based on route params
   const checklistA = getChecklist(decodeURIComponent(params.nameA), params.indexA);
   const checklistB = getChecklist(decodeURIComponent(params.nameB), params.indexB);
   console.log('Merging checklists:', checklistA, checklistB);
-  // Assume you pass checklistA and checklistB as props or load them from state
-  // const [checklistA, setChecklistA] = createSignal(props.checklistA);
-  // const [checklistB, setChecklistB] = createSignal(props.checklistB);
 
   // The merged checklist, initialized to checklistA or empty
   const [merged, setMerged] = createSignal({ ...checklistA });

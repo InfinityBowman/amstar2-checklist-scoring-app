@@ -1,12 +1,12 @@
 import { Show, For, createSignal, createEffect } from 'solid-js';
 import { scoreChecklist } from '@offline/AMSTAR2Checklist.js';
 import TreeView from '@components/TreeView.jsx';
-import { useAppState } from './AppState.jsx';
+import { useAppStore } from './AppStore.js';
 import { useParams, useNavigate } from '@solidjs/router';
 import { slugify } from '@routes/Routes.jsx';
 
 export default function Sidebar(props) {
-  const { projects, checklists, getChecklist } = useAppState();
+  const { projects, checklists, getChecklist } = useAppStore();
   const [currentChecklist, setCurrentChecklist] = createSignal(null);
   const navigate = useNavigate();
   const params = useParams();
@@ -137,7 +137,11 @@ export default function Sidebar(props) {
               <ul class="list-disc space-y-1 text-xs">
                 <For each={checklists()}>
                   {(checklist) => (
-                    <ChecklistItem project={null} checklist={checklist} onDelete={() => props.onDeleteChecklist(null, checklist.id)} />
+                    <ChecklistItem
+                      project={null}
+                      checklist={checklist}
+                      onDelete={() => props.onDeleteChecklist(null, checklist.id)}
+                    />
                   )}
                 </For>
               </ul>
@@ -220,7 +224,7 @@ export default function Sidebar(props) {
               </svg>
               Clear all data
             </button>
-            <div class="mt-10"></div>
+            <div class="mt-10" />
           </div>
         </div>
       </div>
@@ -239,7 +243,9 @@ function ChecklistItem(props) {
       return;
     }
     const projectSlug = slugify(props.project.name);
-    const review = (props.project.reviews || []).find((r) => (r.checklists || []).some((cl) => cl.id === props.checklist.id));
+    const review = (props.project.reviews || []).find((r) =>
+      (r.checklists || []).some((cl) => cl.id === props.checklist.id),
+    );
     if (!review) {
       console.error('Review not found for checklist', props.checklist);
       return;
@@ -287,15 +293,14 @@ function ChecklistItem(props) {
                     })()}
                   `}
             >
-              {(() => {
-                if (!props.checklist) return 'Unknown';
-                const score = scoreChecklist(props.checklist);
-                if (score.length + (props.checklist.name?.length || 0) < 30) {
-                  return score;
-                } else {
-                  return <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
-                }
-              })()}
+              <Show when={props.checklist} fallback={'Unknown'}>
+                {() => {
+                  const score = scoreChecklist(props.checklist);
+                  return score.length + (props.checklist.name?.length || 0) < 30 ?
+                      score
+                    : <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
+                }}
+              </Show>
             </span>
           </div>
           <div class="text-2xs text-gray-500 mt-0.5">{new Date(props.checklist.createdAt).toLocaleDateString()}</div>

@@ -99,6 +99,9 @@
 - [ ] **Offline Guard**
   - [ ] Pages and features that require online status should be guarded/informative
 
+- [ ] **Docs Pages**
+  - [ ] explain how to do things
+
 - [ ] **Misc**
   - [ ] Use Server-Sent Events (EventSource api) for server driven updates
   - [x] Use solid router to control navigation between checklists, projects, etc.

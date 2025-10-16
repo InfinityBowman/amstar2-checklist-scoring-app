@@ -25,4 +25,6 @@ metabase/
 
 .env*
 
-!.env.example 
+!.env.example.*
+
+frontend/app

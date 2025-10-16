@@ -2,9 +2,9 @@ import { createSignal, Show } from 'solid-js';
 import Sidebar from './Sidebar.jsx';
 import Dialog from './components/Dialog.jsx';
 import Resizable from './components/Resizable.jsx';
-import { useAppState } from './AppState.jsx';
+import { useAppStore } from './AppStore.js';
 import Navbar from './Navbar.jsx';
-import { useAuth } from './auth/AuthProvider.jsx';
+import { useAuth } from './auth/AuthStore.js';
 import { AnimatedShow } from './components/AnimatedShow.jsx';
 
 /**
@@ -14,22 +14,20 @@ import { AnimatedShow } from './components/AnimatedShow.jsx';
  * black and white export option for d3
  * search pdf
  */
-// let dbGlobal;
 export default function App(props) {
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = createSignal(false);
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
-  const [db, setDb] = createSignal(null);
   const { authLoading } = useAuth();
 
-  const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppState();
+  const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppStore();
 
   // Handlers for delete all checklists dialog
-  const handleDeleteAll = () => {
-    setDeleteAllDialogOpen(true);
-  };
+  // const handleDeleteAll = () => {
+  //   setDeleteAllDialogOpen(true);
+  // };
 
   const confirmDeleteAll = async () => {
     try {
@@ -104,9 +102,12 @@ export default function App(props) {
         </AnimatedShow>
 
         {/* Mobile overlay backdrop */}
-        <Show when={sidebarOpen()}>
-          <div class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300" onClick={() => setSidebarOpen(false)} />
-        </Show>
+        {/* <Show when={sidebarOpen()}>
+          <div
+            class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300"
+            onClick={() => setSidebarOpen(false)}
+          />
+        </Show> */}
 
         {/* PDF Viewer */}
         <Show when={pdfUrl()}>

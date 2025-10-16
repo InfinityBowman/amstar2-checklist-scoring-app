@@ -8,7 +8,7 @@ function fillExampleAnswers(checklist, idx) {
   // and the first option to true for even checklists.
   Object.keys(checklist).forEach((key) => {
     if (/^q\d+[a-z]*$/i.test(key) && checklist[key]?.answers) {
-      checklist[key].answers.forEach((arr, colIdx) => {
+      checklist[key].answers.forEach((arr, _colIdx) => {
         arr.fill(false);
         if (idx % 2 === 0) {
           arr[0] = true; // Even: first option

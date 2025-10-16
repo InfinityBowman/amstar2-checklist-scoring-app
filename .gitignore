@@ -69,4 +69,5 @@ wheels/
 
 # Alembic
 backend/alembic/versions/*.pyc
-
+backend-js
+docker-compose.js.yml

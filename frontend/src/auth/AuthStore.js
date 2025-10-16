@@ -1,40 +1,22 @@
-import { createContext, useContext, createSignal, onMount, createEffect } from 'solid-js';
+import { createSignal, createEffect, createRoot } from 'solid-js';
 import * as authService from '@api/authService.js';
 import useOnlineStatus from '@primitives/useOnlineStatus.js';
 
-const AuthContext = createContext();
-
-export function AuthProvider(props) {
+function createAuthStore() {
   const [isLoggedIn, setIsLoggedIn] = createSignal(false);
   const [user, setUser] = createSignal(null);
   const [authLoading, setAuthLoading] = createSignal(true);
   const isOnline = useOnlineStatus();
 
-  // Track previous online status
   let wasOnline = isOnline();
-
-  onMount(() => {
-    if (!isOnline()) {
-      setAuthLoading(false);
-      return;
-    }
-    initializeAuth();
-  });
-
-  createEffect(() => {
-    // Only run when online status changes
-    if (isOnline() && !wasOnline && !user()) {
-      initializeAuth();
-    }
-    wasOnline = isOnline();
-  });
 
   async function initializeAuth() {
     setAuthLoading(true);
     try {
       await authService.refreshAccessToken();
-      const user = await authService.getCurrentUser();
-      setUser(user);
+      const u = await authService.getCurrentUser();
+      setUser(u);
+      setIsLoggedIn(!!u);
     } catch {
       setUser(null);
       setIsLoggedIn(false);
@@ -43,10 +25,24 @@ export function AuthProvider(props) {
     }
   }
 
+  // run immediately on first import
+  if (isOnline()) {
+    initializeAuth();
+  } else {
+    setAuthLoading(false);
+  }
+
+  createEffect(() => {
+    if (isOnline() && !wasOnline && !user()) {
+      initializeAuth();
+    }
+    wasOnline = isOnline();
+  });
+
+  // --- API methods ---
   async function signup(email, password, name) {
     await authService.signup(email, password, name);
-    localStorage.setItem('pendingEmail', email); // Store for verification
-    // We do not auto login because we want email verification first
+    localStorage.setItem('pendingEmail', email);
   }
 
   async function sendEmailVerification() {
@@ -59,9 +55,9 @@ export function AuthProvider(props) {
   }
 
   async function signin(email, password) {
-    localStorage.setItem('pendingEmail', email); // Store in case signin needs verification
+    localStorage.setItem('pendingEmail', email);
     await authService.signin(email, password);
-    localStorage.removeItem('pendingEmail'); // Clear pending email on successful signin
+    localStorage.removeItem('pendingEmail');
     setIsLoggedIn(true);
     setUser(await authService.getCurrentUser());
   }
@@ -73,14 +69,14 @@ export function AuthProvider(props) {
   }
 
   async function getCurrentUser() {
-    const user = await authService.getCurrentUser();
-    setUser(user);
-    return user;
+    const u = await authService.getCurrentUser();
+    setUser(u);
+    return u;
   }
 
   async function refreshAccessToken() {
     await authService.refreshAccessToken();
-    // Later add update user data here in case they made changes on another device
+    // Later: maybe refresh user data
   }
 
   async function authFetch(url, options = {}) {
@@ -91,28 +87,25 @@ export function AuthProvider(props) {
     return localStorage.getItem('pendingEmail');
   }
 
-  return (
-    <AuthContext.Provider
-      value={{
-        isLoggedIn,
-        user,
-        signup,
-        signin,
-        signout,
-        getCurrentUser,
-        refreshAccessToken,
-        authFetch,
-        authLoading,
-        sendEmailVerification,
-        verifyEmail,
-        getPendingEmail,
-      }}
-    >
-      {props.children}
-    </AuthContext.Provider>
-  );
+  // export function useAuth() {
+  return {
+    isLoggedIn,
+    user,
+    signup,
+    signin,
+    signout,
+    getCurrentUser,
+    refreshAccessToken,
+    authFetch,
+    authLoading,
+    sendEmailVerification,
+    verifyEmail,
+    getPendingEmail,
+  };
 }
 
+const auth = createRoot(createAuthStore);
+
 export function useAuth() {
-  return useContext(AuthContext);
+  return auth;
 }

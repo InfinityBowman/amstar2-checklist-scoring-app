@@ -122,7 +122,9 @@ export const AMSTAR_CHECKLIST = {
     columns: [
       {
         label: 'For Partial Yes:',
-        options: ['provided a list of all potentially relevant studies that were read in full-text form but excluded from the review'],
+        options: [
+          'provided a list of all potentially relevant studies that were read in full-text form but excluded from the review',
+        ],
       },
       {
         label: 'For Yes, must also have:',

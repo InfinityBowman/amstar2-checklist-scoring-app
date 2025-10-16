@@ -28,6 +28,16 @@ export const API_ENDPOINTS = {
 
   // User endpoints
   CURRENT_USER: `${baseUrl}${API_PREFIX}/users/me`,
+  SEARCH_USERS: `${baseUrl}${API_PREFIX}/users/search`,
+
+  // Project endpoints
+  PROJECTS: `${baseUrl}${API_PREFIX}/projects`,
+
+  // Review endpoints
+  REVIEWS: `${baseUrl}${API_PREFIX}/reviews`,
+
+  // Checklist endpoints
+  CHECKLISTS: `${baseUrl}${API_PREFIX}/checklists`,
 
   ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric/shape`,
 

@@ -10,7 +10,12 @@ export default function Home() {
           <div class="mb-8">
             <div class="mx-auto w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
               <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
           </div>
@@ -21,12 +26,14 @@ export default function Home() {
           </h1>
 
           {/* Subtitle */}
-          <p class="text-xl md:text-2xl text-gray-600 mb-4 font-medium">Collaborative Research Appraisal Tool for Evidence Synthesis</p>
+          <p class="text-xl md:text-2xl text-gray-600 mb-4 font-medium">
+            Collaborative Research Appraisal Tool for Evidence Synthesis
+          </p>
 
           {/* Description */}
           <p class="text-lg text-gray-500 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Streamline your systematic review process with our interactive AMSTAR 2 checklist tool. Create, score, and visualize research
-            appraisals with confidence.
+            Streamline your systematic review process with our interactive AMSTAR 2 checklist tool. Create, score, and
+            visualize research appraisals with confidence.
           </p>
 
           {/* CTA Buttons */}
@@ -86,11 +93,18 @@ export default function Home() {
             <div class="text-center p-8 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
               <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-6">
                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
               <h3 class="text-xl font-semibold mb-4 text-gray-800">Auto-Save</h3>
-              <p class="text-gray-600 leading-relaxed">Never lose your progress. Your work is automatically saved as you go.</p>
+              <p class="text-gray-600 leading-relaxed">
+                Never lose your progress. Your work is automatically saved as you go.
+              </p>
             </div>
 
             {/* Feature 3 */}
@@ -106,7 +120,9 @@ export default function Home() {
                 </svg>
               </div>
               <h3 class="text-xl font-semibold mb-4 text-gray-800">Visual Results</h3>
-              <p class="text-gray-600 leading-relaxed">Generate clear, professional charts and summaries of your AMSTAR 2 assessments.</p>
+              <p class="text-gray-600 leading-relaxed">
+                Generate clear, professional charts and summaries of your AMSTAR 2 assessments.
+              </p>
             </div>
           </div>
         </div>
@@ -117,13 +133,13 @@ export default function Home() {
         <div class="max-w-4xl mx-auto text-center">
           <h2 class="text-3xl md:text-4xl font-bold mb-8 text-gray-800">About AMSTAR 2</h2>
           <p class="text-lg text-gray-600 leading-relaxed mb-8">
-            AMSTAR 2 (A MeaSurement Tool to Assess systematic Reviews) is a critical appraisal tool for systematic reviews that include
-            randomized or non-randomized studies of healthcare interventions.
+            AMSTAR 2 (A MeaSurement Tool to Assess systematic Reviews) is a critical appraisal tool for systematic
+            reviews that include randomized or non-randomized studies of healthcare interventions.
           </p>
           <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
             <p class="text-blue-800 font-medium">
-              Our tool makes it easy to apply the 16 AMSTAR 2 criteria to evaluate the methodological quality of systematic reviews, helping
-              researchers make informed decisions about evidence quality.
+              Our tool makes it easy to apply the 16 AMSTAR 2 criteria to evaluate the methodological quality of
+              systematic reviews, helping researchers make informed decisions about evidence quality.
             </p>
           </div>
         </div>

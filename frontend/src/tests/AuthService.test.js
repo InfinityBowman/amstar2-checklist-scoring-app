@@ -137,7 +137,9 @@ describe('authService', () => {
       mockFetch
         .mockResolvedValueOnce({ status: 401, ok: false }) // initial request
         .mockResolvedValueOnce({ ok: false, text: () => Promise.resolve('Refresh failed') }); // refresh
-      await expect(authService.authFetch('http://localhost:8000/test')).rejects.toThrow('Session expired. Please log in again.');
+      await expect(authService.authFetch('http://localhost:8000/test')).rejects.toThrow(
+        'Session expired. Please log in again.',
+      );
     });
   });
 

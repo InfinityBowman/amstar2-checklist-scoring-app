@@ -50,9 +50,13 @@ export default function Resizable(props) {
 
   let handleClass = '';
   if (direction === 'horizontal') {
-    handleClass = position === 'right' ? 'top-0 right-0 h-full w-2 cursor-col-resize' : 'top-0 left-0 h-full w-2 cursor-col-resize';
+    handleClass =
+      position === 'right' ? 'top-0 right-0 h-full w-2 cursor-col-resize' : 'top-0 left-0 h-full w-2 cursor-col-resize';
   } else {
-    handleClass = position === 'bottom' ? 'left-0 bottom-0 w-full h-2 cursor-row-resize' : 'left-0 top-0 w-full h-2 cursor-row-resize';
+    handleClass =
+      position === 'bottom' ?
+        'left-0 bottom-0 w-full h-2 cursor-row-resize'
+      : 'left-0 top-0 w-full h-2 cursor-row-resize';
   }
 
   return (

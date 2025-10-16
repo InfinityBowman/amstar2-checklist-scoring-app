@@ -9,10 +9,10 @@ export default function PinInput(props) {
     autoComplete: props.autoComplete || 'one-time-code',
     otp: props.otp || true,
     onValueChange(value) {
-      props.onInput && props.onInput(value.valueAsString);
+      if (props.onInput) props.onInput(value.valueAsString);
     },
     onValueComplete(details) {
-      props.onComplete && props.onComplete(details.valueAsString);
+      if (props.onComplete) props.onComplete(details.valueAsString);
     },
   });
 

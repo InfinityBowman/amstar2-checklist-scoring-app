@@ -35,6 +35,7 @@
 3. **Access the Application**
    - **Backend API**: http://localhost:8000
    - **API Documentation**: http://localhost:8000/docs
+   - **Cooler API Documentation**: http://localhost:8000/scalar
    - **Database**: localhost:54321 (PostgreSQL)
    - **Frontend**: [http://localhost:5173/amstar2-checklist-scoring-app/](http://localhost:5173/amstar2-checklist-scoring-app/)
 

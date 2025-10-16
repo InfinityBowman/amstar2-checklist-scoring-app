@@ -2,7 +2,7 @@ import { createSignal, createEffect } from 'solid-js';
 import StrengthIndicator from './StrengthIndicator.jsx';
 import PasswordInput from './PasswordInput.jsx';
 import { useNavigate } from '@solidjs/router';
-import { useAuth } from './AuthProvider.jsx';
+import { useAuth } from './AuthStore.js';
 import { AnimatedShow } from '../components/AnimatedShow.jsx';
 import { AiOutlineLoading3Quarters } from 'solid-icons/ai';
 
@@ -115,7 +115,9 @@ export default function SignUp() {
         <div>
           <PasswordInput password={password()} onPasswordChange={setPassword} autoComplete="new-password" required />
           <AnimatedShow when={submitted() && unmetRequirements().length > 0}>
-            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">Password must include {unmetRequirements()?.[0]}</p>
+            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">
+              Password must include {unmetRequirements()?.[0]}
+            </p>
           </AnimatedShow>
           <StrengthIndicator password={password()} onUnmet={setUnmetRequirements} />
         </div>

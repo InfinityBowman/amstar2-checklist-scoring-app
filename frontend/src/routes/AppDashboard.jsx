@@ -1,5 +1,5 @@
 import { createSignal, Show, For } from 'solid-js';
-import { useAppState } from '@/AppState.jsx';
+import { useAppStore } from '@/AppStore.js';
 import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
 import { createProject } from '@offline/project.js';
@@ -8,7 +8,7 @@ import { checkHealth, checkHealthDb } from '../api/authService.js';
 import { slugify } from './Routes.jsx';
 
 export default function AppDashboard() {
-  const { projects, currentProject, addProject, deleteProject } = useAppState();
+  const { projects, currentProject, addProject, deleteProject } = useAppStore();
   const navigate = useNavigate();
   const [projectName, setProjectName] = createSignal('');
 
@@ -46,9 +46,10 @@ export default function AppDashboard() {
           <For each={projects()}>
             {(project) => (
               <li
-                key={project.id}
                 class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between ${
-                  currentProject() && currentProject().id === project.id ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-100'
+                  currentProject() && currentProject().id === project.id ?
+                    'bg-blue-50 border-blue-300'
+                  : 'hover:bg-gray-100'
                 }`}
                 onClick={() => handleProjectClick(project)}
               >
@@ -98,10 +99,16 @@ export default function AppDashboard() {
         >
           Load Example Project
         </button>
-        <button onClick={checkHealth} class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm">
+        <button
+          onClick={checkHealth}
+          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
+        >
           Check Health
         </button>
-        <button onClick={checkHealthDb} class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm">
+        <button
+          onClick={checkHealthDb}
+          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
+        >
           Check Health DB
         </button>
       </div>

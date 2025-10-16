@@ -7,7 +7,9 @@ type UnknownShapeStream = ShapeStream<Row<unknown>>;
 const streamCache = new Map<string, UnknownShapeStream>();
 const shapeCache = new Map<UnknownShapeStream, UnknownShape>();
 
-export async function preloadShape<T extends Row<unknown> = Row>(options: ShapeStreamOptions<GetExtensions<T>>): Promise<Shape<T>> {
+export async function preloadShape<T extends Row<unknown> = Row>(
+  options: ShapeStreamOptions<GetExtensions<T>>,
+): Promise<Shape<T>> {
   const shapeStream = getShapeStream<T>(options);
   const shape = getShape<T>(shapeStream);
   await shape.rows;
@@ -158,7 +160,10 @@ function parseShapeData<T extends Row<unknown>>(shape: Shape<T>): ShapeDataResul
   };
 }
 
-function shapeResultChanged<T extends Row<unknown>>(oldRes: ShapeDataResult<T> | undefined, newRes: ShapeDataResult<T>): boolean {
+function shapeResultChanged<T extends Row<unknown>>(
+  oldRes: ShapeDataResult<T> | undefined,
+  newRes: ShapeDataResult<T>,
+): boolean {
   return (
     !oldRes ||
     oldRes.isLoading !== newRes.isLoading ||
@@ -174,7 +179,8 @@ function identity<T>(arg: T): T {
   return arg;
 }
 
-interface CreateShapeOptions<SourceData extends Row<unknown>, Selection> extends ShapeStreamOptions<GetExtensions<SourceData>> {
+interface CreateShapeOptions<SourceData extends Row<unknown>, Selection>
+  extends ShapeStreamOptions<GetExtensions<SourceData>> {
   selector?: (value: CreateShapeResult<SourceData>) => Selection;
 }
 

@@ -28,6 +28,8 @@ class User(Base):
     # Relationships
     projects = relationship("Project", back_populates="owner", cascade="all, delete-orphan")
     checklists = relationship("Checklist", back_populates="reviewer")
+    project_memberships = relationship("ProjectMember", back_populates="user", cascade="all, delete-orphan")
+    review_assignments = relationship("ReviewAssignment", back_populates="user", cascade="all, delete-orphan")
 
     # Create a composite index on email for faster lookups
     __table_args__ = (

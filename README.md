@@ -4,13 +4,11 @@ This is a web application for interactively filling out and scoring AMSTAR 2 che
 
 Visit it [here](https://InfinityBowman.github.io/amstar2-checklist-scoring-app)
 
-This is a web application for interactively filling out and scoring AMSTAR 2 checklists for systematic reviews. The app is built with SolidJS and D3 and stores your checklists locally in your browser using IndexedDB, so your data is private and persistent across sessions. **The app works fully offline and will save your checklists until you delete them in the site or clear your browser's site data.**
-
 ## Architecture
 
 - **Frontend**: SolidJS + Vite (with D3 for visualizations)
 - **Backend**: FastAPI + SQLAlchemy + Alembic
-- **Database**: PostgreSQL 16
+- **Database**: PostgreSQL 17
 - **Containerization**: Docker + Docker Compose
 - **Local Storage**: IndexedDB for offline functionality
 

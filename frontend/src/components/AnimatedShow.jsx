@@ -15,8 +15,8 @@ import { createSignal, createEffect, onCleanup, Show } from 'solid-js';
 export function AnimatedShow(props) {
   const [isVisible, setIsVisible] = createSignal(false);
   const [shouldRender, setShouldRender] = createSignal(false);
-  let elementRef;
-  let timeoutId;
+  let elementRef = null;
+  let timeoutId = null;
 
   const duration = () => props.duration ?? 300;
   const timingFunction = () => props.timingFunction ?? 'ease-in-out';

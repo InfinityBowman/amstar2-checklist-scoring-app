@@ -4,6 +4,6 @@
   "experimentalTernaries": true,
   "singleAttributePerLine": false,
   "singleQuote": true,
-  "printWidth": 140,
+  "printWidth": 120,
   "useTabs": false
 }

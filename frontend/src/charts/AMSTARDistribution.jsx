@@ -9,7 +9,8 @@ import * as d3 from 'd3';
  * - title: string (default: "Distribution of AMSTAR Ratings on Each Item Across Included Reviews")
  */
 export default function AMSTARDistribution(props) {
-  let ref, containerRef;
+  let ref = null;
+  let containerRef = null;
   const data = () => props.data ?? [];
   const [containerSize, setContainerSize] = createSignal({ width: 900, height: 600 });
 
