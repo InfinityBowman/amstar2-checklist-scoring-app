@@ -137,7 +137,11 @@ export default function Sidebar(props) {
               <ul class="list-disc space-y-1 text-xs">
                 <For each={checklists()}>
                   {(checklist) => (
-                    <ChecklistItem project={null} checklist={checklist} onDelete={() => props.onDeleteChecklist(null, checklist.id)} />
+                    <ChecklistItem
+                      project={null}
+                      checklist={checklist}
+                      onDelete={() => props.onDeleteChecklist(null, checklist.id)}
+                    />
                   )}
                 </For>
               </ul>
@@ -220,7 +224,7 @@ export default function Sidebar(props) {
               </svg>
               Clear all data
             </button>
-            <div class="mt-10"></div>
+            <div class="mt-10" />
           </div>
         </div>
       </div>
@@ -239,7 +243,9 @@ function ChecklistItem(props) {
       return;
     }
     const projectSlug = slugify(props.project.name);
-    const review = (props.project.reviews || []).find((r) => (r.checklists || []).some((cl) => cl.id === props.checklist.id));
+    const review = (props.project.reviews || []).find((r) =>
+      (r.checklists || []).some((cl) => cl.id === props.checklist.id),
+    );
     if (!review) {
       console.error('Review not found for checklist', props.checklist);
       return;

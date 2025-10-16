@@ -72,7 +72,12 @@ export default function SignIn() {
           />
         </div>
         <div>
-          <PasswordInput password={password()} onPasswordChange={setPassword} autoComplete="current-password" required />
+          <PasswordInput
+            password={password()}
+            onPasswordChange={setPassword}
+            autoComplete="current-password"
+            required
+          />
           <AnimatedShow when={!!error()}>
             <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">{error()}</p>
           </AnimatedShow>

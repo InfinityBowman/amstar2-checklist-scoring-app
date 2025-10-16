@@ -115,7 +115,9 @@ export default function SignUp() {
         <div>
           <PasswordInput password={password()} onPasswordChange={setPassword} autoComplete="new-password" required />
           <AnimatedShow when={submitted() && unmetRequirements().length > 0}>
-            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">Password must include {unmetRequirements()?.[0]}</p>
+            <p class="pt-2 sm:pt-3 px-2 text-red-600 text-xs sm:text-sm">
+              Password must include {unmetRequirements()?.[0]}
+            </p>
           </AnimatedShow>
           <StrengthIndicator password={password()} onUnmet={setUnmetRequirements} />
         </div>

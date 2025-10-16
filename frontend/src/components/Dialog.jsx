@@ -12,10 +12,17 @@ export default function Dialog(props) {
               {props.description && <p class="mt-2 text-gray-600">{props.description}</p>}
             </div>
             <div class="flex justify-end gap-2 mt-6">
-              <button class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors" onClick={props.onCancel} autofocus>
+              <button
+                class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                onClick={props.onCancel}
+                autofocus
+              >
                 Cancel
               </button>
-              <button class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors" onClick={props.onConfirm}>
+              <button
+                class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+                onClick={props.onConfirm}
+              >
                 {props.confirmText || 'Delete'}
               </button>
             </div>

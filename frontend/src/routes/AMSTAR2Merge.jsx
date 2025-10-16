@@ -10,7 +10,13 @@ import { useAppStore } from '../AppStore.js';
 export default function AMSTAR2Merge() {
   const params = useParams();
   const { getChecklist } = useAppStore();
-  console.log('Route params:', decodeURIComponent(params.nameA), params.indexA, decodeURIComponent(params.nameB), params.indexB);
+  console.log(
+    'Route params:',
+    decodeURIComponent(params.nameA),
+    params.indexA,
+    decodeURIComponent(params.nameB),
+    params.indexB,
+  );
 
   // Load checklists based on route params
   const checklistA = getChecklist(decodeURIComponent(params.nameA), params.indexA);

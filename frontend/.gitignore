@@ -27,4 +27,4 @@ metabase/
 
 !.env.example.*
 
-frontend/backend_test
+frontend/app

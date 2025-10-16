@@ -10,8 +10,15 @@ import { generateUUID } from '@offline/localDB.js';
 import { slugify } from './Routes.jsx';
 
 export default function ProjectDashboard() {
-  const { currentProject, setCurrentProject, deleteProject, addReview, deleteReview, addChecklistToReview, deleteChecklistFromReview } =
-    useAppStore();
+  const {
+    currentProject,
+    setCurrentProject,
+    deleteProject,
+    addReview,
+    deleteReview,
+    addChecklistToReview,
+    deleteChecklistFromReview,
+  } = useAppStore();
   const params = useParams();
   const navigate = useNavigate();
   const [reviewName, setReviewName] = createSignal('');
@@ -61,7 +68,9 @@ export default function ProjectDashboard() {
   const handleChecklistClick = (checklist) => {
     const checklistSlug = slugify(checklist.name);
     const projectSlug = slugify(currentProject().name);
-    const review = (currentProject().reviews || []).find((r) => (r.checklists || []).some((cl) => cl.id === checklist.id));
+    const review = (currentProject().reviews || []).find((r) =>
+      (r.checklists || []).some((cl) => cl.id === checklist.id),
+    );
     if (!review) {
       console.error('Review not found for checklist', checklist);
       return;
@@ -77,7 +86,24 @@ export default function ProjectDashboard() {
     console.log(csv);
   };
 
-  const questionOrder = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16'];
+  const questionOrder = [
+    'q1',
+    'q2',
+    'q3',
+    'q4',
+    'q5',
+    'q6',
+    'q7',
+    'q8',
+    'q9',
+    'q10',
+    'q11',
+    'q12',
+    'q13',
+    'q14',
+    'q15',
+    'q16',
+  ];
 
   createEffect(() => {
     const data = (currentProject()?.reviews || []).flatMap((review) =>
@@ -154,7 +180,9 @@ export default function ProjectDashboard() {
             Delete Project
           </button>
         </div>
-        <div class="mb-2 text-xs text-gray-500">Created: {new Date(currentProject().createdAt).toLocaleDateString()}</div>
+        <div class="mb-2 text-xs text-gray-500">
+          Created: {new Date(currentProject().createdAt).toLocaleDateString()}
+        </div>
         <div class="mb-4">
           <h3 class="text-base font-semibold mb-1">Add New Review</h3>
           <div class="flex gap-2 items-center">
@@ -183,7 +211,9 @@ export default function ProjectDashboard() {
                   <div class="flex items-center justify-between">
                     <div>
                       <span class="font-semibold">{review.name}</span>
-                      <span class="ml-2 text-xs text-gray-400">Created: {new Date(review.createdAt).toLocaleDateString()}</span>
+                      <span class="ml-2 text-xs text-gray-400">
+                        Created: {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
                     </div>
                     <button
                       class="px-2 py-1 bg-red-400 text-white rounded hover:bg-red-500 text-xs"
@@ -197,24 +227,28 @@ export default function ProjectDashboard() {
                     <ul class="space-y-1">
                       <For each={review.checklists || []}>
                         {(cl) => (
-                          <li
-                            class="flex items-center justify-between border rounded px-2 py-1 bg-white hover:bg-blue-50 cursor-pointer"
-                            onClick={() => handleChecklistClick(cl)}
-                          >
-                            <span>
-                              <span class="font-semibold">{cl.name}</span>
-                              <span class="ml-2 text-xs text-gray-600">
-                                Reviewer: {cl.reviewerName || <span class="italic text-gray-400">Unassigned</span>}
-                              </span>
-                            </span>
+                          <li class="border rounded bg-white hover:bg-blue-50">
                             <button
-                              class="ml-2 px-2 py-0.5 bg-red-400 text-white rounded hover:bg-red-500 text-xs"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteChecklistFromReview(currentProject().id, review.id, cl.id);
-                              }}
+                              type="button"
+                              class="flex items-center justify-between w-full px-2 py-1 cursor-pointer text-left"
+                              onClick={() => handleChecklistClick(cl)}
                             >
-                              Delete
+                              <span>
+                                <span class="font-semibold">{cl.name}</span>
+                                <span class="ml-2 text-xs text-gray-600">
+                                  Reviewer: {cl.reviewerName || <span class="italic text-gray-400">Unassigned</span>}
+                                </span>
+                              </span>
+                              <button
+                                type="button"
+                                class="ml-2 px-2 py-0.5 bg-red-400 text-white rounded hover:bg-red-500 text-xs"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteChecklistFromReview(currentProject().id, review.id, cl.id);
+                                }}
+                              >
+                                Delete
+                              </button>
                             </button>
                           </li>
                         )}
@@ -249,16 +283,28 @@ export default function ProjectDashboard() {
           </ul>
         </div>
         <div class="mb-4 flex gap-2">
-          <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={handleChecklistExport}>
+          <button
+            class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm"
+            onClick={handleChecklistExport}
+          >
             Export Checklists CSV
           </button>
-          <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={uploadAndStoreFile}>
+          <button
+            class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm"
+            onClick={uploadAndStoreFile}
+          >
             Upload file
           </button>
-          <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={handleGetStoredFile}>
+          <button
+            class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm"
+            onClick={handleGetStoredFile}
+          >
             Download File
           </button>
-          <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm" onClick={handleDisplayStoredFile}>
+          <button
+            class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm"
+            onClick={handleDisplayStoredFile}
+          >
             Display File
           </button>
         </div>

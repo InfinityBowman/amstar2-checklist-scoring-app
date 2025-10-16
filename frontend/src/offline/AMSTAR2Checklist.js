@@ -325,7 +325,8 @@ export function importChecklistsFromCSV(csv) {
     // Find column index and option index
     const questionDef = AMSTAR_CHECKLIST[row['Question']];
     const colIdx = questionDef?.columns?.findIndex((col) => (col.label || '') === row['Column Label']);
-    const optIdx = colIdx !== -1 ? questionDef.columns[colIdx].options.findIndex((opt) => opt === row['Option Text']) : -1;
+    const optIdx =
+      colIdx !== -1 ? questionDef.columns[colIdx].options.findIndex((opt) => opt === row['Option Text']) : -1;
     if (colIdx !== -1 && optIdx !== -1) {
       grouped[key][row['Question']].answers[colIdx][optIdx] = row['Selected'] === 'TRUE';
     }

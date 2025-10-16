@@ -260,7 +260,9 @@ async function deleteChecklist(projectId, reviewId, checklistId) {
     if (projectIndex !== -1) {
       const reviewIndex = (state.projects[projectIndex].reviews || []).findIndex((r) => r.id === reviewId);
       if (reviewIndex !== -1) {
-        setState('projects', projectIndex, 'reviews', reviewIndex, 'checklists', (arr) => arr.filter((c) => c.id !== checklistId));
+        setState('projects', projectIndex, 'reviews', reviewIndex, 'checklists', (arr) =>
+          arr.filter((c) => c.id !== checklistId),
+        );
       }
     }
 

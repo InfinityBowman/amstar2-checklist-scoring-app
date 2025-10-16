@@ -1,4 +1,4 @@
-import { createSignal, createEffect } from 'solid-js';
+import { createSignal, createEffect, Show } from 'solid-js';
 import { AMSTAR_CHECKLIST } from '@offline/checklistMap.js';
 import { useAppStore } from '@/AppStore.js';
 import { useParams, useNavigate } from '@solidjs/router';
@@ -311,9 +311,19 @@ export function Question9(props) {
         <CriticalButton state={stateA} onUpdate={onUpdateab} />
       </div>
       <div class="font-semibold text-gray-900 h-4 mt-2 mb-1">{question.subtitle}</div>
-      <StandardQuestionInternal state={stateA} question={{ text: 'q9a' }} columns={question.columns} handleChange={handleChangeA} />
+      <StandardQuestionInternal
+        state={stateA}
+        question={{ text: 'q9a' }}
+        columns={question.columns}
+        handleChange={handleChangeA}
+      />
       <div class="font-semibold text-gray-900 h-4 mt-2">{question.subtitle2}</div>
-      <StandardQuestionInternal state={stateB} question={{ text: 'q9b' }} columns={question.columns2} handleChange={handleChangeB} />
+      <StandardQuestionInternal
+        state={stateB}
+        question={{ text: 'q9b' }}
+        columns={question.columns2}
+        handleChange={handleChangeB}
+      />
     </div>
   );
 }
@@ -610,8 +620,12 @@ function StandardQuestionInternal(props) {
     <div class="flex flex-col gap-4 sm:flex-row sm:gap-6">
       {props.columns.map((col, colIdx) => (
         <div
-          key={colIdx}
-          class={colIdx === props.columns.length - 1 ? `${props.width ?? 'w-32'} flex flex-col min-w-0` : 'flex-1 flex flex-col min-w-0'}
+          
+          class={
+            colIdx === props.columns.length - 1 ?
+              `${props.width ?? 'w-32'} flex flex-col min-w-0`
+            : 'flex-1 flex flex-col min-w-0'
+          }
         >
           <div class="font-semibold text-gray-800 text-xs break-words whitespace-normal min-w-0 w-full min-h-[2rem] flex items-center">
             {col.label}
@@ -619,7 +633,7 @@ function StandardQuestionInternal(props) {
           {colIdx === props.columns.length - 1 ?
             <div class="flex flex-col gap-2 mt-1">
               {col.options.map((option, optIdx) => (
-                <label key={optIdx} class="flex items-center space-x-2 text-xs">
+                <label  class="flex items-center space-x-2 text-xs">
                   <input
                     type="radio"
                     name={`col-${colIdx}-${props.question?.text ?? ''}`}
@@ -633,7 +647,7 @@ function StandardQuestionInternal(props) {
             </div>
           : <div class="flex flex-col gap-2">
               {col.options.map((option, optIdx) => (
-                <label key={optIdx} class="flex items-center space-x-2 text-xs">
+                <label  class="flex items-center space-x-2 text-xs">
                   <input
                     type="checkbox"
                     checked={props.state().answers[colIdx][optIdx]}
@@ -737,11 +751,15 @@ export default function AMSTAR2Checklist() {
                   // Update the route if checklist name changes
                   if (params.projectSlug && params.reviewSlug && params.checklistSlug && currentChecklist()) {
                     const lastDash = params.checklistSlug.lastIndexOf('-');
-                    const checklistId = lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
+                    const checklistId =
+                      lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
                     const newChecklistSlug = slugify(e.target.value) + '-' + checklistId;
-                    navigate(`/projects/${params.projectSlug}/reviews/${params.reviewSlug}/checklists/${newChecklistSlug}`, {
-                      replace: true,
-                    });
+                    navigate(
+                      `/projects/${params.projectSlug}/reviews/${params.reviewSlug}/checklists/${newChecklistSlug}`,
+                      {
+                        replace: true,
+                      },
+                    );
                   }
                 }}
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
@@ -792,17 +810,35 @@ export default function AMSTAR2Checklist() {
               onUpdateb={(newQ9b) => handleChecklistChange({ q9b: newQ9b })}
               checklistState={currentChecklist}
             />
-            <Question10 onUpdate={(newQ10) => handleChecklistChange({ q10: newQ10 })} checklistState={currentChecklist} />
+            <Question10
+              onUpdate={(newQ10) => handleChecklistChange({ q10: newQ10 })}
+              checklistState={currentChecklist}
+            />
             <Question11
               onUpdatea={(newQ11a) => handleChecklistChange({ q11a: newQ11a })}
               onUpdateb={(newQ11b) => handleChecklistChange({ q11b: newQ11b })}
               checklistState={currentChecklist}
             />
-            <Question12 onUpdate={(newQ12) => handleChecklistChange({ q12: newQ12 })} checklistState={currentChecklist} />
-            <Question13 onUpdate={(newQ13) => handleChecklistChange({ q13: newQ13 })} checklistState={currentChecklist} />
-            <Question14 onUpdate={(newQ14) => handleChecklistChange({ q14: newQ14 })} checklistState={currentChecklist} />
-            <Question15 onUpdate={(newQ15) => handleChecklistChange({ q15: newQ15 })} checklistState={currentChecklist} />
-            <Question16 onUpdate={(newQ16) => handleChecklistChange({ q16: newQ16 })} checklistState={currentChecklist} />
+            <Question12
+              onUpdate={(newQ12) => handleChecklistChange({ q12: newQ12 })}
+              checklistState={currentChecklist}
+            />
+            <Question13
+              onUpdate={(newQ13) => handleChecklistChange({ q13: newQ13 })}
+              checklistState={currentChecklist}
+            />
+            <Question14
+              onUpdate={(newQ14) => handleChecklistChange({ q14: newQ14 })}
+              checklistState={currentChecklist}
+            />
+            <Question15
+              onUpdate={(newQ15) => handleChecklistChange({ q15: newQ15 })}
+              checklistState={currentChecklist}
+            />
+            <Question16
+              onUpdate={(newQ16) => handleChecklistChange({ q16: newQ16 })}
+              checklistState={currentChecklist}
+            />
           </div>
         </Show>
       </div>

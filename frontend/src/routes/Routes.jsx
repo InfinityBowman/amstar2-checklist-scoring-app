@@ -33,7 +33,10 @@ export default function AppRoutes() {
         <Route path="/electric" component={Electric} />
         {/* <Route path="/project/new" component={CreateProject} /> */}
         <Route path="/projects/:projectSlug" component={ProjectDashboard} />
-        <Route path="/projects/:projectSlug/reviews/:reviewSlug/checklists/:checklistSlug" component={AMSTAR2Checklist} />
+        <Route
+          path="/projects/:projectSlug/reviews/:reviewSlug/checklists/:checklistSlug"
+          component={AMSTAR2Checklist}
+        />
         <Route path="/checklist/:checklistSlug" component={AMSTAR2Checklist} />
         <Route path="/merge/:checklistSlugA/:checklistSlugB" component={AMSTAR2Merge} />
         <Route

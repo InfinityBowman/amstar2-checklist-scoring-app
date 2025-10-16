@@ -1,4 +1,4 @@
-import { createMemo } from 'solid-js';
+import { createMemo, For } from 'solid-js';
 import { createEffect } from 'solid-js';
 
 const requirementsList = [
@@ -29,13 +29,15 @@ export default function StrengthIndicator(props) {
       {/* Requirements */}
       <div class="text-xs text-gray-700" id="password-requirements" aria-live="polite">
         <ul class="pace-y-0.5 sm:space-y-1">
-          {requirementsList.map((req) => {
+          <For each={requirementsList}>{(req) => {
             const met = strength().met.includes(req.label);
             return (
               <li class="flex items-center gap-2">
                 <span
                   class={`w-3.5 h-3.5 ml-1 rounded-full flex items-center justify-center ${
-                    met ? 'bg-white text-green-500 border-green-500 border-[1.5px]' : 'border-red-500 border-[1.5px] text-red-500'
+                    met ?
+                      'bg-white text-green-500 border-green-500 border-[1.5px]'
+                    : 'border-red-500 border-[1.5px] text-red-500'
                   }`}
                   aria-hidden="true"
                 >
@@ -51,7 +53,7 @@ export default function StrengthIndicator(props) {
                 <span class={met ? 'text-green-500' : 'text-red-500'}>{req.label}</span>
               </li>
             );
-          })}
+          }}</For>
         </ul>
       </div>
     </div>

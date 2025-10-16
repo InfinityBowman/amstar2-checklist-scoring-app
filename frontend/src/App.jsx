@@ -102,9 +102,12 @@ export default function App(props) {
         </AnimatedShow>
 
         {/* Mobile overlay backdrop */}
-        <Show when={sidebarOpen()}>
-          <div class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300" onClick={() => setSidebarOpen(false)} />
-        </Show>
+        {/* <Show when={sidebarOpen()}>
+          <div
+            class="sm:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300"
+            onClick={() => setSidebarOpen(false)}
+          />
+        </Show> */}
 
         {/* PDF Viewer */}
         <Show when={pdfUrl()}>

@@ -114,7 +114,10 @@ describe('AppStore', () => {
       const store = useAppStore();
 
       await expect(store.loadData()).rejects.toThrow();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error loading IndexedDB data:', expect.objectContaining({ message: errorMessage }));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error loading IndexedDB data:',
+        expect.objectContaining({ message: errorMessage }),
+      );
     });
   });
 
@@ -138,7 +141,10 @@ describe('AppStore', () => {
       const store = useAppStore();
 
       await expect(store.addProject(project)).rejects.toThrow();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error adding project:', expect.objectContaining({ message: errorMessage }));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error adding project:',
+        expect.objectContaining({ message: errorMessage }),
+      );
     });
   });
 
@@ -183,7 +189,10 @@ describe('AppStore', () => {
       const store = useAppStore();
 
       await expect(store.deleteProject('p1')).rejects.toThrow();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error deleting project:', expect.objectContaining({ message: errorMessage }));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error deleting project:',
+        expect.objectContaining({ message: errorMessage }),
+      );
     });
   });
 
@@ -460,7 +469,9 @@ describe('AppStore', () => {
         // Mock delete failure
         localDB.deleteReviewFromProject.mockResolvedValue(false);
 
-        await expect(store.deleteReview(project.id, reviewId)).rejects.toThrow('Review not found or could not be deleted');
+        await expect(store.deleteReview(project.id, reviewId)).rejects.toThrow(
+          'Review not found or could not be deleted',
+        );
       });
     });
   });
