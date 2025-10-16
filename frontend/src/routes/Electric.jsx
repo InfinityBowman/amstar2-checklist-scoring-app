@@ -33,7 +33,10 @@ export default function Electric() {
   // use mergeable store, so this will create another store, then merge with existing
   // mergeablestore created from the saved opfs persister
   function syncToTinyBase() {
-    console.log('Syncing Electric data to TinyBase store...');
+    console.log(checklistAnswersShape.data());
+
+    // return;
+    // console.log('Syncing Electric data to TinyBase store...');
     // For each table, set all rows in TinyBase
     const tablesToSync = [
       { name: 'projects', data: projectsShape.data() },
@@ -45,18 +48,21 @@ export default function Electric() {
     ];
     for (const { name, data } of tablesToSync) {
       if (Array.isArray(data)) {
-        // Clear and repopulate the table
         store.delTable(name);
         for (const row of data) {
-          store.setRow(name, row.id, row);
+          if (name === 'checklist_answers' && Array.isArray(row.answers)) {
+            store.setRow(name, row.id, { ...row, answers: JSON.stringify(row.answers) });
+          } else {
+            store.setRow(name, row.id, row);
+          }
         }
       }
     }
-    console.log(store.getTables());
   }
 
   createEffect(() => {
     syncToTinyBase();
+    console.log(store.getTables());
   });
 
   // Create shapes for all tables
@@ -149,7 +155,7 @@ export default function Electric() {
         isLoading: checklistAnswersShape.isLoading,
         isError: checklistAnswersShape.isError,
         error: checklistAnswersShape.error,
-        color: 'red',
+        color: 'lime',
         description: 'AMSTAR2 checklist answers',
       },
       {
@@ -206,7 +212,7 @@ export default function Electric() {
       },
       pink: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-700', badge: 'bg-pink-100 text-pink-800' },
       cyan: { bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-700', badge: 'bg-cyan-100 text-cyan-800' },
-      red: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', badge: 'bg-red-100 text-red-800' },
+      lime: { bg: 'bg-lime-50', border: 'border-lime-300', text: 'text-lime-800', badge: 'bg-lime-100 text-lime-900' },
     };
     return colors[color] || colors.blue;
   };

@@ -22,7 +22,13 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Application startup: checking if database needs seeding")
     try:
+        # First try the improved seed function that processes init.sql
         await seed_database()
+        
+        # As a fallback, also try to seed just the demo users
+        # This ensures we at least have login credentials even if other seed data fails
+        from app.utils.seed import seed_demo_users
+        await seed_demo_users()
     except Exception as e:
         logger.error(f"Failed to seed database: {e}")
     

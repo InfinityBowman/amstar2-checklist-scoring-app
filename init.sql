@@ -4,10 +4,10 @@
 -- Demo Users
 INSERT INTO users (id, name, email, hashed_password, created_at, email_verified_at, timezone, locale)
 VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'Demo Admin', 'admin@example.com', '$2b$12$cHK.pppA70Fpy.68KrKVpODJO0fHu0qz27PkzMacQEhtzQRQcwxEm', NOW(), NOW(), 'UTC', 'en-US'),
-  ('22222222-2222-2222-2222-222222222222', 'Demo User', 'user@example.com', '$2b$12$cHK.pppA70Fpy.68KrKVpODJO0fHu0qz27PkzMacQEhtzQRQcwxEm', NOW(), NOW(), 'UTC', 'en-US'),
-  ('33333333-3333-3333-3333-333333333333', 'Test Reviewer', 'reviewer@example.com', '$2b$12$cHK.pppA70Fpy.68KrKVpODJO0fHu0qz27PkzMacQEhtzQRQcwxEm', NOW(), NOW(), 'UTC', 'en-US');
--- Note: All passwords are set to 'password123'
+  ('11111111-1111-1111-1111-111111111111', 'Demo Admin', 'admin@example.com', '$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW', NOW(), NOW(), 'UTC', 'en-US'),
+  ('22222222-2222-2222-2222-222222222222', 'Demo User', 'user@example.com', '$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW', NOW(), NOW(), 'UTC', 'en-US'),
+  ('33333333-3333-3333-3333-333333333333', 'Test Reviewer', 'reviewer@example.com', '$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW', NOW(), NOW(), 'UTC', 'en-US');
+-- Note: All passwords are set to 'Test111!'
 
 -- Demo Projects
 INSERT INTO projects (id, owner_id, name, updated_at)

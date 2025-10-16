@@ -7,41 +7,42 @@ store.setSchema({
   projects: {
     id: { type: 'string' }, // Unique project ID
     name: { type: 'string' }, // Project name/title
-    createdAt: { type: 'number' }, // Timestamp (ms)
+    updated_at: { type: 'number' }, // Timestamp (ms)
+    owner_id: { type: 'number' }, // FK to users.id
   },
   project_members: {
-    projectId: { type: 'string' }, // FK to projects.id
-    userId: { type: 'string' }, // FK to users.id
+    project_id: { type: 'string' }, // FK to projects.id
+    user_id: { type: 'string' }, // FK to users.id
     role: { type: 'string' }, // 'owner' or 'member'
     // Composite PK (projectId, userId)
   },
   reviews: {
     id: { type: 'string' }, // Unique review ID
-    projectId: { type: 'string' }, // Foreign key to projects.id
+    project_id: { type: 'string' }, // Foreign key to projects.id
     name: { type: 'string' }, // Review name/title
-    createdAt: { type: 'number' }, // Timestamp (ms)
-    pdfFileName: { type: 'string' }, // Optional PDF file name
+    created_at: { type: 'number' }, // Timestamp (ms)
+    // pdf_file_name: { type: 'string' }, // PDF file name
   },
   review_assignments: {
-    reviewId: { type: 'string' }, // FK to reviews.id
-    userId: { type: 'string' }, // FK to users.id
+    review_id: { type: 'string' }, // FK to reviews.id
+    user_id: { type: 'string' }, // FK to users.id
     // Composite PK (reviewId, userId)
   },
   checklists: {
     id: { type: 'string' }, // Unique checklist ID
-    reviewId: { type: 'string' }, // Foreign key to reviews.id
-    reviewerId: { type: 'string' }, // Optional, for multi-user
+    review_id: { type: 'string' }, // Foreign key to reviews.id
+    reviewer_id: { type: 'string' }, // Optional, for multi-user
     type: { type: 'string' }, // e.g. 'amstar'
-    completedAt: { type: 'number' }, // Timestamp (ms), optional
-    updatedAt: { type: 'number' }, // Timestamp (ms)
+    completed_at: { type: 'number' }, // Timestamp (ms), optional
+    updated_at: { type: 'number' }, // Timestamp (ms)
   },
   checklist_answers: {
     id: { type: 'string' }, // Unique answer ID (UUID)
-    checklistId: { type: 'string' }, // Foreign key to checklists.id
-    questionKey: { type: 'string' }, // e.g. 'q1', 'q2', etc.
+    checklist_id: { type: 'string' }, // Foreign key to checklists.id
+    question_key: { type: 'string' }, // e.g. 'q1', 'q2', etc.
     answers: { type: 'string' }, // JSON stringified array
     critical: { type: 'boolean' }, // true/false
-    updatedAt: { type: 'number' }, // Timestamp (ms)
+    updated_at: { type: 'number' }, // Timestamp (ms)
   },
 });
 
