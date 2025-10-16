@@ -3,11 +3,11 @@ import { createSignal } from 'solid-js';
 const [online, setOnline] = createSignal(navigator.onLine);
 
 window.addEventListener('online', () => {
-  console.log('Went online');
+  console.info('Went online');
   setOnline(true);
 });
 window.addEventListener('offline', () => {
-  console.log('Went offline');
+  console.info('Went offline');
   setOnline(false);
 });
 

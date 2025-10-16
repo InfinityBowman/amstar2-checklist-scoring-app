@@ -293,15 +293,14 @@ function ChecklistItem(props) {
                     })()}
                   `}
             >
-              {(() => {
-                if (!props.checklist) return 'Unknown';
-                const score = scoreChecklist(props.checklist);
-                if (score.length + (props.checklist.name?.length || 0) < 30) {
-                  return score;
-                } else {
-                  return <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
-                }
-              })()}
+              <Show when={props.checklist} fallback={'Unknown'}>
+                {() => {
+                  const score = scoreChecklist(props.checklist);
+                  return score.length + (props.checklist.name?.length || 0) < 30 ?
+                      score
+                    : <span class="inline-block w-2 h-2 rounded-full" style="background:currentColor;" />;
+                }}
+              </Show>
             </span>
           </div>
           <div class="text-2xs text-gray-500 mt-0.5">{new Date(props.checklist.createdAt).toLocaleDateString()}</div>

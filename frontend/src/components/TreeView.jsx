@@ -21,12 +21,18 @@ export default function TreeView(props) {
     <>
       <div
         class={`
-          flex items-center justify-between cursor-pointer select-none rounded-md transition-colors
-          px-2 py-1 font-medium text-xs text-gray-800 hover:bg-gray-100 ${currentProject()?.id === project()?.id ? 'bg-gray-200' : 'bg-white'}
-        `}
+    flex items-center justify-between cursor-pointer select-none rounded-md transition-colors
+    px-2 py-1 font-medium text-xs text-gray-800 hover:bg-gray-100 ${currentProject()?.id === project()?.id ? 'bg-gray-200' : 'bg-white'}
+  `}
         onClick={() => props.onSelect?.({ project: project() })}
         tabIndex={0}
         role="button"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            props.onSelect?.({ project: project() });
+            e.preventDefault();
+          }
+        }}
       >
         <span class="truncate">{project().name || project().id}</span>
         <button

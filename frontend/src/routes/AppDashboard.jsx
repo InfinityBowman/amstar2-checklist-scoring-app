@@ -46,7 +46,6 @@ export default function AppDashboard() {
           <For each={projects()}>
             {(project) => (
               <li
-                
                 class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between ${
                   currentProject() && currentProject().id === project.id ?
                     'bg-blue-50 border-blue-300'

@@ -1,4 +1,4 @@
-import { createSignal, createEffect, Show } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { AMSTAR_CHECKLIST } from '@offline/checklistMap.js';
 import { useAppStore } from '@/AppStore.js';
 import { useParams, useNavigate } from '@solidjs/router';
@@ -618,49 +618,54 @@ function CriticalButton(props) {
 function StandardQuestionInternal(props) {
   return (
     <div class="flex flex-col gap-4 sm:flex-row sm:gap-6">
-      {props.columns.map((col, colIdx) => (
-        <div
-          
-          class={
-            colIdx === props.columns.length - 1 ?
-              `${props.width ?? 'w-32'} flex flex-col min-w-0`
-            : 'flex-1 flex flex-col min-w-0'
-          }
-        >
-          <div class="font-semibold text-gray-800 text-xs break-words whitespace-normal min-w-0 w-full min-h-[2rem] flex items-center">
-            {col.label}
+      <For each={props.columns}>
+        {(col, colIdx) => (
+          <div
+            class={
+              colIdx() === props.columns.length - 1 ?
+                `${props.width ?? 'w-32'} flex flex-col min-w-0`
+              : 'flex-1 flex flex-col min-w-0'
+            }
+          >
+            <div class="font-semibold text-gray-800 text-xs break-words whitespace-normal min-w-0 w-full min-h-[2rem] flex items-center">
+              {col.label}
+            </div>
+            {colIdx() === props.columns.length - 1 ?
+              <div class="flex flex-col gap-2 mt-1">
+                <For each={col.options}>
+                  {(option, optIdx) => (
+                    <label class="flex items-center space-x-2 text-xs">
+                      <input
+                        type="radio"
+                        name={`col-${colIdx()}-${props.question?.text ?? ''}`}
+                        checked={props.state().answers[colIdx()][optIdx()]}
+                        onChange={() => props.handleChange(colIdx(), optIdx())}
+                        class="w-3.5 h-3.5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                      />
+                      <span class="text-gray-700 break-words">{option}</span>
+                    </label>
+                  )}
+                </For>
+              </div>
+            : <div class="flex flex-col gap-2">
+                <For each={col.options}>
+                  {(option, optIdx) => (
+                    <label class="flex items-center space-x-2 text-xs">
+                      <input
+                        type="checkbox"
+                        checked={props.state().answers[colIdx()][optIdx()]}
+                        onChange={() => props.handleChange(colIdx(), optIdx())}
+                        class="w-3 h-3 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
+                      />
+                      <span class="text-gray-700 break-words">{option}</span>
+                    </label>
+                  )}
+                </For>
+              </div>
+            }
           </div>
-          {colIdx === props.columns.length - 1 ?
-            <div class="flex flex-col gap-2 mt-1">
-              {col.options.map((option, optIdx) => (
-                <label  class="flex items-center space-x-2 text-xs">
-                  <input
-                    type="radio"
-                    name={`col-${colIdx}-${props.question?.text ?? ''}`}
-                    checked={props.state().answers[colIdx][optIdx]}
-                    onChange={() => props.handleChange(colIdx, optIdx)}
-                    class="w-3.5 h-3.5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <span class="text-gray-700 break-words">{option}</span>
-                </label>
-              ))}
-            </div>
-          : <div class="flex flex-col gap-2">
-              {col.options.map((option, optIdx) => (
-                <label  class="flex items-center space-x-2 text-xs">
-                  <input
-                    type="checkbox"
-                    checked={props.state().answers[colIdx][optIdx]}
-                    onChange={() => props.handleChange(colIdx, optIdx)}
-                    class="w-3 h-3 shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <span class="text-gray-700 break-words">{option}</span>
-                </label>
-              ))}
-            </div>
-          }
-        </div>
-      ))}
+        )}
+      </For>
     </div>
   );
 }
@@ -739,10 +744,13 @@ export default function AMSTAR2Checklist() {
           {/* Review Details */}
           <div class="grid md:grid-cols-3 gap-4 text-xs">
             <div>
-              <label class="block font-medium text-gray-700 mb-2">Review Title</label>
+              <label for="reviewName" class="block font-medium text-gray-700 mb-2">
+                Review Title
+              </label>
               <input
                 type="text"
                 value={reviewName()}
+                id="reviewName"
                 onChange={(e) => {
                   setReviewName(e.target.value);
                   handleChecklistChange({ name: e.target.value });
@@ -767,9 +775,12 @@ export default function AMSTAR2Checklist() {
               />
             </div>
             <div>
-              <label class="block font-medium text-gray-700 mb-2">Reviewer Name</label>
+              <label for="reviewerName" class="block font-medium text-gray-700 mb-2">
+                Reviewer Name
+              </label>
               <input
                 type="text"
+                id="reviewerName"
                 value={reviewerName()}
                 onChange={(e) => {
                   setReviewerName(e.target.value);
@@ -780,9 +791,12 @@ export default function AMSTAR2Checklist() {
               />
             </div>
             <div>
-              <label class="block font-medium text-gray-700 mb-2">Review Date</label>
+              <label for="reviewDate" class="block font-medium text-gray-700 mb-2">
+                Review Date
+              </label>
               <input
                 type="date"
+                id="reviewDate"
                 value={reviewDate()}
                 onChange={(e) => {
                   setReviewDate(e.target.value);
