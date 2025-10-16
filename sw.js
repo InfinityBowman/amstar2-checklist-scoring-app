@@ -2850,8 +2850,8 @@ class NetworkOnly extends Strategy {
   }
 }
 
-console.log("Service worker loaded");
-precacheAndRoute([{"revision":null,"url":"assets/index-DI3sr568.css"},{"revision":null,"url":"assets/index-v6eZ-dZJ.js"},{"revision":"af3ce7eef2282bf20de04b97fd61c17b","url":"index.html"},{"revision":"583140937b17754a4b0727098720af0e","url":"registerSW.js"},{"revision":"5d3e0acfe04a12d24de1307fec167172","url":"apple-touch-icon.png"},{"revision":"de11fb7ff41c47fa98878b1c73faa2f5","url":"favicon-16x16.png"},{"revision":"a00092ad4c3f35955796184e7ba8c011","url":"favicon-32x32.png"},{"revision":"a252619223354bc5b54898df190cfd20","url":"manifest.webmanifest"}]);
+console.info("Service worker loaded");
+precacheAndRoute([{"revision":null,"url":"assets/AppStore.api-D30tTOvR.js"},{"revision":null,"url":"assets/checklistService-B7rCCqZT.js"},{"revision":null,"url":"assets/index-C_PjkHu6.js"},{"revision":null,"url":"assets/index-DeNUH7qY.css"},{"revision":null,"url":"assets/reviewService-DlHrA_fl.js"},{"revision":null,"url":"assets/userService-n9FYtoVC.js"},{"revision":"7aa665c439147ac65bfc4652ed928e39","url":"index.html"},{"revision":"583140937b17754a4b0727098720af0e","url":"registerSW.js"},{"revision":"5d3e0acfe04a12d24de1307fec167172","url":"apple-touch-icon.png"},{"revision":"de11fb7ff41c47fa98878b1c73faa2f5","url":"favicon-16x16.png"},{"revision":"a00092ad4c3f35955796184e7ba8c011","url":"favicon-32x32.png"},{"revision":"a252619223354bc5b54898df190cfd20","url":"manifest.webmanifest"}]);
 cleanupOutdatedCaches();
 let allowlist;
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/amstar2-checklist-scoring-app/index.html"), { allowlist }));
@@ -2859,6 +2859,3 @@ const apiUrlPattern = /\/api\//;
 registerRoute(({ url }) => apiUrlPattern.test(url.href), new NetworkOnly());
 self.skipWaiting();
 clientsClaim();
-self.addEventListener("online", () => {
-  console.log("Back online, processing offline actions...");
-});
