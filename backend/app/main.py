@@ -1,14 +1,42 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
 from app.core.config import settings
 from app.db.session import get_session
 from app.api.v1 import api_router
+from app.utils.seed import seed_database
+
+logger = logging.getLogger(__name__)
 
 
-app = FastAPI(title="AMSTAR2 API", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan context manager for FastAPI app.
+    Handles startup and shutdown events.
+    """
+    # Startup
+    logger.info("Application startup: checking if database needs seeding")
+    try:
+        await seed_database()
+    except Exception as e:
+        logger.error(f"Failed to seed database: {e}")
+    
+    yield
+    
+    # Shutdown
+    logger.info("Application shutdown")
+
+
+app = FastAPI(
+    title="AMSTAR2 API", 
+    version="0.1.0",
+    lifespan=lifespan
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,4 +60,3 @@ async def healthz_db(session: AsyncSession = Depends(get_session)):
 
 # Include API routers
 app.include_router(api_router, prefix=settings.API_PREFIX)
-

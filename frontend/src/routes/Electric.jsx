@@ -39,6 +39,9 @@ export default function Electric() {
       { name: 'projects', data: projectsShape.data() },
       { name: 'reviews', data: reviewsShape.data() },
       { name: 'checklists', data: checklistsShape.data() },
+      { name: 'checklist_answers', data: checklistAnswersShape.data() },
+      { name: 'project_members', data: projectMembersShape.data() },
+      { name: 'review_assignments', data: reviewAssignmentsShape.data() },
     ];
     for (const { name, data } of tablesToSync) {
       if (Array.isArray(data)) {

@@ -21,7 +21,7 @@ services:
       - wal_level=logical
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # Removed init.sql mounting - will handle seeding through the backend
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
       interval: 5s
@@ -51,6 +51,7 @@ services:
     command: sh -c "alembic -c alembic.ini upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
     volumes:
       - ./backend:/app
+      - ./init.sql:/init.sql:ro
 
   electric:
     image: docker.io/electricsql/electric:latest

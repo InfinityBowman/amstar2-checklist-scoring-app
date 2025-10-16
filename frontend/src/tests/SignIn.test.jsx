@@ -1,6 +1,6 @@
 import { render, fireEvent, screen, waitFor } from '@solidjs/testing-library';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import SignIn from '../auth/SignIn';
+import SignIn from '@auth/SignIn';
 
 // Create mock functions
 const mockNavigate = vi.fn();

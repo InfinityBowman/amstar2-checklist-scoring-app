@@ -12,7 +12,8 @@
     "sw": "SOURCE_MAP=true SW_DEV=true vite build && vite preview",
     "deploy": "gh-pages -d dist",
     "format": "prettier --write .",
-    "test": "if [ \"$CI\" = \"true\" ]; then vitest run; else vitest --ui; fi"
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "keywords": [],
   "author": "Jacob Maynard",
