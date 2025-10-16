@@ -51,7 +51,6 @@ services:
     command: sh -c "alembic -c alembic.ini upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
     volumes:
       - ./backend:/app
-      # - ./init.sql:/init.sql:ro
 
   electric:
     image: docker.io/electricsql/electric:latest

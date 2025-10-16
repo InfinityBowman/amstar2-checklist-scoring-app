@@ -28,8 +28,15 @@
    npm run build # this is needed to build custom packages
    npm run dev
 
-   # View logs (optional)
-   docker-compose logs -f
+   # Run tests
+   cd frontend
+   npm test
+   
+   # Or for tests with a nice UI
+   npm run test:ui
+
+   # View logs
+   docker compose logs -f
    ```
 
 3. **Access the Application**
