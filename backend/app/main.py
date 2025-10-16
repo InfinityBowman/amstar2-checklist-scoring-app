@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+from scalar_fastapi import get_scalar_api_reference
 
 from app.core.config import settings
 from app.db.session import get_session
@@ -39,14 +40,15 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="AMSTAR2 API", 
+    title="CoRATES API", 
     version="0.1.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    openapi_url="/openapi.json",
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=settings.ALLOWED_ORIGINS + ["*"],  # Allow all origins for documentation
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -63,6 +65,13 @@ async def healthz_db(session: AsyncSession = Depends(get_session)):
     await session.execute(text("SELECT 1"))
     return {"db": "ok"}
 
+
+@app.get("/scalar", include_in_schema=False)
+async def scalar_html():
+    return get_scalar_api_reference(
+        openapi_url=app.openapi_url,
+        title=app.title,
+    )
 
 # Include API routers
 app.include_router(api_router, prefix=settings.API_PREFIX)

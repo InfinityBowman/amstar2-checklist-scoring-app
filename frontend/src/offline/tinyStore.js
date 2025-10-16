@@ -1,6 +1,27 @@
 import { createStore, createMergeableStore } from 'tinybase';
 import { createOpfsPersister } from 'tinybase/persisters/persister-browser';
 
+/**
+ * This will become the main database we read and write to.
+ * It will use OPFS under the hood for persistance.
+ * When offline, there will be another table in here to track pending changes.
+ * These changes will have, in addition to what they need to change, a field
+ * for the id of the item they are reliant on exiting
+ * if they are reliant on anything. e.g. changing review name requires the review to exist first.
+ * They will also have the state of the store before the change was made to allow for easy rollback.
+ * When back online, we will attempt to push these changes to the server in the order they were made.
+ * Operations that succeed will return the item from the server. Changes that create new items will need to have
+ * their temp IDs replaced with the server IDs and any items dependent on them updated to use the new IDs. And we
+ * will have to check for any other overlapping temp ids in the store and update those to a new random ID and so on.
+ * Operations that fail will be retried a few times. Otherwise rollback the state and remove any dependent changes.
+ * The state of the store can be retrieved for rollback like so: store.getTablesSnapshot()
+ * This will return an object with all tables and their current state.
+ * e.g. {projects: {...}, reviews: {...}, checklists: {...}, answers: {...}}
+ * We can then use store.setTablesSnapshot(snapshot) to rollback to that state.
+ *
+ * Once we are online we can then fetch latest data with electric sync into a mergeable store and merge it in here.
+ * But we will wait until the transaction queue is empty to avoid conflicts.
+ */
 const store = createMergeableStore();
 
 store.setSchema({

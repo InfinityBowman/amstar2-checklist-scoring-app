@@ -191,28 +191,28 @@ export default function Electric() {
 
   const getColorClasses = (color) => {
     const colors = {
-      blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-800' },
+      blue: { bg: 'bg-blue-100', border: 'border-blue-200', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-800' },
       purple: {
-        bg: 'bg-purple-50',
+        bg: 'bg-purple-100',
         border: 'border-purple-200',
         text: 'text-purple-700',
         badge: 'bg-purple-100 text-purple-800',
       },
       green: {
-        bg: 'bg-green-50',
+        bg: 'bg-green-100',
         border: 'border-green-200',
         text: 'text-green-700',
         badge: 'bg-green-100 text-green-800',
       },
       orange: {
-        bg: 'bg-orange-50',
+        bg: 'bg-orange-100',
         border: 'border-orange-200',
         text: 'text-orange-700',
         badge: 'bg-orange-100 text-orange-800',
       },
-      pink: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-700', badge: 'bg-pink-100 text-pink-800' },
-      cyan: { bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-700', badge: 'bg-cyan-100 text-cyan-800' },
-      lime: { bg: 'bg-lime-50', border: 'border-lime-300', text: 'text-lime-800', badge: 'bg-lime-100 text-lime-900' },
+      pink: { bg: 'bg-pink-100', border: 'border-pink-200', text: 'text-pink-700', badge: 'bg-pink-100 text-pink-800' },
+      cyan: { bg: 'bg-cyan-100', border: 'border-cyan-200', text: 'text-cyan-700', badge: 'bg-cyan-100 text-cyan-800' },
+      lime: { bg: 'bg-lime-100', border: 'border-lime-300', text: 'text-lime-800', badge: 'bg-lime-100 text-lime-900' },
     };
     return colors[color] || colors.blue;
   };
