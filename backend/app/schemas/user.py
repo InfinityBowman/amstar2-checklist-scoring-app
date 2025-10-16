@@ -13,6 +13,13 @@ class UserResponse(BaseModel):
     email: EmailStr
     name: str
     created_at: datetime
+    email_verified_at: datetime = None
+    
+class UserSearchResponse(BaseModel):
+    """Lightweight user model for search results"""
+    id: UUID
+    email: EmailStr
+    name: str
 
 class UserLogin(BaseModel):
     email: EmailStr = Field(..., description="User's email address")

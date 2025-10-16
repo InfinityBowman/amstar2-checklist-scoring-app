@@ -23,8 +23,8 @@ class Project(Base):
     # Relationships
     owner = relationship("User", back_populates="projects")
     reviews = relationship("Review", back_populates="project", cascade="all, delete-orphan")
+    members = relationship("ProjectMember", back_populates="project", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('ix_projects_owner_id', 'owner_id'),
     )
-

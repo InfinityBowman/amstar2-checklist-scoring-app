@@ -23,8 +23,8 @@ class Review(Base):
     # Relationships
     project = relationship("Project", back_populates="reviews")
     checklists = relationship("Checklist", back_populates="review", cascade="all, delete-orphan")
+    assignments = relationship("ReviewAssignment", back_populates="review", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('ix_reviews_project_id', 'project_id'),
     )
-

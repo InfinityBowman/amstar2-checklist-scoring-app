@@ -513,5 +513,17 @@ export function useAppStore() {
     addReview,
     updateReview,
     deleteReview,
+
+    // User Search and Project Members
+    searchUsers: async (query, limit = 10) => {
+      const { searchUsers } = await import('./AppStore.api.js');
+      return searchUsers(query, limit);
+    },
+
+    // Add project members by email
+    addUserToProjectByEmail: async (projectId, email) => {
+      const { addUserToProjectByEmail } = await import('./AppStore.api.js');
+      return addUserToProjectByEmail(projectId, email);
+    },
   };
 }
