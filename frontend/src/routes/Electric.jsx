@@ -239,14 +239,7 @@ export default function Electric() {
                     <div class="flex items-center">
                       <Show when={isLoading()}>
                         <svg class="animate-spin h-3 w-3 mr-1 text-blue-600" fill="none" viewBox="0 0 24 24">
-                          <circle
-                            class="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"
-                           />
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                           <path
                             class="opacity-75"
                             fill="currentColor"
@@ -288,14 +281,7 @@ export default function Electric() {
                     <Show when={isLoading() && !isError()}>
                       <div class="py-4 text-center">
                         <svg class="animate-spin h-4 w-4 text-blue-600 mx-auto mb-1" fill="none" viewBox="0 0 24 24">
-                          <circle
-                            class="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"
-                           />
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                           <path
                             class="opacity-75"
                             fill="currentColor"
