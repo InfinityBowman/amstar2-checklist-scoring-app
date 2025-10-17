@@ -1,5 +1,6 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:3004';
 const API_PREFIX = import.meta.env.VITE_API_PREFIX || '/api/v1';
 
 // Ensure API_BASE_URL doesn't already include the API prefix
@@ -7,13 +8,6 @@ let baseUrl = API_BASE_URL;
 if (baseUrl.endsWith('/api/v1')) {
   baseUrl = baseUrl.replace('/api/v1', '');
 }
-
-// Debug logging
-// console.log('VITE_API_URL env var:', import.meta.env.VITE_API_URL);
-// console.log('API_PREFIX env var:', import.meta.env.VITE_API_PREFIX);
-// console.log('API_BASE_URL:', API_BASE_URL);
-// console.log('baseUrl:', baseUrl);
-// console.log('Full API base URL:', `${baseUrl}${API_PREFIX}`);
 
 export const API_ENDPOINTS = {
   // Auth endpoints
@@ -32,6 +26,7 @@ export const API_ENDPOINTS = {
 
   // Project endpoints
   PROJECTS: `${baseUrl}${API_PREFIX}/projects`,
+  // PROJECTS: `${'http://localhost:8000'}${API_PREFIX}/projects`,
 
   // Review endpoints
   REVIEWS: `${baseUrl}${API_PREFIX}/reviews`,
@@ -39,7 +34,8 @@ export const API_ENDPOINTS = {
   // Checklist endpoints
   CHECKLISTS: `${baseUrl}${API_PREFIX}/checklists`,
 
-  ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric/shape`,
+  // ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric/shape`,
+  ELECTRIC_SHAPE: 'http://localhost:3000/api/shapes',
 
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,

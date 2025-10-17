@@ -17,6 +17,9 @@ export async function signup(email, password, name) {
 }
 
 let accessToken = null;
+export function getAccessToken() {
+  return accessToken;
+}
 
 export async function signin(email, password) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -50,6 +53,7 @@ export async function getCurrentUser() {
 
 export async function authFetch(url, options = {}) {
   // Attach Authorization header if accessToken exists
+  let start = performance.now();
   options.headers = {
     ...options.headers,
     Authorization: `Bearer ${accessToken}`,
@@ -72,7 +76,7 @@ export async function authFetch(url, options = {}) {
       throw new Error('Session expired. Please log in again. Error:', err);
     }
   }
-
+  // console.log(`authFetch to ${url} took ${performance.now() - start} ms`);
   return res;
 }
 

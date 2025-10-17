@@ -13,7 +13,7 @@ from app.utils.auth import get_current_user
 router = APIRouter()
 
 
-@router.post("/", response_model=ReviewResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ReviewResponse, status_code=status.HTTP_201_CREATED)
 async def create_review(
     review_in: ReviewCreate,
     current_user: User = Depends(get_current_user),

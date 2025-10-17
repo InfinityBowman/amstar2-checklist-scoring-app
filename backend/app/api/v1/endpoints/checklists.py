@@ -14,7 +14,7 @@ from app.utils.auth import get_current_user
 router = APIRouter()
 
 
-@router.post("/", response_model=ChecklistResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ChecklistResponse, status_code=status.HTTP_201_CREATED)
 async def create_checklist(
     checklist_in: ChecklistCreate,
     current_user: User = Depends(get_current_user),

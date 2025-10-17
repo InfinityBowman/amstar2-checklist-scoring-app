@@ -12,6 +12,7 @@ function createAuthStore() {
 
   async function initializeAuth() {
     setAuthLoading(true);
+    console.log('Initializing auth...');
     try {
       await authService.refreshAccessToken();
       const u = await authService.getCurrentUser();
@@ -87,6 +88,10 @@ function createAuthStore() {
     return localStorage.getItem('pendingEmail');
   }
 
+  function getAccessToken() {
+    return authService.getAccessToken();
+  }
+
   // export function useAuth() {
   return {
     isLoggedIn,
@@ -101,6 +106,7 @@ function createAuthStore() {
     sendEmailVerification,
     verifyEmail,
     getPendingEmail,
+    getAccessToken,
   };
 }
 

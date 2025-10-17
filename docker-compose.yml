@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:17-alpine
+    image: postgres:16-alpine
     container_name: corates_postgres
     restart: unless-stopped
     env_file:
@@ -21,7 +21,6 @@ services:
       - wal_level=logical
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # Removed init.sql mounting - will handle seeding through the backend
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
       interval: 5s
@@ -64,6 +63,28 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  bun-proxy:
+    build:
+      context: ./backend-js
+      dockerfile: Dockerfile
+    container_name: corates_bun_proxy
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - ELECTRIC_URL=http://electric:3000
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - API_PREFIX=/api/v1
+      - PORT=3004
+    depends_on:
+      - electric
+    ports:
+      - '3004:3004'
+    working_dir: /app
+    command: bun run dev
+    volumes:
+      - ./backend-js:/app
 
   frontend:
     build:

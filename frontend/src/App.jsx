@@ -1,4 +1,4 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, Show, createEffect } from 'solid-js';
 import Sidebar from './Sidebar.jsx';
 import Dialog from './components/Dialog.jsx';
 import Resizable from './components/Resizable.jsx';
@@ -6,11 +6,12 @@ import { useAppStore } from './AppStore.js';
 import Navbar from './Navbar.jsx';
 import { useAuth } from './auth/AuthStore.js';
 import { AnimatedShow } from './components/AnimatedShow.jsx';
+import DataLoader from './components/DataLoader';
 
 /**
  * TODO
- * Save review title, name, date for each checklist
- * pdfs might need to be linked to or owned by checklists
+ * Save review title, name, date for each review
+ * pdfs might need to be linked to or owned by reviews
  * black and white export option for d3
  * search pdf
  */
@@ -20,14 +21,14 @@ export default function App(props) {
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
-  const { authLoading } = useAuth();
+  const { user, authLoading, authFetch } = useAuth();
 
   const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppStore();
 
   // Handlers for delete all checklists dialog
-  // const handleDeleteAll = () => {
-  //   setDeleteAllDialogOpen(true);
-  // };
+  const handleDeleteAll = () => {
+    setDeleteAllDialogOpen(true);
+  };
 
   const confirmDeleteAll = async () => {
     try {
@@ -83,6 +84,10 @@ export default function App(props) {
     setPendingDeleteId(null);
   };
 
+  // createEffect(() => {
+  //   console.log(dataLoading(), authLoading());
+  // });
+
   return (
     <div class="flex flex-col h-screen overflow-y-hidden">
       {/* Navbar at the top */}
@@ -97,7 +102,11 @@ export default function App(props) {
         />
 
         {/* Main content area, fades in after page refresh */}
-        <AnimatedShow class="flex flex-1" when={!dataLoading() && !authLoading()}>
+        <AnimatedShow
+          class="flex flex-1"
+          when={!dataLoading()}
+          fallback={<div class="flex-1 flex items-center justify-center">Loading...</div>}
+        >
           <div class="flex-1 min-h-0 overflow-y-auto">{props.children}</div>
         </AnimatedShow>
 
@@ -136,6 +145,9 @@ export default function App(props) {
         onCancel={cancelDeleteAll}
         onConfirm={confirmDeleteAll}
       />
+      <Show when={user()}>
+      </Show>
+        <DataLoader />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { createSignal, createEffect, Show } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useAppStore } from '@/AppStore';
 
@@ -125,7 +125,7 @@ export default function ProjectMemberManager(props) {
                 <Show when={searchResults().length > 0}>
                   <div class="absolute w-full z-50">
                     <ul class="max-h-[240px] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg divide-y divide-gray-100">
-                      {searchResults().map((user) => (
+                      <For each={searchResults()}>{(user) => (
                         <li
                           onClick={() => handleSelectUser(user)}
                           class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-150 flex items-center justify-between group"
@@ -148,7 +148,7 @@ export default function ProjectMemberManager(props) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                           </svg>
                         </li>
-                      ))}
+                      )}</For>
                     </ul>
                   </div>
                 </Show>
@@ -170,12 +170,12 @@ export default function ProjectMemberManager(props) {
                           r="10"
                           stroke="currentColor"
                           stroke-width="4"
-                        ></circle>
+                         />
                         <path
                           class="opacity-75"
                           fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                         />
                       </svg>
                       Searching...
                     </div>
@@ -212,7 +212,7 @@ export default function ProjectMemberManager(props) {
             {/* Divider */}
             <div class="relative mb-8">
               <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-300"></div>
+                <div class="w-full border-t border-gray-300" />
               </div>
               <div class="relative flex justify-center text-sm">
                 <span class="px-4 bg-white text-gray-500 font-medium">Or add by email</span>

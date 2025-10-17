@@ -2,7 +2,6 @@ import { createShape } from '@electric-sql/solid';
 import { createSignal, Show, For, createEffect } from 'solid-js';
 import { API_ENDPOINTS } from '@api/config.js';
 import { useAuth } from '@/auth/AuthStore.js';
-import { store } from '@/offline/tinyStore.js';
 
 export default function Electric() {
   const { authFetch, user } = useAuth();
@@ -28,42 +27,6 @@ export default function Electric() {
       </div>
     );
   }
-
-  // Sync to tinybase periodically if there is nothing in the transaction queue
-  // use mergeable store, so this will create another store, then merge with existing
-  // mergeablestore created from the saved opfs persister
-  function syncToTinyBase() {
-    console.log(checklistAnswersShape.data());
-
-    // return;
-    // console.log('Syncing Electric data to TinyBase store...');
-    // For each table, set all rows in TinyBase
-    const tablesToSync = [
-      { name: 'projects', data: projectsShape.data() },
-      { name: 'reviews', data: reviewsShape.data() },
-      { name: 'checklists', data: checklistsShape.data() },
-      { name: 'checklist_answers', data: checklistAnswersShape.data() },
-      { name: 'project_members', data: projectMembersShape.data() },
-      { name: 'review_assignments', data: reviewAssignmentsShape.data() },
-    ];
-    for (const { name, data } of tablesToSync) {
-      if (Array.isArray(data)) {
-        store.delTable(name);
-        for (const row of data) {
-          if (name === 'checklist_answers' && Array.isArray(row.answers)) {
-            store.setRow(name, row.id, { ...row, answers: JSON.stringify(row.answers) });
-          } else {
-            store.setRow(name, row.id, row);
-          }
-        }
-      }
-    }
-  }
-
-  createEffect(() => {
-    syncToTinyBase();
-    console.log(store.getTables());
-  });
 
   // Create shapes for all tables
   const usersShape = createShape({
@@ -283,7 +246,7 @@ export default function Electric() {
                             r="10"
                             stroke="currentColor"
                             stroke-width="4"
-                          ></circle>
+                           />
                           <path
                             class="opacity-75"
                             fill="currentColor"
@@ -332,7 +295,7 @@ export default function Electric() {
                             r="10"
                             stroke="currentColor"
                             stroke-width="4"
-                          ></circle>
+                           />
                           <path
                             class="opacity-75"
                             fill="currentColor"

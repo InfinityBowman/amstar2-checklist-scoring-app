@@ -19,8 +19,8 @@ class ProjectResponse(BaseModel):
     id: UUID
     owner_id: UUID
     name: str
+    created_at: datetime
     updated_at: datetime
 
     class Config:
         from_attributes = True
-

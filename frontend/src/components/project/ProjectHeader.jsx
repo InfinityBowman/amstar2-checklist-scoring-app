@@ -1,15 +1,16 @@
-import { createProject } from '@api/projectService.js';
+// import { createProject } from '@api/projectService.js';
+import { solidStore } from '@offline/solidStore.js';
 
 export default function ProjectHeader(props) {
+  const { saveProject } = solidStore;
+
   function handleCreateProject() {
-    createProject(props.project.name)
+    saveProject(props.project)
       .then((newProject) => {
         console.log('Project created successfully:', newProject);
-        // Optionally, you can add logic here to update the UI or notify the user
       })
       .catch((error) => {
         console.error('Failed to create project:', error);
-        // Optionally, you can add logic here to show an error message to the user
       });
   }
 
@@ -28,7 +29,7 @@ export default function ProjectHeader(props) {
           class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition flex items-center"
         >
           <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
           </svg>
           Manage Members
         </button>

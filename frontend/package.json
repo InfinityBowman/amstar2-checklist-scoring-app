@@ -5,7 +5,8 @@
   "homepage": "https://InfinityBowman.github.io/amstar2-checklist-scoring-app",
   "scripts": {
     "dev": "vite dev",
-    "docker": "docker compose up --build backend postgres electric -d",
+    "docker": "docker compose up --build backend postgres electric",
+    "docker:bun": "docker compose up --build backend postgres electric bun-proxy",
     "build": "npm run build:packages && vite build",
     "build:packages": "for d in packages/*; do (cd \"$d\" && npm run build); done",
     "preview": "vite preview",
@@ -13,7 +14,9 @@
     "deploy": "gh-pages -d dist",
     "format": "prettier --write .",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint:fix": "eslint . --ext .js,.jsx --fix"
   },
   "keywords": [],
   "author": "Jacob Maynard",
@@ -50,7 +53,7 @@
     "jsdom": "^27.0.0",
     "prettier": "3.6.2",
     "tailwindcss": "^4.1.13",
-    "vite": "^7.1.9",
+    "vite": "^7.1.10",
     "vite-plugin-pwa": "^1.0.2",
     "vite-plugin-solid": "^2.11.8",
     "vitest": "^3.2.4"

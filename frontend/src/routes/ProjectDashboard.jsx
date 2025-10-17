@@ -83,13 +83,12 @@ export default function ProjectDashboard() {
   };
 
   const toggleMemberManager = () => {
-    console.log('Toggling member manager', isOpen());
     setIsOpen(!isOpen());
   };
 
   const handleMemberAdded = (user) => {
     // Update local state or refresh project details
-    console.log('New member added:', user);
+    console.log('New member added unimplemented:', user);
     // Close the modal after member is added
     setIsOpen(false);
   };
