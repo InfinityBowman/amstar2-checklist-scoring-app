@@ -1,4 +1,4 @@
-import { createSignal, Show, createEffect } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
 import Sidebar from './Sidebar.jsx';
 import Dialog from './components/Dialog.jsx';
 import Resizable from './components/Resizable.jsx';
@@ -145,8 +145,9 @@ export default function App(props) {
         onCancel={cancelDeleteAll}
         onConfirm={confirmDeleteAll}
       />
-      <Show when={user()}></Show>
-      <DataLoader />
+      <Show when={user()}>
+        <DataLoader />
+      </Show>
     </div>
   );
 }
