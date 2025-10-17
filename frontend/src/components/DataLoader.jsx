@@ -17,7 +17,6 @@ export default function DataLoader() {
 
   console.log('%cDataLoader mounted', 'color: green;');
 
-  // Initialize shapes when component mounts
   createEffect(() => {
     if (user()) {
       // Only create shapes when we have a user
@@ -34,7 +33,7 @@ export default function DataLoader() {
 
       const newShapes = tables.reduce((acc, table) => {
         acc[table] = createShape({
-          url: `http://localhost:3004/api/v1/shapes/${table}`,
+          url: `${API_ENDPOINTS.ELECTRIC_SHAPE}/${table}`,
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -76,7 +75,6 @@ export default function DataLoader() {
     ];
 
     for (const { name, data } of tablesToSync) {
-      // console.log(`Syncing table: ${name} with ${data}`);
       if (Array.isArray(data)) {
         syncStore.delTable(name);
 
@@ -150,7 +148,6 @@ export default function DataLoader() {
     // Clean up synchronizers
     if (synchronizer1) await synchronizer1.destroy();
     if (synchronizer2) await synchronizer2.destroy();
-    // The AbortController will handle cleaning up the shape requests
   });
 
   return (

@@ -26,7 +26,6 @@ export const API_ENDPOINTS = {
 
   // Project endpoints
   PROJECTS: `${baseUrl}${API_PREFIX}/projects`,
-  // PROJECTS: `${'http://localhost:8000'}${API_PREFIX}/projects`,
 
   // Review endpoints
   REVIEWS: `${baseUrl}${API_PREFIX}/reviews`,
@@ -34,8 +33,8 @@ export const API_ENDPOINTS = {
   // Checklist endpoints
   CHECKLISTS: `${baseUrl}${API_PREFIX}/checklists`,
 
-  // ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric/shape`,
-  ELECTRIC_SHAPE: 'http://localhost:3004/api/shapes',
+  ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/api/shapes`,
+  // ELECTRIC_SHAPE: 'http://localhost:3004/api/shapes',
 
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,
