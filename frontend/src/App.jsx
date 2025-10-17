@@ -145,9 +145,8 @@ export default function App(props) {
         onCancel={cancelDeleteAll}
         onConfirm={confirmDeleteAll}
       />
-      <Show when={user()}>
-      </Show>
-        <DataLoader />
+      <Show when={user()}></Show>
+      <DataLoader />
     </div>
   );
 }
