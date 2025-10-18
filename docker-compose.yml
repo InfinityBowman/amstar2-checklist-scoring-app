@@ -31,6 +31,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+      target: development
     container_name: corates_backend
     restart: unless-stopped
     env_file:
@@ -68,6 +69,7 @@ services:
     build:
       context: ./backend-js
       dockerfile: Dockerfile
+      target: development
     container_name: corates_bun_proxy
     restart: unless-stopped
     env_file:

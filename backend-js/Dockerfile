@@ -1,21 +1,19 @@
 # Bun/Elysia Backend Dockerfile
+
 FROM oven/bun:latest AS base
-
-# Set working directory
 WORKDIR /app
-
-# Copy package files and install dependencies
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
-
-# Copy the rest of the application code
 COPY . .
 
-# Expose the app port (default 3004)
-EXPOSE 3004
-
-# Set environment variables (override in docker-compose or at runtime)
+# --- Production stage ---
+FROM base AS production
 ENV NODE_ENV=production
+EXPOSE 3004
+CMD ["bun", "run", "start"]
 
-# Start the server
+# --- Development stage ---
+FROM base AS development
+ENV NODE_ENV=development
+EXPOSE 3004
 CMD ["bun", "run", "dev"]
