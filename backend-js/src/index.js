@@ -15,6 +15,8 @@ import { authPlugin } from './routes/api/auth.js';
 import { usersPlugin } from './routes/api/users.js';
 import { projectsPlugin } from './routes/api/projects.js';
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:5173'];
+
 // Create an API router
 const apiRouter = new Elysia({ prefix: '/api/v1' })
   .use(authPlugin)
@@ -26,7 +28,7 @@ const app = new Elysia()
   // CORS must be first to apply to all routes
   .use(
     cors({
-      origin: 'http://localhost:5173',
+      origin: allowedOrigins,
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       exposeHeaders: ['electric-offset', 'electric-handle', 'electric-schema', 'electric-cursor'],

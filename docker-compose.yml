@@ -31,7 +31,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-      target: development
+      # target: development
     container_name: corates_backend
     restart: unless-stopped
     env_file:
