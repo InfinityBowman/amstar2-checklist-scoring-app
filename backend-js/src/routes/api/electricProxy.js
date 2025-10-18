@@ -5,7 +5,6 @@ export const electricProxy = (app) =>
   app.get('/shapes/:table', async ({ params, request, jwt }) => {
     try {
       const { table } = params;
-      // Use getCurrentUser from auth.js
       const user = await getCurrentUser(request, jwt);
       if (!user) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -26,13 +25,12 @@ export const electricProxy = (app) =>
       });
       originUrl.searchParams.set('table', table);
 
-      // Optionally scope data
-      if (!user.roles || !user.roles.includes('admin')) {
-        // You may want to adjust this to match your user/org model
-        if (user.org_id) {
-          originUrl.searchParams.set('where', `org_id = '${user.org_id}'`);
-        }
-      }
+      // Eventually scope data
+      // if (!user.roles || !user.roles.includes('admin')) {
+      // if (user.org_id) {
+      //   originUrl.searchParams.set('where', `org_id = '${user.org_id}'`);
+      // }
+      // }
 
       // Proxy request to Electric
       let response;

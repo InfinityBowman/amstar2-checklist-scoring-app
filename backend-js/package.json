@@ -10,7 +10,8 @@
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop --out=src/db/migrations",
-    "docker:up": "docker compose -f ../docker-compose.js.yml up --build"
+    "docker:up": "docker compose -f ../docker-compose.js.yml up --build",
+    "db:seed": "bun run src/db/seed.js"
   },
   "dependencies": {
     "@electric-sql/client": "^1.0.14",

@@ -2,7 +2,8 @@ import { Elysia } from 'elysia';
 import { jwt as elysiaJwt } from '@elysiajs/jwt';
 import postgres from 'postgres';
 import { randomUUID } from 'crypto';
-import bcrypt from 'bcryptjs'; // or use Bun's built-in hashing for dev
+import bcrypt from 'bcryptjs';
+import { sendEmail } from '@utils/sendEmail.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
 const sql = postgres(process.env.DATABASE_URL);

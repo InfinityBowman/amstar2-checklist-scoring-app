@@ -1,11 +1,11 @@
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: './src/db/schema/*',
+  schema: './src/db/schema.js',
   out: './src/db/migrations',
-  driver: 'pg',
+  dialect: 'postgresql',
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/amstar2',
+    connectionString: process.env.DATABASE_URL,
   },
   verbose: true,
   strict: true,
