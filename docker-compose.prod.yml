@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+  electric:
+    image: docker.io/electricsql/electric:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+
+  backend:
+    build:
+      context: ./backend-js
+      dockerfile: Dockerfile
+    restart: always
+    env_file: .env
+    environment:
+      ELECTRIC_URL: http://electric:3000
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      API_PREFIX: ${API_PREFIX}
+      PORT: 3004
+    depends_on:
+      - electric
+    networks:
+      - internal
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+    restart: always
+    env_file: .env
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+    networks:
+      - internal
+      - public
+
+  traefik:
+    image: traefik:v3.1
+    command:
+      - '--providers.docker=true'
+      - '--entrypoints.websecure.address=:443'
+      - '--entrypoints.web.address=:80'
+      - '--certificatesresolvers.myresolver.acme.httpchallenge=true'
+      - '--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web'
+      - '--certificatesresolvers.myresolver.acme.email=you@example.com'
+      - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+
+volumes:
+  pgdata:
+
+networks:
+  internal:
+    driver: bridge
+  public:
+    driver: bridge
