@@ -90,6 +90,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: development
     container_name: corates_frontend
     restart: unless-stopped
     env_file:
