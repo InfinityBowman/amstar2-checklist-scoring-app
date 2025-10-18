@@ -59,11 +59,11 @@ async function processQueue() {
         break;
 
       case OperationType.UPDATE_PROJECT:
-        result = await projectAPI.updateProject(operation.data.id, operation.data);
+        // result = await projectAPI.updateProject(operation.data.id, operation.data);
         break;
 
       case OperationType.DELETE_PROJECT:
-        result = await projectAPI.deleteProject(operation.data.id);
+        // result = await projectAPI.deleteProject(operation.data.id);
         break;
     }
 
