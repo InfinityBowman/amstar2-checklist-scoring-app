@@ -14,8 +14,10 @@ cleanupOutdatedCaches();
 let allowlist;
 if (import.meta.env.DEV) allowlist = [/^\/$/];
 
+const BASE_URL = import.meta.env.VITE_BASE_URL || '/';
+
 // to allow work offline
-registerRoute(new NavigationRoute(createHandlerBoundToURL('/amstar2-checklist-scoring-app/index.html'), { allowlist }));
+registerRoute(new NavigationRoute(createHandlerBoundToURL(`${BASE_URL}index.html`), { allowlist }));
 
 // Add route handler to bypass API requests - let them go to the network
 // Match any URL that includes /api to ensure all API calls go to network

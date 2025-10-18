@@ -5,10 +5,7 @@ import solid from 'vite-plugin-solid';
 import path from 'path';
 
 export default defineConfig({
-  base: '/amstar2-checklist-scoring-app',
-  optimizeDeps: {
-    exclude: ['@electric-sql/pglite'],
-  },
+  base: process.env.VITE_BASE_URL || '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
