@@ -124,19 +124,19 @@ async def seed_demo_users():
             "id": "11111111-1111-1111-1111-111111111111",
             "name": "Demo Admin",
             "email": "admin@example.com",
-            "hashed_password": "$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW"
+            "password_hash": "$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW"
         },
         {
             "id": "22222222-2222-2222-2222-222222222222",
             "name": "Demo User",
             "email": "user@example.com",
-            "hashed_password": "$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW"
+            "password_hash": "$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW"
         },
         {
             "id": "33333333-3333-3333-3333-333333333333",
             "name": "Test Reviewer",
             "email": "reviewer@example.com",
-            "hashed_password": "$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW"
+            "password_hash": "$2b$12$QE4YjeceRg.ctIXetOFkpekPTahVF1LvB3ltsxUea0iY4ZjCNL8rW"
         }
     ]
     
@@ -154,10 +154,10 @@ async def seed_demo_users():
             # Add each user
             for user in demo_users:
                 sql = f"""
-                INSERT INTO users (id, name, email, hashed_password, created_at, updated_at, email_verified_at)
+                INSERT INTO users (id, name, email, password_hash, created_at, updated_at, email_verified_at)
                 VALUES 
                 ('{user['id']}', '{user['name']}', '{user['email']}', 
-                '{user['hashed_password']}', NOW(), NOW(), NOW());
+                '{user['password_hash']}', NOW(), NOW(), NOW());
                 """
                 try:
                     await db.execute(text(sql))

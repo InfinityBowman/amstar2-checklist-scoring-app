@@ -1,12 +1,14 @@
 import { Elysia } from 'elysia';
 import { jwt as elysiaJwt } from '@elysiajs/jwt';
-import postgres from 'postgres';
+
+import { db } from '@db/drizzle.js';
+import { users } from '@db/schema.js';
+import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '@utils/sendEmail.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
-const sql = postgres(process.env.DATABASE_URL);
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
@@ -32,24 +34,29 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
       const { email, name, password } = body;
       // TODO: Validate, check strong password, etc.
       // Check if user already exists
-      const existing = await sql`SELECT id FROM users WHERE email = ${email.toLowerCase()}`;
+      const existing = await db.select({ id: users.id }).from(users).where(eq(users.email, email.toLowerCase()));
       if (existing.length > 0) {
         set.status = 409;
         return { error: 'User with this email already exists' };
       }
       // Hash password
-      const hashed_password = await bcrypt.hash(password, 10);
+      const passwordHash = await bcrypt.hash(password, 10);
       const id = randomUUID();
-      await sql`
-        INSERT INTO users (id, name, email, hashed_password)
-        VALUES (${id}, ${name}, ${email.toLowerCase()}, ${hashed_password})
-      `;
+      await db.insert(users).values({
+        id,
+        name,
+        email: email.toLowerCase(),
+        passwordHash,
+      });
       // Generate and store email verification code
       const code = generateCode();
-      await sql`
-        UPDATE users SET email_verification_code=${code}, email_verification_requested_at=NOW()
-        WHERE id=${id}
-      `;
+      await db
+        .update(users)
+        .set({
+          emailVerificationCode: code,
+          emailVerificationRequestedAt: new Date(),
+        })
+        .where(eq(users.id, id));
       // (Send code via email here)
       return { message: 'User created. Verification code sent.', code }; // Remove code in prod
     } catch (err) {
@@ -63,13 +70,13 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
   .post('/signin', async ({ body, set, jwt, cookie }) => {
     try {
       const { email, password } = body;
-      const users = await sql`SELECT * FROM users WHERE email = ${email.toLowerCase()}`;
-      const user = users[0];
-      if (!user || !(await bcrypt.compare(password, user.hashed_password))) {
+      const userArr = await db.select().from(users).where(eq(users.email, email.toLowerCase()));
+      const user = userArr[0];
+      if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
         set.status = 401;
         return { error: 'Invalid email or password' };
       }
-      if (!user.email_verified_at) {
+      if (!user.emailVerifiedAt) {
         set.status = 401;
         return { error: 'Email not verified' };
       }
@@ -91,7 +98,7 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
   })
 
   // Refresh
-  .post('/refresh', async ({ request, set, jwt, cookie }) => {
+  .post('/refresh', async ({ set, jwt, cookie }) => {
     try {
       const refresh = cookie.refresh.value;
       if (!refresh) {
@@ -122,7 +129,7 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
   })
 
   // Signout
-  .post('/signout', async ({ cookie }) => {
+  .post('/signout', async ({ cookie, set }) => {
     try {
       cookie.refresh.value = '';
       cookie.refresh.options = {
@@ -144,10 +151,13 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
     try {
       const { email } = body;
       const code = generateCode();
-      await sql`
-        UPDATE users SET email_verification_code=${code}, email_verification_requested_at=NOW()
-        WHERE email=${email.toLowerCase()}
-      `;
+      await db
+        .update(users)
+        .set({
+          emailVerificationCode: code,
+          emailVerificationRequestedAt: new Date(),
+        })
+        .where(eq(users.email, email.toLowerCase()));
       // (Send code via email here)
       return { message: `Verification code sent. CODE: ${code}` }; // Remove code in prod
     } catch (err) {
@@ -161,16 +171,20 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
   .post('/verify-email', async ({ body, set }) => {
     try {
       const { email, code } = body;
-      const users = await sql`SELECT * FROM users WHERE email=${email.toLowerCase()}`;
-      const user = users[0];
-      if (!user || user.email_verification_code !== code) {
+      const userArr = await db.select().from(users).where(eq(users.email, email.toLowerCase()));
+      const user = userArr[0];
+      if (!user || user.emailVerificationCode !== code) {
         set.status = 401;
         return { error: 'Invalid verification code' };
       }
-      await sql`
-        UPDATE users SET email_verified_at=NOW(), email_verification_code=NULL, email_verification_requested_at=NULL
-        WHERE id=${user.id}
-      `;
+      await db
+        .update(users)
+        .set({
+          emailVerifiedAt: new Date(),
+          emailVerificationCode: null,
+          emailVerificationRequestedAt: null,
+        })
+        .where(eq(users.id, user.id));
       return { message: 'Email verified successfully' };
     } catch (err) {
       console.error('Verify email error:', err);
@@ -184,10 +198,13 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
     try {
       const { email } = body;
       const code = generateCode();
-      await sql`
-        UPDATE users SET password_reset_code=${code}, password_reset_requested_at=NOW()
-        WHERE email=${email.toLowerCase()}
-      `;
+      await db
+        .update(users)
+        .set({
+          passwordResetCode: code,
+          passwordResetRequestedAt: new Date(),
+        })
+        .where(eq(users.email, email.toLowerCase()));
       // (Send code via email here)
       return { message: `Password reset code sent. CODE: ${code}` }; // Remove code in prod
     } catch (err) {
@@ -201,23 +218,27 @@ export const authPlugin = new Elysia({ prefix: '/auth' })
   .post('/reset-password', async ({ body, set }) => {
     try {
       const { email, code, new_password } = body;
-      const users = await sql`SELECT * FROM users WHERE email=${email.toLowerCase()}`;
-      const user = users[0];
-      if (!user || user.password_reset_code !== code) {
+      const userArr = await db.select().from(users).where(eq(users.email, email.toLowerCase()));
+      const user = userArr[0];
+      if (!user || user.passwordResetCode !== code) {
         set.status = 401;
         return { error: 'Invalid or expired reset code' };
       }
       // Check code expiry (15 min)
-      const requestedAt = new Date(user.password_reset_requested_at);
+      const requestedAt = new Date(user.passwordResetRequestedAt);
       if (Date.now() - requestedAt.getTime() > 15 * 60 * 1000) {
         set.status = 401;
         return { error: 'Reset code has expired' };
       }
-      const hashed_password = await bcrypt.hash(new_password, 10);
-      await sql`
-        UPDATE users SET hashed_password=${hashed_password}, password_reset_code=NULL, password_reset_requested_at=NULL
-        WHERE id=${user.id}
-      `;
+      const passwordHash = await bcrypt.hash(new_password, 10);
+      await db
+        .update(users)
+        .set({
+          passwordHash,
+          passwordResetCode: null,
+          passwordResetRequestedAt: null,
+        })
+        .where(eq(users.id, user.id));
       return { message: 'Password reset successful' };
     } catch (err) {
       console.error('Reset password error:', err);

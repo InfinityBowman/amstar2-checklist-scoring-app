@@ -1,15 +1,15 @@
 import { For } from 'solid-js';
 import ReviewItem from './ReviewItem';
-import { useAppStore } from '@/AppStore';
+import { solidStore } from '@/offline/solidStore';
 
 export default function ReviewsList(props) {
-  const { currentProject } = useAppStore();
+  const { getReviewsForProject } = solidStore;
 
   return (
     <div class="mb-4">
       <h3 class="text-base font-semibold mb-1">Reviews &amp; Checklists</h3>
       <ul class="divide-y divide-gray-100 border rounded bg-white shadow-sm">
-        <For each={currentProject().reviews || []}>
+        <For each={getReviewsForProject(props.project.id)}>
           {(review) => (
             <ReviewItem
               review={review}

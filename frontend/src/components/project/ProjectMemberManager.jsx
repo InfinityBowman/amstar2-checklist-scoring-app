@@ -3,7 +3,7 @@ import { Portal } from 'solid-js/web';
 import { useAppStore } from '@/AppStore';
 
 export default function ProjectMemberManager(props) {
-  const { searchUsers, addUserToProjectByEmail, currentProject } = useAppStore();
+  const { searchUsers, addUserToProjectByEmail } = useAppStore();
 
   // Local state
   const [searchQuery, setSearchQuery] = createSignal('');
@@ -62,7 +62,7 @@ export default function ProjectMemberManager(props) {
     setSuccess('');
 
     try {
-      const result = await addUserToProjectByEmail(currentProject().id, email());
+      const result = await addUserToProjectByEmail(props.projectId, email());
       setSuccess(`Added ${result.user.name} (${result.user.email}) to the project`);
       setEmail('');
 

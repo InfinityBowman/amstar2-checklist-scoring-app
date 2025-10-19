@@ -9,6 +9,11 @@ import { enqueueOperation } from '@api/syncService.js';
 const tinyStore = createMergeableStore();
 
 export const schema = {
+  users: {
+    id: { type: 'string' }, // Unique user ID
+    name: { type: 'string' }, // User's name
+    email: { type: 'string' }, // User's email address
+  },
   projects: {
     id: { type: 'string' }, // Unique project ID
     name: { type: 'string' }, // Project name/title
@@ -87,6 +92,7 @@ export async function createReactiveStore() {
 
   // Create solid signals for each table in the schema
   const [projects, setProjects] = createSignal([]);
+  const [users, setUsers] = createSignal([]);
   const [reviews, setReviews] = createSignal([]);
   const [checklists, setChecklists] = createSignal([]);
   const [checklistAnswers, setChecklistAnswers] = createSignal([]);
@@ -112,6 +118,17 @@ export async function createReactiveStore() {
         id,
       }));
       setProjects(projectsData);
+    });
+
+    // Users listener
+    const usersListener = tinyStore.addTableListener('users', () => {
+      console.log('Users table changed');
+      // return;
+      const usersData = Object.entries(tinyStore.getTable('users') || {}).map(([id, user]) => ({
+        ...user,
+        id,
+      }));
+      setUsers(usersData);
     });
 
     // Reviews listener
@@ -202,6 +219,12 @@ export async function createReactiveStore() {
       id,
     }));
     setProjects(projectsData);
+
+    const usersData = Object.entries(tinyStore.getTable('users') || {}).map(([id, user]) => ({
+      ...user,
+      id,
+    }));
+    setUsers(usersData);
 
     const reviewsData = Object.entries(tinyStore.getTable('reviews') || {}).map(([id, review]) => ({ ...review, id }));
     setReviews(reviewsData);
@@ -514,6 +537,7 @@ export async function createReactiveStore() {
   return {
     // Data signals
     projects,
+    users,
     reviews,
     checklists,
     checklistAnswers,

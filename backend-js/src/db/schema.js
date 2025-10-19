@@ -13,8 +13,8 @@ export const users = pgTable('users', {
   passwordResetAt: timestamp('password_reset_at', { mode: 'date' }),
   passwordResetCode: text('password_reset_code'),
   passwordResetRequestedAt: timestamp('password_reset_requested_at', { mode: 'date' }),
-  timezone: text('timezone').default('UTC'),
-  locale: text('locale').default('en-US'),
+  // timezone: text('timezone').default('UTC'),
+  // locale: text('locale').default('en-US'),
 });
 
 // Projects table

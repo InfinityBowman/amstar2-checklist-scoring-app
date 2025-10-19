@@ -2,21 +2,21 @@ import { For, createEffect, Show } from 'solid-js';
 import { solidStore } from '@offline/solidStore';
 
 export default function DataViewer() {
-  const { projects, reviews, checklists, checklistAnswers, projectMembers, reviewAssignments, state, isLoaded } =
+  const { projects, users, reviews, checklists, checklistAnswers, projectMembers, reviewAssignments, state, isLoaded } =
     solidStore;
 
   createEffect(() => {
-    console.log('Store data updated:', {
-      projects: projects().length,
-      reviews: reviews().length,
-      checklists: checklists().length,
-      answers: checklistAnswers().length,
-      members: projectMembers().length,
-      assignments: reviewAssignments().length,
-    });
+    // console.log('Store data updated:', {
+    //   projects: projects().length,
+    //   users: users().length,
+    //   reviews: reviews().length,
+    //   checklists: checklists().length,
+    //   answers: checklistAnswers().length,
+    //   members: projectMembers().length,
+    //   assignments: reviewAssignments().length,
+    // });
   });
 
-  // Helper to truncate UUIDs
   const short = (id) => id;
 
   return (
@@ -44,6 +44,35 @@ export default function DataViewer() {
                       <tr class="hover:bg-gray-50 border-t border-gray-100">
                         <td class="p-1 font-mono">{short(p.id)}</td>
                         <td class="p-1">{p.name}</td>
+                      </tr>
+                    )}
+                  </For>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Users */}
+          <div class="bg-white p-2 rounded shadow">
+            <div class="flex justify-between items-center mb-1">
+              <h2 class="font-bold">Users ({users().length})</h2>
+            </div>
+            <div class="overflow-auto max-h-32">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-gray-50 text-xs">
+                    <th class="p-1 text-left">ID</th>
+                    <th class="p-1 text-left">Name</th>
+                    <th class="p-1 text-left">Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <For each={users()}>
+                    {(u) => (
+                      <tr class="hover:bg-gray-50 border-t border-gray-100">
+                        <td class="p-1 font-mono">{short(u.id)}</td>
+                        <td class="p-1">{u.name}</td>
+                        <td class="p-1">{u.email}</td>
                       </tr>
                     )}
                   </For>

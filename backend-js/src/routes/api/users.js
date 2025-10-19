@@ -1,9 +1,10 @@
 import { Elysia } from 'elysia';
 import { jwt } from '@elysiajs/jwt';
-import postgres from 'postgres';
+import { db } from '@db/drizzle.js';
+import { users } from '@db/schema.js';
+import { eq } from 'drizzle-orm';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
-const sql = postgres(process.env.DATABASE_URL);
 
 export const usersPlugin = new Elysia({ prefix: '/users' })
   .use(
@@ -17,8 +18,8 @@ export const usersPlugin = new Elysia({ prefix: '/users' })
   // Get all users
   .get('/', async ({ set }) => {
     try {
-      const users = await sql`SELECT id, name, email FROM users`;
-      return { users };
+      const allUsers = await db.select({ id: users.id, name: users.name, email: users.email }).from(users);
+      return { users: allUsers };
     } catch (err) {
       console.error('Get all users error:', err);
       set.status = 500;
@@ -48,8 +49,11 @@ export const usersPlugin = new Elysia({ prefix: '/users' })
         return { error: 'Invalid token: missing user id' };
       }
       // Fetch user from DB
-      const users = await sql`SELECT id, name, email FROM users WHERE id = ${payload.sub}`;
-      const user = users[0];
+      const userArr = await db
+        .select({ id: users.id, name: users.name, email: users.email })
+        .from(users)
+        .where(eq(users.id, payload.sub));
+      const user = userArr[0];
       if (!user) {
         return { error: 'User not found' };
       }

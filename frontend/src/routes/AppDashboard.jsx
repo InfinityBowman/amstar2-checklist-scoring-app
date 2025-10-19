@@ -4,17 +4,16 @@ import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
 import { createProject } from '@offline/project.js';
 import { generateUUID } from '@offline/localDB.js';
-import { checkHealth, checkHealthDb } from '../api/authService.js';
-import { slugify } from './Routes.jsx';
+import { solidStore } from '@/offline/solidStore';
 
 export default function AppDashboard() {
-  const { projects, currentProject, addProject, deleteProject } = useAppStore();
+  const { addProject, deleteProject } = useAppStore();
   const navigate = useNavigate();
   const [projectName, setProjectName] = createSignal('');
+  const { projects } = solidStore;
 
   const handleProjectClick = (project) => {
-    const slug = slugify(project.name);
-    navigate(`/projects/${slug}-${project.id}`);
+    navigate(`/projects/${project.id}`);
   };
 
   const handleAddProject = async () => {
@@ -46,17 +45,20 @@ export default function AppDashboard() {
           <For each={projects()}>
             {(project) => (
               <li
-                class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between ${
-                  currentProject() && currentProject().id === project.id ?
-                    'bg-blue-50 border-blue-300'
-                  : 'hover:bg-gray-100'
-                }`}
+                class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-gray-100`}
                 onClick={() => handleProjectClick(project)}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleProjectClick(project);
+                  }
+                }}
               >
                 <div>
                   <div class="font-medium">{project.name}</div>
-                  <div class="text-xs text-gray-600">{project.description}</div>
-                  <div class="text-xs text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
+                  <div class="text-xs text-gray-400">
+                    Last modified: {new Date(project.updated_at).toLocaleDateString()}
+                  </div>
                 </div>
                 <button
                   class="ml-0 sm:ml-4 mt-2 sm:mt-0 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
@@ -98,18 +100,6 @@ export default function AppDashboard() {
           }}
         >
           Load Example Project
-        </button>
-        <button
-          onClick={checkHealth}
-          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
-        >
-          Check Health
-        </button>
-        <button
-          onClick={checkHealthDb}
-          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
-        >
-          Check Health DB
         </button>
       </div>
     </div>

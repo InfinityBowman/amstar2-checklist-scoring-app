@@ -4,10 +4,9 @@ import { useNavigate, useParams } from '@solidjs/router';
 import { createChecklist } from '@offline/AMSTAR2Checklist.js';
 import { createReview } from '@offline/review.js';
 import { generateUUID } from '@offline/localDB.js';
-import { slugify } from './Routes.jsx';
-import ProjectMemberManager from '../components/project/ProjectMemberManager.jsx';
+import { solidStore } from '@/offline/solidStore';
 
-// Import new components
+import ProjectMemberManager from '../components/project/ProjectMemberManager.jsx';
 import ProjectHeader from '../components/project/ProjectHeader';
 import ProjectMetadata from '../components/project/ProjectMetadata';
 import AddReviewForm from '../components/project/AddReviewForm';
@@ -16,30 +15,19 @@ import FileManagement from '../components/project/FileManagement';
 import ChartSection from '../components/project/ChartSection';
 
 export default function ProjectDashboard() {
-  const {
-    currentProject,
-    setCurrentProject,
-    deleteProject,
-    addReview,
-    deleteReview,
-    addChecklistToReview,
-    deleteChecklistFromReview,
-  } = useAppStore();
+  const { deleteProject, addReview, deleteReview, addChecklistToReview, deleteChecklistFromReview } = useAppStore();
+
+  const [currentProject, setCurrentProject] = createSignal(null);
+  const { projects } = solidStore;
 
   const params = useParams();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = createSignal(false);
 
-  function getProjectIdFromParam(param) {
-    if (!param) return null;
-    const lastDash = param.lastIndexOf('-');
-    return lastDash !== -1 ? param.slice(lastDash + 1) : param;
-  }
-
   createEffect(() => {
-    const projectId = getProjectIdFromParam(params.projectSlug);
-    if (projectId) {
-      setCurrentProject(projectId);
+    const project = projects().find((p) => p.id === params.projectId);
+    if (project) {
+      setCurrentProject(project);
     } else {
       console.warn('ProjectDashboard: No project found for', projectId);
       navigate(`/dashboard`);
@@ -67,8 +55,6 @@ export default function ProjectDashboard() {
   };
 
   const handleChecklistClick = (checklist) => {
-    const checklistSlug = slugify(checklist.name);
-    const projectSlug = slugify(currentProject().name);
     const review = (currentProject().reviews || []).find((r) =>
       (r.checklists || []).some((cl) => cl.id === checklist.id),
     );
@@ -76,10 +62,7 @@ export default function ProjectDashboard() {
       console.error('Review not found for checklist', checklist);
       return;
     }
-    const reviewSlug = slugify(review.name);
-    navigate(
-      `/projects/${projectSlug}-${currentProject().id}/reviews/${reviewSlug}-${review.id}/checklists/${checklistSlug}-${checklist.id}`,
-    );
+    navigate(`/projects/${currentProject().id}/reviews/${review.id}/checklists/${checklist.id}`);
   };
 
   const toggleMemberManager = () => {
@@ -107,11 +90,12 @@ export default function ProjectDashboard() {
           projectId={currentProject().id}
           onMemberAdded={handleMemberAdded}
         />
-        <ProjectMetadata createdAt={currentProject().createdAt} />
+        <ProjectMetadata updatedAt={currentProject().updated_at} />
 
         <AddReviewForm onAddReview={handleAddReview} />
 
         <ReviewsList
+          project={currentProject()}
           onDeleteReview={(reviewId) => deleteReview(currentProject().id, reviewId)}
           onChecklistClick={handleChecklistClick}
           onDeleteChecklist={(reviewId, checklistId) =>

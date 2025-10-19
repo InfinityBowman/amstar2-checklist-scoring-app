@@ -48,34 +48,32 @@ export default function DataLoader() {
     }
   });
 
+  // When any shape's data changes, trigger sync
   createEffect(() => {
     const currentShapes = shapes();
-    // Listen to each table's data
     Object.values(currentShapes).forEach((shape) => {
       if (shape && typeof shape.data === 'function') {
-        // This effect will rerun when shape.data() changes
-        shape.data(); // Access to register dependency
+        shape.data();
       }
     });
-    // When any shape's data changes, trigger sync
     debouncedSync();
   });
 
   async function syncToTinyBase() {
-    const syncStore = createMergeableStore();
-    syncStore.setSchema(schema);
+    const syncStore = solidStore.tinyStore;
+    // syncStore.setSchema(schema);
 
     // Clean up existing synchronizers if they exist
-    if (synchronizer1) await synchronizer1.destroy();
-    if (synchronizer2) await synchronizer2.destroy();
+    // if (synchronizer1) await synchronizer1.destroy();
+    // if (synchronizer2) await synchronizer2.destroy();
 
     // Create new synchronizers
-    synchronizer1 = createLocalSynchronizer(solidStore.tinyStore);
-    synchronizer2 = createLocalSynchronizer(syncStore);
+    // synchronizer1 = createLocalSynchronizer(solidStore.tinyStore);
+    // synchronizer2 = createLocalSynchronizer(syncStore);
 
     // Start syncing
-    synchronizer1.startSync();
-    synchronizer2.startSync();
+    // synchronizer1.startSync();
+    // synchronizer2.startSync();
 
     console.log('Syncing Electric data to TinyBase store...');
 
@@ -83,6 +81,7 @@ export default function DataLoader() {
     // For each table, set all rows in TinyBase
     const tablesToSync = [
       { name: 'projects', data: currentShapes.projects?.data() ?? [] },
+      { name: 'users', data: currentShapes.users?.data() ?? [] },
       { name: 'reviews', data: currentShapes.reviews?.data() ?? [] },
       { name: 'checklists', data: currentShapes.checklists?.data() ?? [] },
       { name: 'checklist_answers', data: currentShapes.checklist_answers?.data() ?? [] },
@@ -90,21 +89,46 @@ export default function DataLoader() {
       { name: 'review_assignments', data: currentShapes.review_assignments?.data() ?? [] },
     ];
 
+    console.log('Tables to sync:', tablesToSync);
+
     for (const { name, data } of tablesToSync) {
       if (Array.isArray(data)) {
-        syncStore.delTable(name);
-
+        // 1. Build a set of synced IDs for this table
+        const syncedIds = new Set();
         for (const row of data) {
+          if (name === 'project_members') {
+            syncedIds.add(`${row.project_id}::${row.user_id}`);
+          } else if (name === 'review_assignments') {
+            syncedIds.add(`${row.review_id}::${row.user_id}`);
+          } else {
+            syncedIds.add(row.id);
+          }
+        }
+
+        // 2. Remove all rows except local-only or unsynced or present in sync
+        const localRows = syncStore.getTable(name);
+        Object.entries(localRows).forEach(([id, row]) => {
+          if (!row || row.status === 'local-only' || row.status === 'unsynced') return;
+          if (!syncedIds.has(id)) {
+            syncStore.delRow(name, id);
+          }
+        });
+
+        // 3. Upsert all synced rows
+        for (const row of data) {
+          // console.log(`Syncing table ${name}, row: ${JSON.stringify(row)}`);
+          // Skip local-only or unsynced items for now
+          if (row.status === 'local-only' || row.status === 'unsynced') {
+            continue;
+          }
+          // syncStore.delRow(name, row.id);
+
           if (name === 'checklist_answers' && Array.isArray(row.answers)) {
             syncStore.setRow(name, row.id, { ...row, answers: JSON.stringify(row.answers) });
-          }
-          // Special handling for composite key tables
-          else if (name === 'project_members') {
-            // Create a composite key from project_id and user_id
+          } else if (name === 'project_members') {
             const rowId = `${row.project_id}::${row.user_id}`;
             syncStore.setRow(name, rowId, row);
           } else if (name === 'review_assignments') {
-            // Create a composite key from review_id and user_id
             const rowId = `${row.review_id}::${row.user_id}`;
             syncStore.setRow(name, rowId, row);
           } else {
@@ -151,6 +175,7 @@ export default function DataLoader() {
     }
   }, 1000); // 1 second debounce
 
+  // Trigger sync when user changes (e.g., login/logout)
   createEffect(() => {
     if (user()) {
       console.log('User changed, triggering sync...');

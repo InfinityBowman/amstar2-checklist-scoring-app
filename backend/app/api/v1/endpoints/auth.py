@@ -101,11 +101,11 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_session))
                 status_code=status.HTTP_409_CONFLICT, detail="Email already registered"
             )
 
-    hashed_password = get_password_hash(user_data.password)
+    password_hash = get_password_hash(user_data.password)
     new_user = User(
         email=user_data.email,
         name=user_data.name,
-        hashed_password=hashed_password,
+        password_hash=password_hash,
     )
 
     db.add(new_user)
@@ -142,7 +142,7 @@ async def signin(
     result = await db.execute(select(User).where(User.email == user_data.email))
     user = result.scalar_one_or_none()
 
-    if not user or not verify_password(user_data.password, user.hashed_password):
+    if not user or not verify_password(user_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
         )
@@ -404,7 +404,7 @@ async def reset_password(
         )
     
     # Update password and clear reset code
-    user.hashed_password = get_password_hash(new_password)
+    user.password_hash = get_password_hash(new_password)
     user.password_reset_code = None
     user.password_reset_at = datetime.now(timezone.utc)
     user.password_reset_requested_at = None
