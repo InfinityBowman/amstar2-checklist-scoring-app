@@ -33,12 +33,12 @@ export default function DataLoader() {
 
       const newShapes = tables.reduce((acc, table) => {
         acc[table] = createShape({
-          // url: `${API_ENDPOINTS.ELECTRIC_SHAPE}/${table}`,
-          url: `${API_ENDPOINTS.ELECTRIC_SHAPE}`,
-          params: { table },
-          // headers: {
-          //   Authorization: `Bearer ${accessToken}`,
-          // },
+          // url: `${API_ENDPOINTS.ELECTRIC_SHAPE}`,
+          // params: { table },
+          url: `${API_ENDPOINTS.ELECTRIC_SHAPE}/${table}`,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
           signal: controller().signal,
         });
         return acc;

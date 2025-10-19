@@ -33,8 +33,8 @@ export const API_ENDPOINTS = {
   // Checklist endpoints
   CHECKLISTS: `${baseUrl}${API_PREFIX}/checklists`,
 
-  // ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/shapes`,
-  ELECTRIC_SHAPE: `http://localhost:3000/v1/shape`,
+  ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/shapes`,
+  // ELECTRIC_SHAPE: `http://localhost:3000/v1/shape`,
 
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,
