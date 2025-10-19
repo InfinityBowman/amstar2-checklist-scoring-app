@@ -33,10 +33,12 @@ export default function DataLoader() {
 
       const newShapes = tables.reduce((acc, table) => {
         acc[table] = createShape({
-          url: `${API_ENDPOINTS.ELECTRIC_SHAPE}/${table}`,
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          // url: `${API_ENDPOINTS.ELECTRIC_SHAPE}/${table}`,
+          url: `${API_ENDPOINTS.ELECTRIC_SHAPE}`,
+          params: { table },
+          // headers: {
+          //   Authorization: `Bearer ${accessToken}`,
+          // },
           signal: controller().signal,
         });
         return acc;
@@ -45,6 +47,20 @@ export default function DataLoader() {
       setShapes(newShapes);
     }
   });
+
+  createEffect(() => {
+    const currentShapes = shapes();
+    // Listen to each table's data
+    Object.values(currentShapes).forEach((shape) => {
+      if (shape && typeof shape.data === 'function') {
+        // This effect will rerun when shape.data() changes
+        shape.data(); // Access to register dependency
+      }
+    });
+    // When any shape's data changes, trigger sync
+    debouncedSync();
+  });
+
   async function syncToTinyBase() {
     const syncStore = createMergeableStore();
     syncStore.setSchema(schema);
