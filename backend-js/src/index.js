@@ -21,13 +21,20 @@ const apiRouter = new Elysia({ prefix: '/api/v1' })
   .use(usersPlugin)
   .use(projectsPlugin)
   .use(electricProxy);
+
+const logCorsPlugin = new Elysia().onRequest(({ request }) => {
+  if (request.method === 'OPTIONS') {
+    console.log('[CORS] OPTIONS request:', request.url, request.headers);
+  }
+});
 // Create the main app
 const app = new Elysia()
   // CORS must be first to apply to all routes
+  .use(logCorsPlugin)
   .use(
     cors({
       origin: 'http://localhost:5173',
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       exposeHeaders: ['electric-offset', 'electric-handle', 'electric-schema', 'electric-cursor'],
       credentials: true,

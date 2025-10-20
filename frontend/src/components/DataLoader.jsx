@@ -1,9 +1,7 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js';
 import { createShape } from '@electric-sql/solid';
 import { API_ENDPOINTS } from '@api/config.js';
-import { createMergeableStore } from 'tinybase';
-import { createLocalSynchronizer } from 'tinybase/synchronizers/synchronizer-local';
-import { solidStore, schema } from '@offline/solidStore';
+import { solidStore } from '@offline/solidStore';
 import { useAuth } from '@/auth/AuthStore.js';
 
 export default function DataLoader() {
@@ -33,7 +31,7 @@ export default function DataLoader() {
 
       const newShapes = tables.reduce((acc, table) => {
         acc[table] = createShape({
-          // url: `${API_ENDPOINTS.ELECTRIC_SHAPE}`,
+          // url: `${`http://localhost:3000/v1/shape`}`,
           // params: { table },
           url: `${API_ENDPOINTS.ELECTRIC_SHAPE}/${table}`,
           headers: {
@@ -61,19 +59,6 @@ export default function DataLoader() {
 
   async function syncToTinyBase() {
     const syncStore = solidStore.tinyStore;
-    // syncStore.setSchema(schema);
-
-    // Clean up existing synchronizers if they exist
-    // if (synchronizer1) await synchronizer1.destroy();
-    // if (synchronizer2) await synchronizer2.destroy();
-
-    // Create new synchronizers
-    // synchronizer1 = createLocalSynchronizer(solidStore.tinyStore);
-    // synchronizer2 = createLocalSynchronizer(syncStore);
-
-    // Start syncing
-    // synchronizer1.startSync();
-    // synchronizer2.startSync();
 
     console.log('Syncing Electric data to TinyBase store...');
 

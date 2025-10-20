@@ -5,17 +5,17 @@ export default function DataViewer() {
   const { projects, users, reviews, checklists, checklistAnswers, projectMembers, reviewAssignments, state, isLoaded } =
     solidStore;
 
-  createEffect(() => {
-    // console.log('Store data updated:', {
-    //   projects: projects().length,
-    //   users: users().length,
-    //   reviews: reviews().length,
-    //   checklists: checklists().length,
-    //   answers: checklistAnswers().length,
-    //   members: projectMembers().length,
-    //   assignments: reviewAssignments().length,
-    // });
-  });
+  // createEffect(() => {
+  //   console.log('Store data updated:', {
+  //     projects: projects().length,
+  //     users: users().length,
+  //     reviews: reviews().length,
+  //     checklists: checklists().length,
+  //     answers: checklistAnswers().length,
+  //     members: projectMembers().length,
+  //     assignments: reviewAssignments().length,
+  //   });
+  // });
 
   const short = (id) => id;
 

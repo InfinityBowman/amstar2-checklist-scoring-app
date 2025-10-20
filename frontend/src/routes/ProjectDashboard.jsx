@@ -4,7 +4,7 @@ import { useNavigate, useParams } from '@solidjs/router';
 import { createChecklist } from '@offline/AMSTAR2Checklist.js';
 import { createReview } from '@offline/review.js';
 import { generateUUID } from '@offline/localDB.js';
-import { solidStore } from '@/offline/solidStore';
+import { getProjectCollection } from '@offline/modelCollections.js';
 
 import ProjectMemberManager from '../components/project/ProjectMemberManager.jsx';
 import ProjectHeader from '../components/project/ProjectHeader';
@@ -18,7 +18,7 @@ export default function ProjectDashboard() {
   const { deleteProject, addReview, deleteReview, addChecklistToReview, deleteChecklistFromReview } = useAppStore();
 
   const [currentProject, setCurrentProject] = createSignal(null);
-  const { projects } = solidStore;
+  const projects = getProjectCollection();
 
   const params = useParams();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function ProjectDashboard() {
     if (project) {
       setCurrentProject(project);
     } else {
-      console.warn('ProjectDashboard: No project found for', projectId);
+      console.warn('ProjectDashboard: No project found for', project.id);
       navigate(`/dashboard`);
     }
   });

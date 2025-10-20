@@ -2,7 +2,7 @@ import { createSignal, batch } from 'solid-js';
 import { createStore as createSolidStore } from 'solid-js/store';
 import { createMergeableStore } from 'tinybase';
 import { createOpfsPersister } from 'tinybase/persisters/persister-browser';
-import { enqueueOperation } from '@api/syncService.js';
+// import { enqueueOperation } from '@api/syncService.js';
 // import { syncOperation } from './syncWrapper.js';
 // import { API_ENDPOINTS } from '../api/config.js';
 
@@ -266,7 +266,7 @@ export async function createReactiveStore() {
   const saveProject = async (project) => {
     if (!project.id) throw new Error('Project must have an ID');
     let item = { id: project.id, name: project.name, owner_id: 1234, updated_at: new Date().toISOString() };
-    enqueueOperation('CREATE_PROJECT', project.name, project.id, getStoreSnapshot(tinyStore));
+    // enqueueOperation('CREATE_PROJECT', project.name, project.id, getStoreSnapshot(tinyStore));
     tinyStore.setRow('projects', project.id, item);
     console.log('Saved project:', item, tinyStore.getTable('projects'));
   };
@@ -348,7 +348,7 @@ export async function createReactiveStore() {
   };
 
   // CRUD Operations for Reviews
-  const saveReview = async (review) => {
+  const addReview = async (review) => {
     if (!review.id) throw new Error('Review must have an ID');
     if (!review.project_id) throw new Error('Review must have a project_id');
     tinyStore.setRow('reviews', review.id, review);
@@ -393,7 +393,7 @@ export async function createReactiveStore() {
   };
 
   // CRUD Operations for Checklists
-  const saveChecklist = async (checklist) => {
+  const addChecklist = async (checklist) => {
     if (!checklist.id) throw new Error('Checklist must have an ID');
     if (!checklist.review_id) throw new Error('Checklist must have a review_id');
     tinyStore.setRow('checklists', checklist.id, checklist);
@@ -419,7 +419,7 @@ export async function createReactiveStore() {
   };
 
   // CRUD Operations for Checklist Answers
-  const saveChecklistAnswer = async (answer) => {
+  const addChecklistAnswer = async (answer) => {
     if (!answer.id) throw new Error('Answer must have an ID');
     if (!answer.checklist_id) throw new Error('Answer must have a checklist_id');
 
@@ -442,7 +442,7 @@ export async function createReactiveStore() {
   };
 
   // Project Members operations
-  const saveProjectMember = async (projectId, userId, role = 'member') => {
+  const addProjectMember = async (projectId, userId, role = 'member') => {
     const id = `${projectId}::${userId}`;
     const member = {
       project_id: projectId,
@@ -460,7 +460,7 @@ export async function createReactiveStore() {
   };
 
   // CRUD Operations for  Review Assignments
-  const saveReviewAssignment = async (reviewId, userId) => {
+  const addReviewAssignment = async (reviewId, userId) => {
     const id = `${reviewId}::${userId}`;
     const assignment = {
       review_id: reviewId,
@@ -555,25 +555,25 @@ export async function createReactiveStore() {
     setCurrentProject,
 
     // Review operations
-    saveReview,
+    addReview,
     deleteReview,
     setCurrentReview,
 
     // Checklist operations
-    saveChecklist,
+    addChecklist,
     deleteChecklist,
     setCurrentChecklist,
 
     // Checklist answer operations
-    saveChecklistAnswer,
+    addChecklistAnswer,
     deleteChecklistAnswer,
 
     // Project member operations
-    saveProjectMember,
+    addProjectMember,
     deleteProjectMember,
 
     // Review assignment operations
-    saveReviewAssignment,
+    addReviewAssignment,
     deleteReviewAssignment,
 
     // Relationship helpers

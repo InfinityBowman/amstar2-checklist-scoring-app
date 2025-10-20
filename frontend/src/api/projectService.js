@@ -29,13 +29,35 @@ export async function createProject(name) {
   }
 }
 
+export async function deleteProject(projectId) {
+  try {
+    const response = await authFetch(`${API_ENDPOINTS.PROJECTS}/${projectId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to delete project');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    throw error;
+  }
+}
+
 export async function addUserToProject(projectId, userId) {
   try {
-    const response = await authFetch(`${API_ENDPOINTS.PROJECTS}/${projectId}/members/${userId}`, {
+    const response = await authFetch(`${API_ENDPOINTS.PROJECTS}/${projectId}/add-user`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ userId }),
     });
 
     if (!response.ok) {
@@ -50,24 +72,24 @@ export async function addUserToProject(projectId, userId) {
   }
 }
 
-export async function addUserToProjectByEmail(projectId, email) {
+export async function removeUserFromProject(projectId, userId) {
   try {
-    const response = await authFetch(`${API_ENDPOINTS.PROJECTS}/${projectId}/members/add-by-email`, {
-      method: 'POST',
+    const response = await authFetch(`${API_ENDPOINTS.PROJECTS}/${projectId}/remove-user`, {
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ userId }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.detail || 'Failed to add user to project');
+      throw new Error(errorData.detail || 'Failed to remove user from project');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error adding user to project by email:', error);
+    console.error('Error removing user from project:', error);
     throw error;
   }
 }

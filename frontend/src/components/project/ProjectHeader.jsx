@@ -1,11 +1,7 @@
-// import { createProject } from '@api/projectService.js';
-import { solidStore } from '@offline/solidStore.js';
-
 export default function ProjectHeader(props) {
-  const { saveProject } = solidStore;
-
   function handleCreateProject() {
-    saveProject(props.project)
+    props.project
+      .save()
       .then((newProject) => {
         console.log('Project created successfully:', newProject);
       })
@@ -34,7 +30,7 @@ export default function ProjectHeader(props) {
           Manage Members
         </button>
         <button
-          onClick={() => props.onDeleteProject(props.project.id)}
+          onClick={() => props.project.delete()}
           class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition"
         >
           Delete Project

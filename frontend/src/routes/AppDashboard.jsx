@@ -4,13 +4,13 @@ import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
 import { createProject } from '@offline/project.js';
 import { generateUUID } from '@offline/localDB.js';
-import { solidStore } from '@/offline/solidStore';
+import { getProjectCollection , Project} from '@offline/modelCollections.js';
 
 export default function AppDashboard() {
   const { addProject, deleteProject } = useAppStore();
   const navigate = useNavigate();
   const [projectName, setProjectName] = createSignal('');
-  const { projects } = solidStore;
+  const projects = getProjectCollection();
 
   const handleProjectClick = (project) => {
     navigate(`/projects/${project.id}`);
@@ -18,22 +18,24 @@ export default function AppDashboard() {
 
   const handleAddProject = async () => {
     if (!projectName().trim()) return;
-    const newProject = await addProject(
-      createProject({
-        id: await generateUUID(),
-        name: projectName().trim(),
-        createdAt: Date.now(),
-        checklists: [],
-      }),
-    );
+    const newProject = new Project({ name: projectName().trim() });
+    // const newProject = await addProject(
+    //   createProject({
+    //     id: await generateUUID(),
+    //     name: projectName().trim(),
+    //     createdAt: Date.now(),
+    //     checklists: [],
+    //   }),
+    // );
+    await newProject.save();
     setProjectName('');
     // Navigate to the new project
-    handleProjectClick(newProject);
+    // handleProjectClick(newProject);
   };
 
-  const handleDeleteProject = async (projectId) => {
+  const handleDeleteProject = async (project) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
-      await deleteProject(projectId);
+      await project.delete();
     }
   };
 
@@ -64,7 +66,7 @@ export default function AppDashboard() {
                   class="ml-0 sm:ml-4 mt-2 sm:mt-0 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeleteProject(project.id);
+                    handleDeleteProject(project);
                   }}
                 >
                   Delete

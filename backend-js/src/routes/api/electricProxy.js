@@ -62,9 +62,9 @@ export const electricProxy = (app) =>
 
       // Build upstream Electric shape URL
       const originUrl = new URL('http://electric:3000/v1/shape');
-      // Only pass through Electric protocol params
-      const reqUrl = new URL(request.url);
-      reqUrl.searchParams.forEach((value, key) => {
+      const url = new URL(request.url);
+      // Only pass through Electric protocol parameters
+      url.searchParams.forEach((value, key) => {
         if (ELECTRIC_PROTOCOL_QUERY_PARAMS.includes(key)) {
           originUrl.searchParams.set(key, value);
         }
@@ -88,6 +88,7 @@ export const electricProxy = (app) =>
       // Proxy request to Electric
       let response;
       try {
+        // console.log('Proxying request to Electric:', originUrl.toString());
         response = await fetch(originUrl);
       } catch (err) {
         console.error('Error fetching from Electric:', err);
@@ -97,32 +98,21 @@ export const electricProxy = (app) =>
         });
       }
 
+      // Forward all headers except CORS
       const headers = new Headers(response.headers);
-      headers.delete('content-encoding');
-      headers.delete('content-length');
-      // Remove all CORS-related headers from upstream
       headers.delete('access-control-allow-origin');
-      headers.delete('access-control-allow-methods');
-      headers.delete('access-control-allow-headers');
-      headers.delete('access-control-allow-credentials');
-      headers.delete('access-control-expose-headers');
-      headers.delete('access-control-max-age');
+      // headers.delete('access-control-allow-methods');
+      // headers.delete('access-control-allow-headers');
+      // headers.delete('access-control-allow-credentials');
+      // headers.delete('access-control-expose-headers');
+      // headers.delete('access-control-max-age');
 
-      // If Electric returns error status, return body as JSON
-      if (!response.ok) {
-        let errorText;
-        try {
-          errorText = await response.text();
-        } catch (err) {
-          errorText = 'Failed to read error body';
-        }
-        console.error('Electric returned error:', response.status, errorText);
-        return new Response(JSON.stringify({ error: 'Electric error', status: response.status, details: errorText }), {
-          status: response.status,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
+      // const headers = new Headers(response.headers);
+      headers.delete(`content-encoding`);
+      headers.delete(`content-length`);
+      headers.set(`Vary`, `Authorization`);
 
+      // console.log(`Proxied shape request for table "${table}" by user "${user.sub}"`);
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

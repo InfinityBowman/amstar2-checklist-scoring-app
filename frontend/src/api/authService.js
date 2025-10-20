@@ -59,8 +59,9 @@ export async function authFetch(url, options = {}) {
     Authorization: `Bearer ${accessToken}`,
   };
   options.credentials = 'include'; // ensure cookies are sent
-
+  console.log('fetching', url, options);
   let res = await fetch(url, options);
+  console.log('fetched');
 
   if (res.status === 401 || res.status === 403) {
     // Try to refresh the token
