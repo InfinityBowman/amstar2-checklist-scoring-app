@@ -15,11 +15,39 @@
    cd amstar2-checklist-scoring-app
    ```
 
-2. **Start the Application**
+2. **Local HTTPS with Caddy (Recommended):**
+
+To enable HTTPS (and HTTP/2) for local development, use [Caddy](https://caddyserver.com/) as a local HTTPS reverse proxy. Caddy automatically generates and manages trusted certificates for localhost.
+
+**Install Caddy:**
+
+- On macOS (with Homebrew):
+  ```sh
+  brew install caddy
+  ```
+- On Linux or Windows: See [Caddy download page](https://caddyserver.com/docs/install) for instructions.
+
+**Start Caddy and Vite together:**
+
+- In the `frontend` directory, run:
+  ```sh
+  npm install
+  npm run dev
+  ```
+  This will start both Vite and Caddy using `concurrently`.
+
+**Access your app securely:**
+
+- Frontend: https://localhost
+- Backend API (proxied): https://localhost:3005
+
+No need to manually generate or manage SSL certs—Caddy handles everything automatically.
+
+3. **Start the Application**
 
    ```bash
    # Build and start all services
-   docker-compose up --build -d
+   docker compose up --build -d
 
    # Alternatively, for frontend dev (--build is needed to pull in new changes to docker, if no changes are made, then it can be left out)
    cd frontend
@@ -31,15 +59,16 @@
    # Run tests
    cd frontend
    npm test
-   
+
    # Or for tests with a nice UI
    npm run test:ui
 
    # View logs
    docker compose logs -f
+   # Or just don't include the '-d' option to docker compose command
    ```
 
-3. **Access the Application**
+4. **Access the Application**
    - **Backend API**: http://localhost:8000
    - **API Documentation**: http://localhost:8000/docs
    - **Cooler API Documentation**: http://localhost:8000/scalar

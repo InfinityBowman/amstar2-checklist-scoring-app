@@ -1,6 +1,6 @@
 // API Configuration
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_BASE_URL = 'http://localhost:3004';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = 'https://localhost:3004';
 const API_PREFIX = import.meta.env.VITE_API_PREFIX || '/api/v1';
 
 // Ensure API_BASE_URL doesn't already include the API prefix

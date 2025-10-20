@@ -4,7 +4,9 @@
   "description": "An app for managing and scoring AMSTAR 2 checklists",
   "homepage": "https://InfinityBowman.github.io/amstar2-checklist-scoring-app",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "concurrently \"npm:dev:vite\" \"npm:dev:caddy\"",
+    "dev:vite": "vite dev",
+    "dev:caddy": "caddy run --config ../Caddyfile --adapter caddyfile",
     "docker": "docker compose up --build backend postgres electric",
     "docker:bun": "docker compose up --build backend postgres electric bun-proxy",
     "build": "npm run build:packages && vite build",
@@ -44,6 +46,7 @@
     "@tailwindcss/vite": "^4.1.13",
     "@testing-library/jest-dom": "^6.8.0",
     "@vitest/ui": "^3.2.4",
+    "concurrently": "^9.2.1",
     "eslint": "^9.37.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-solid": "^0.14.5",

@@ -1,0 +1,11 @@
+# HTTPS for Vite frontend
+https://localhost {
+    reverse_proxy localhost:5173
+    tls internal
+}
+
+# HTTPS for Bun backend
+https://localhost:3005 {
+    reverse_proxy localhost:3004
+    tls internal
+}

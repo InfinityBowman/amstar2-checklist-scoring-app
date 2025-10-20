@@ -3,9 +3,10 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import solid from 'vite-plugin-solid';
 import path from 'path';
+// import mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig({
-  base: '/amstar2-checklist-scoring-app',
+  base: '/',
   optimizeDeps: {
     exclude: ['@electric-sql/pglite'],
   },
@@ -33,6 +34,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     solid(),
+    // mkcert(),
     VitePWA({
       srcDir: 'src',
       filename: 'sw.js',

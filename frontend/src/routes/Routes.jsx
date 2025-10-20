@@ -15,7 +15,7 @@ import useOnlineStatus from '@primitives/useOnlineStatus.js';
 import AMSTAR2Merge from './AMSTAR2Merge.jsx';
 import DataViewer from '@/components/DataViewer.jsx';
 
-export const BASEPATH = '/amstar2-checklist-scoring-app';
+export const BASEPATH = import.meta.env.VITE_BASE_URL || '/';
 
 export function slugify(str) {
   return str

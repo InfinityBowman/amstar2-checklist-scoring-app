@@ -2,6 +2,7 @@ import { Elysia } from 'elysia';
 import { openapi } from '@elysiajs/openapi';
 import { cors } from '@elysiajs/cors';
 import { electricProxy } from './routes/api/electricProxy.js';
+import fs from 'fs';
 
 // Load environment variables if .env file exists
 try {
@@ -33,7 +34,7 @@ const app = new Elysia()
   .use(logCorsPlugin)
   .use(
     cors({
-      origin: 'http://localhost:5173',
+      origin: ['https://localhost', 'https://localhost:3005'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       exposeHeaders: ['electric-offset', 'electric-handle', 'electric-schema', 'electric-cursor'],
@@ -66,6 +67,14 @@ const app = new Elysia()
     }),
   )
   .listen(process.env.PORT || 3004);
+  // .listen({
+  //   port: process.env.PORT || 3004,
+  //   hostname: '0.0.0.0',
+  //   tls: {
+  //     key: fs.readFileSync('../certs/key.pem'),
+  //     cert: fs.readFileSync('../certs/cert.pem'),
+  //   },
+  // });
 
-console.log(`🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`);
-console.log(`🦊 Docs running at http://${app.server?.hostname}:${app.server?.port}/docs`);
+console.log(`🦊 Elysia is running at https://${app.server?.hostname}:${app.server?.port}`);
+console.log(`🦊 Docs running at https://${app.server?.hostname}:${app.server?.port}/docs`);
