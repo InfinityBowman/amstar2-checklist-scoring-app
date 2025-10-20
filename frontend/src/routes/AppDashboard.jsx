@@ -4,7 +4,7 @@ import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
 import { createProject } from '@offline/project.js';
 import { generateUUID } from '@offline/localDB.js';
-import { getProjectCollection , Project} from '@offline/modelCollections.js';
+import { getProjectCollection, Project } from '@offline/modelCollections.js';
 
 export default function AppDashboard() {
   const { addProject, deleteProject } = useAppStore();

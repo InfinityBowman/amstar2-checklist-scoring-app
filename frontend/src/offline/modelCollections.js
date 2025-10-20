@@ -17,7 +17,7 @@ export class Project {
   async save() {
     await solidStore.saveProject(this);
     let result = await projectAPI.createProject(this.name);
-    console.log(result)
+    console.log(result);
     this.id = result.id;
   }
 
