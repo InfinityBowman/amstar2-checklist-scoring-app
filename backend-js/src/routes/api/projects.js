@@ -10,30 +10,22 @@ export const projectsPlugin = new Elysia({ prefix: '/projects' })
   // Create a new project
   .post('/', async ({ body, jwt, request, set }) => {
     try {
-      const startTotal = Date.now();
-      const timings = {};
-
-      const startAuth = Date.now();
-      // const user = await getCurrentUser(request, jwt);
-      // if (!user) {
-      //   return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      //     status: 401,
-      //     headers: { 'Content-Type': 'application/json' },
-      //   });
-      // }
-      timings.auth = Date.now() - startAuth;
+      const user = await getCurrentUser(request, jwt);
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
 
       // Validate body
-      const startValidate = Date.now();
       const { name } = body;
       if (!name || typeof name !== 'string') {
         set.status = 400;
         return { error: 'Missing or invalid project name' };
       }
-      timings.validate = Date.now() - startValidate;
 
       // Generate unique UUID for project
-      const startUuid = Date.now();
       let projectId;
       let attempts = 0;
       do {
@@ -46,33 +38,25 @@ export const projectsPlugin = new Elysia({ prefix: '/projects' })
         set.status = 500;
         return { error: 'Unable to generate unique project ID' };
       }
-      timings.uuid = Date.now() - startUuid;
 
       const now = new Date().toISOString();
       // const ownerId = user.sub;
       const ownerId = '11111111-1111-1111-1111-111111111111';
 
       // Insert project
-      const startInsertProject = Date.now();
       await db.insert(projects).values({
         id: projectId,
         name,
         ownerId,
         updatedAt: new Date(now),
       });
-      timings.insertProject = Date.now() - startInsertProject;
 
       // Add creator as a member (role: 'owner')
-      const startInsertMember = Date.now();
       await db.insert(projectMembers).values({
         projectId,
         userId: ownerId,
         role: 'owner',
       });
-      timings.insertMember = Date.now() - startInsertMember;
-
-      timings.total = Date.now() - startTotal;
-      console.log('[Add Project Timing]', timings);
 
       // Return response
       return {
@@ -81,7 +65,6 @@ export const projectsPlugin = new Elysia({ prefix: '/projects' })
         owner_id: ownerId,
         created_at: now,
         updated_at: now,
-        timings,
       };
     } catch (err) {
       console.error('Create project error:', err);

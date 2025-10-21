@@ -74,8 +74,6 @@ export default function DataLoader() {
       { name: 'review_assignments', data: currentShapes.review_assignments?.data() ?? [] },
     ];
 
-    console.log('Tables to sync:', tablesToSync);
-
     for (const { name, data } of tablesToSync) {
       if (Array.isArray(data)) {
         // 1. Build a set of synced IDs for this table
@@ -124,7 +122,7 @@ export default function DataLoader() {
     }
     // await synchronizer1.destroy();
     // await synchronizer2.destroy();
-    console.log(syncStore.getTables());
+    // console.log(syncStore.getTables());
   }
   let synchronizer1 = null;
   let synchronizer2 = null;

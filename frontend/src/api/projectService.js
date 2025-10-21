@@ -2,9 +2,9 @@ import { API_ENDPOINTS } from './config.js';
 import { authFetch } from './authService.js';
 
 export async function createProject(name) {
-  console.log('Creating project with name:', name);
+  // console.log('Creating project with name:', name);
   try {
-    let start = performance.now();
+    // let start = performance.now();
     const response = await authFetch(`${API_ENDPOINTS.PROJECTS}`, {
       method: 'POST',
       headers: {
@@ -12,8 +12,7 @@ export async function createProject(name) {
       },
       body: JSON.stringify({ name }),
     });
-    let end = performance.now();
-    console.log(`createProject API call took ${end - start} ms`);
+    // console.log(`createProject API call took ${performance.now() - start} ms`);
 
     if (!response.ok) {
       const errorData = await response.json();

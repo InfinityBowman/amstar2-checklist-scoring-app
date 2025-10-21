@@ -53,15 +53,13 @@ export async function getCurrentUser() {
 
 export async function authFetch(url, options = {}) {
   // Attach Authorization header if accessToken exists
-  let start = performance.now();
+  // let start = performance.now();
   options.headers = {
     ...options.headers,
     Authorization: `Bearer ${accessToken}`,
   };
   options.credentials = 'include'; // ensure cookies are sent
-  console.log('fetching', url, options);
   let res = await fetch(url, options);
-  console.log('fetched');
 
   if (res.status === 401 || res.status === 403) {
     // Try to refresh the token
