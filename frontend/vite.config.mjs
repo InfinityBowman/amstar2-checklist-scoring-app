@@ -26,7 +26,7 @@ export default defineConfig({
     target: 'esnext',
   },
   server: {
-    allowedHosts: 'all',
+    allowedHosts: ['localhost', 'corates.jacobmaynard.dev'],
   },
   devOptions: {
     enabled: process.env.SW_DEV === 'true',
