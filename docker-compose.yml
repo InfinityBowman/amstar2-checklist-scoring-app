@@ -101,7 +101,7 @@ services:
     depends_on:
       - backend
     working_dir: /src
-    command: sh -c "npm run dev --host 0.0.0.0"
+    command: sh -c "npm run dev:vite -- --host 0.0.0.0"
 
 volumes:
   pgdata:
