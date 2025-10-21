@@ -25,6 +25,9 @@ export default defineConfig({
     sourcemap: process.env.SOURCE_MAP === 'true',
     target: 'esnext',
   },
+  server: {
+    allowedHosts: 'all',
+  },
   devOptions: {
     enabled: process.env.SW_DEV === 'true',
     /* when using generateSW the PWA plugin will switch to classic */

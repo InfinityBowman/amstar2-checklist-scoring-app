@@ -34,7 +34,7 @@ const app = new Elysia()
   .use(logCorsPlugin)
   .use(
     cors({
-      origin: ['https://localhost', 'https://localhost:3005'],
+      origin: ['https://localhost', 'https://localhost:3005', 'https://corates.jacobmaynard.dev'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       exposeHeaders: ['electric-offset', 'electric-handle', 'electric-schema', 'electric-cursor'],
