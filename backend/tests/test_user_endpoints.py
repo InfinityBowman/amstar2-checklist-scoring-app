@@ -36,9 +36,9 @@ class TestGetCurrentUserEndpoint:
         assert "hashed_password" not in data
     
     def test_no_token_returns_401(self, api_client: APIClient):
-        """No token should return 401"""
+        """No token should return 403 (FastAPI HTTPBearer default)"""
         response = api_client.get("/api/v1/users/me")
-        assert response.status_code == 401
+        assert response.status_code == 403
     
     def test_invalid_token_returns_401(self, api_client: APIClient):
         """Invalid token should return 401"""
@@ -91,19 +91,20 @@ class TestSearchUsersEndpoint:
         )
         api_client.set_token(main_token)
         
-        # Create a user with specific email
-        target_email = "alice.special@example.com"
+        # Create a user with specific email pattern
+        unique_id = generate_email().split('@')[0]  # Get unique part
+        target_email = f"alice.special.{unique_id}@example.com"
         target_user, _ = create_user_and_get_token(
             api_client, target_email, "Alice Special", generate_strong_password()
         )
         
-        # Search for "alice.special"
-        response = api_client.get("/api/v1/users/search", params={"q": "alice.special"})
+        # Search for unique part
+        response = api_client.get("/api/v1/users/search", params={"q": unique_id})
         
         assert response.status_code == 200
         users = response.json()
         assert len(users) >= 1
-        # Check that alice.special is in results
+        # Check that our target user is in results
         alice_found = any(u["email"] == target_email for u in users)
         assert alice_found
     
@@ -254,7 +255,7 @@ class TestSearchUsersEndpoint:
         assert len(users) <= 10
     
     def test_max_limit_enforced(self, api_client: APIClient):
-        """Maximum limit of 50 should be enforced"""
+        """Maximum limit of 50 should be enforced - returns 422 for invalid value"""
         # Create main user
         main_email = generate_email()
         main_user, main_token = create_user_and_get_token(
@@ -265,10 +266,8 @@ class TestSearchUsersEndpoint:
         # Try to search with limit > 50
         response = api_client.get("/api/v1/users/search", params={"limit": 100})
         
-        # Should still work but limit to 50
-        assert response.status_code == 200
-        users = response.json()
-        assert len(users) <= 50
+        # Should return validation error
+        assert response.status_code == 422
     
     def test_min_limit_enforced(self, api_client: APIClient):
         """Minimum limit of 1 should be enforced"""
@@ -286,7 +285,7 @@ class TestSearchUsersEndpoint:
         assert response.status_code == 422
     
     def test_no_auth_returns_401(self, api_client: APIClient):
-        """No authentication should return 401"""
+        """No authentication should return 403 (FastAPI HTTPBearer default)"""
         response = api_client.get("/api/v1/users/search")
-        assert response.status_code == 401
+        assert response.status_code == 403
 

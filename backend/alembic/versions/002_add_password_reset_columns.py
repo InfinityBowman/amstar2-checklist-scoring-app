@@ -1,4 +1,4 @@
-g"""Add password reset columns to users
+"""Add password reset columns to users
 
 Revision ID: 002
 Revises: 9c7d10deb489

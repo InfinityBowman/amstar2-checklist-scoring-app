@@ -46,7 +46,8 @@ class TestSignupEndpoint:
     
     def test_email_normalized_to_lowercase(self, api_client: APIClient):
         """Email should be normalized to lowercase"""
-        email = "Test.User@EXAMPLE.COM"
+        # Use a unique email with mixed case
+        email = f"Test.{generate_email()}"
         name = generate_name()
         password = generate_strong_password()
         
@@ -85,7 +86,7 @@ class TestSignupEndpoint:
         # Try to signup again with same email
         response = api_client.post(
             "/api/v1/auth/signup",
-            json={"email": email, "name": "Another Name", "password": "AnotherPass123"}
+            json={"email": email, "name": "Another Name", "password": "AnotherPass123!"}
         )
         
         assert response.status_code == 409
@@ -106,7 +107,7 @@ class TestSignupEndpoint:
         # Try to signup again without verifying
         response = api_client.post(
             "/api/v1/auth/signup",
-            json={"email": email, "name": "Another Name", "password": "AnotherPass123"}
+            json={"email": email, "name": "Another Name", "password": "AnotherPass123!"}
         )
         
         assert response.status_code == 409
@@ -751,7 +752,7 @@ class TestResetPasswordEndpoint:
         """Valid code and strong password should return 200"""
         email = generate_email()
         old_password = generate_strong_password()
-        new_password = "NewPassword123"
+        new_password = "NewPassword123!"
         
         # Sign up and verify user
         api_client.post(
@@ -893,7 +894,7 @@ class TestResetPasswordEndpoint:
         """After reset, user should be able to sign in with new password"""
         email = generate_email()
         old_password = generate_strong_password()
-        new_password = "NewPassword123"
+        new_password = "NewPassword123!"
         
         # Sign up and verify user
         api_client.post(

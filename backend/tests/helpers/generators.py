@@ -18,8 +18,8 @@ def generate_name() -> str:
 
 def generate_strong_password() -> str:
     """Generate a strong password that meets all requirements"""
-    # At least 8 chars, uppercase, lowercase, digit
-    return "Test1234"
+    # At least 8 chars, uppercase, lowercase, digit, special character
+    return "Test1234!"
 
 
 def generate_weak_password_no_uppercase() -> str:

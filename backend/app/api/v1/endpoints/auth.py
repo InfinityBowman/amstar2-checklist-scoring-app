@@ -162,7 +162,7 @@ async def signin(
         key="refresh",
         value=refresh_token,
         httponly=True,
-        secure=True,  # Use HTTPS in production
+        secure=settings.ENV == "production",  # Only use secure in production
         samesite="strict",
         path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS
@@ -401,6 +401,13 @@ async def reset_password(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid reset code"
+        )
+    
+    # Validate new password
+    is_strong_password_bool, password_detail = is_strong_password(new_password)
+    if not is_strong_password_bool:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=password_detail
         )
     
     # Update password and clear reset code
