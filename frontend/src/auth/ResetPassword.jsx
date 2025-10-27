@@ -55,24 +55,23 @@ export default function ResetPassword() {
     setLoading(false);
   }
 
- async function handleReset() {
-  setError('');
-  if (!newPassword() || newPassword() !== confirmPassword()) {
-    return setError('Passwords do not match');
+  async function handleReset() {
+    setError('');
+    if (!newPassword() || newPassword() !== confirmPassword()) {
+      return setError('Passwords do not match');
+    }
+    setLoading(true);
+
+    try {
+      // DEV: skip real backend, just simulate a successful reset
+      await new Promise((resolve) => setTimeout(resolve, 200)); // optional delay for UX
+      navigate('/signin'); // go to sign-in after "successful" reset
+    } catch (err) {
+      setError('Failed to reset password');
+    }
+
+    setLoading(false);
   }
-  setLoading(true);
-
-  try {
-    // DEV: skip real backend, just simulate a successful reset
-    await new Promise((resolve) => setTimeout(resolve, 200)); // optional delay for UX
-    navigate('/signin'); // go to sign-in after "successful" reset
-  } catch (err) {
-    setError('Failed to reset password');
-  }
-
-  setLoading(false);
-}
-
 
   return (
     <div class="h-full flex items-center justify-center p-4">
@@ -87,11 +86,7 @@ export default function ResetPassword() {
               onInput={(e) => setEmail(e.target.value)}
               class="w-full p-2 border border-gray-300 rounded-lg"
             />
-            <button
-              onClick={handleRequest}
-              class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2"
-              disabled={loading()}
-            >
+            <button onClick={handleRequest} class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2" disabled={loading()}>
               {loading() ? 'Sending...' : 'Send Verification Code'}
             </button>
           </>
@@ -99,9 +94,7 @@ export default function ResetPassword() {
         {step() === 2 && (
           <>
             <h2 class="text-xl font-bold text-gray-900 mb-2">Enter Verification Code</h2>
-            <p class="text-gray-500 text-xs mb-2">
-              (DEV: Use code {generatedCode()} for testing)
-            </p>
+            <p class="text-gray-500 text-xs mb-2">(DEV: Use code {generatedCode()} for testing)</p>
             <input
               type="text"
               placeholder="Verification code"
@@ -109,11 +102,7 @@ export default function ResetPassword() {
               onInput={(e) => setCode(e.target.value)}
               class="w-full p-2 border border-gray-300 rounded-lg"
             />
-            <button
-              onClick={handleVerify}
-              class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2"
-              disabled={loading()}
-            >
+            <button onClick={handleVerify} class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2" disabled={loading()}>
               {loading() ? 'Verifying...' : 'Verify Code'}
             </button>
             {error() && <p class="text-red-600 text-xs mt-2">{error()}</p>}
@@ -124,11 +113,7 @@ export default function ResetPassword() {
             <h2 class="text-xl font-bold text-gray-900 mb-2">Set New Password</h2>
             <PasswordInput password={newPassword()} onPasswordChange={setNewPassword} placeholder="New password" />
             <PasswordInput password={confirmPassword()} onPasswordChange={setConfirmPassword} placeholder="Confirm password" />
-            <button
-              onClick={handleReset}
-              class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2"
-              disabled={loading()}
-            >
+            <button onClick={handleReset} class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2" disabled={loading()}>
               {loading() ? 'Resetting...' : 'Reset Password'}
             </button>
             {error() && <p class="text-red-600 text-xs mt-2">{error()}</p>}
