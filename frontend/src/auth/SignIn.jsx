@@ -82,6 +82,7 @@ export default function SignIn() {
           class="w-full py-2 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg sm:rounded-xl shadow transition disabled:opacity-50 flex items-center justify-center"
           disabled={loading()}
         >
+
           <AnimatedShow when={loading()} fallback={'Sign In'}>
             <div class="flex items-center">
               <AiOutlineLoading3Quarters class="animate-spin mr-2" size={22} />
@@ -89,6 +90,20 @@ export default function SignIn() {
             </div>
           </AnimatedShow>
         </button>
+
+        <div class="text-center mt-1 sm:mt-2">
+          <a
+            href="/reset-password"
+            class="text-indigo-600 hover:underline text-xs sm:text-sm font-semibold"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/reset-password');
+            }}
+          >
+            Forgot password?
+          </a>
+        </div>
+
         <div class="text-center text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4">
           Don&apos;t have an account?{' '}
           <a
