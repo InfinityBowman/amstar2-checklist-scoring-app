@@ -108,19 +108,15 @@ class TestSearchUsersEndpoint:
         alice_found = any(u["email"] == target_email for u in users)
         assert alice_found
     
-    def test_search_is_case_insensitive(self, api_client: APIClient):
+    def test_search_is_case_insensitive(self, authenticated_client):
         """Search should be case-insensitive"""
-        # Create main user
-        main_email = generate_email()
-        main_user, main_token = create_user_and_get_token(
-            api_client, main_email, "Main User", generate_strong_password()
-        )
-        api_client.set_token(main_token)
+        api_client, user_data, access_token = authenticated_client
         
-        # Create a user with specific name
-        target_email = generate_email()
+        # Create a user with specific name using a unique email
+        import time
+        unique_email = f"bobsmith{int(time.time() * 1000000)}@example.com"
         target_user, _ = create_user_and_get_token(
-            api_client, target_email, "Bob Smith", generate_strong_password()
+            api_client, unique_email, "Bob Smith", generate_strong_password()
         )
         
         # Search with different casing

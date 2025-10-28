@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, text
 from uuid import UUID
 
 from app.db.session import get_session
@@ -40,10 +40,10 @@ async def create_review(
     # If not owner, check if user is a project member
     if not is_owner:
         # Query project_members table
-        query = """
+        query = text("""
         SELECT 1 FROM project_members
         WHERE project_id = :project_id AND user_id = :user_id
-        """
+        """)
         
         result = await db.execute(
             query,

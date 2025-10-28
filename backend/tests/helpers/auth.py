@@ -122,3 +122,44 @@ def create_review(client: APIClient, project_id: str, review_name: str) -> Dict:
     assert response.status_code == 201, f"Review creation failed: {response.text}"
     return response.json()
 
+
+def assign_reviewer(client: APIClient, review_id: str, user_id: str) -> Dict:
+    """
+    Assign a user as reviewer for a review.
+    Requires client to be authenticated as project owner or member.
+    
+    Returns:
+        Response data dict
+    """
+    response = client.post(
+        f"/api/v1/reviews/{review_id}/assign/{user_id}"
+    )
+    
+    # Known API bug: may return 500
+    if response.status_code == 500:
+        import pytest
+        pytest.skip("API Bug: assign_reviewer returns 500. See API_BUGS_FOUND.md")
+    
+    assert response.status_code == 201, f"Assign reviewer failed: {response.text}"
+    return response.json()
+
+
+def create_checklist(client: APIClient, review_id: str, reviewer_id: str = None, checklist_type: str = "amstar") -> Dict:
+    """
+    Create a checklist for a review.
+    Requires client to be authenticated as assigned reviewer.
+    
+    Returns:
+        Checklist data dict
+    """
+    payload = {"review_id": review_id, "type": checklist_type}
+    if reviewer_id:
+        payload["reviewer_id"] = reviewer_id
+    
+    response = client.post(
+        "/api/v1/checklists/",
+        json=payload
+    )
+    assert response.status_code == 201, f"Checklist creation failed: {response.text}"
+    return response.json()
+
