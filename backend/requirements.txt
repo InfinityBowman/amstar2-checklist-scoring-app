@@ -12,3 +12,11 @@ python-multipart==0.0.9
 bcrypt<4.1.0
 httpx==0.28.1
 scalar-fastapi==1.4.3
+
+# Testing dependencies
+pytest==8.0.0
+pytest-asyncio==0.23.5
+pytest-cov==4.1.0
+faker==22.6.0
+freezegun==1.4.0
+respx==0.21.1

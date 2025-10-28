@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, text
 from typing import List
 from uuid import UUID
 from pydantic import EmailStr
@@ -66,11 +66,11 @@ async def add_project_member_by_email(
         )
     
     # Insert into project_members table
-    query = """
+    query = text("""
     INSERT INTO project_members (project_id, user_id, role)
     VALUES (:project_id, :user_id, :role)
     ON CONFLICT (project_id, user_id) DO NOTHING
-    """
+    """)
     
     await db.execute(
         query,
@@ -128,11 +128,11 @@ async def add_project_member(
         )
     
     # Insert into project_members table
-    query = """
+    query = text("""
     INSERT INTO project_members (project_id, user_id, role)
     VALUES (:project_id, :user_id, :role)
     ON CONFLICT (project_id, user_id) DO NOTHING
-    """
+    """)
     
     await db.execute(
         query,

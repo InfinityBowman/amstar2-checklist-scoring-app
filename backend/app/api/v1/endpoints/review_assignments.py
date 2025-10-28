@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, text
 from uuid import UUID
 
 from app.db.session import get_session
@@ -44,10 +44,10 @@ async def assign_reviewer(
     # If not owner, check if user is a project member
     if not is_owner:
         # Query project_members table
-        query = """
+        query = text("""
         SELECT 1 FROM project_members
         WHERE project_id = :project_id AND user_id = :user_id
-        """
+        """)
         
         result = await db.execute(
             query,
@@ -75,10 +75,10 @@ async def assign_reviewer(
     # Check if the user is a member of the project
     if user_id != project.owner_id:
         # Query project_members table
-        query = """
+        query = text("""
         SELECT 1 FROM project_members
         WHERE project_id = :project_id AND user_id = :user_id
-        """
+        """)
         
         result = await db.execute(
             query,
@@ -94,11 +94,11 @@ async def assign_reviewer(
             )
     
     # Insert into review_assignments table
-    query = """
+    query = text("""
     INSERT INTO review_assignments (review_id, user_id)
     VALUES (:review_id, :user_id)
     ON CONFLICT (review_id, user_id) DO NOTHING
-    """
+    """)
     
     await db.execute(
         query,
