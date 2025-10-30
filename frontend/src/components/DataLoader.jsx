@@ -30,7 +30,7 @@ export default function DataLoader() {
       ];
 
       const newShapes = tables.reduce((acc, table) => {
-        acc[table] = createShape({
+        acc[table] = createShape(() => ({
           // url: `${`http://localhost:3000/v1/shape`}`,
           // params: { table },
           url: `${API_ENDPOINTS.ELECTRIC_SHAPE}/${table}`,
@@ -38,7 +38,7 @@ export default function DataLoader() {
             Authorization: `Bearer ${accessToken}`,
           },
           signal: controller().signal,
-        });
+        }));
         return acc;
       }, {});
 
@@ -73,53 +73,56 @@ export default function DataLoader() {
       { name: 'project_members', data: currentShapes.project_members?.data() ?? [] },
       { name: 'review_assignments', data: currentShapes.review_assignments?.data() ?? [] },
     ];
+    console.log('Tables to sync:', tablesToSync);
 
-    for (const { name, data } of tablesToSync) {
-      if (Array.isArray(data)) {
-        // 1. Build a set of synced IDs for this table
-        const syncedIds = new Set();
-        for (const row of data) {
-          if (name === 'project_members') {
-            syncedIds.add(`${row.project_id}::${row.user_id}`);
-          } else if (name === 'review_assignments') {
-            syncedIds.add(`${row.review_id}::${row.user_id}`);
-          } else {
-            syncedIds.add(row.id);
+    syncStore.transaction(() => {
+      for (const { name, data } of tablesToSync) {
+        if (Array.isArray(data)) {
+          // 1. Build a set of synced IDs for this table
+          const syncedIds = new Set();
+          for (const row of data) {
+            if (name === 'project_members') {
+              syncedIds.add(`${row.project_id}::${row.user_id}`);
+            } else if (name === 'review_assignments') {
+              syncedIds.add(`${row.review_id}::${row.user_id}`);
+            } else {
+              syncedIds.add(row.id);
+            }
           }
-        }
 
-        // 2. Remove all rows except local-only or unsynced or present in sync
-        const localRows = syncStore.getTable(name);
-        Object.entries(localRows).forEach(([id, row]) => {
-          if (!row || row.status === 'local-only' || row.status === 'unsynced') return;
-          if (!syncedIds.has(id)) {
-            syncStore.delRow(name, id);
-          }
-        });
+          // 2. Remove all rows except local-only or unsynced or present in sync
+          const localRows = syncStore.getTable(name);
+          Object.entries(localRows).forEach(([id, row]) => {
+            if (!row || row.status === 'local-only' || row.sync_status === 'unsynced') return;
+            if (!syncedIds.has(id)) {
+              syncStore.delRow(name, id);
+            }
+          });
 
-        // 3. Upsert all synced rows
-        for (const row of data) {
-          // console.log(`Syncing table ${name}, row: ${JSON.stringify(row)}`);
-          // Skip local-only or unsynced items for now
-          if (row.status === 'local-only' || row.status === 'unsynced') {
-            continue;
-          }
-          // syncStore.delRow(name, row.id);
+          // 3. Upsert all synced rows
+          for (const row of data) {
+            // console.log(`Syncing table ${name}, row: ${JSON.stringify(row)}`);
+            // Skip local-only or unsynced items for now
+            if (row.status === 'local-only' || row.status === 'unsynced') {
+              continue;
+            }
+            // syncStore.delRow(name, row.id);
 
-          if (name === 'checklist_answers' && Array.isArray(row.answers)) {
-            syncStore.setRow(name, row.id, { ...row, answers: JSON.stringify(row.answers) });
-          } else if (name === 'project_members') {
-            const rowId = `${row.project_id}::${row.user_id}`;
-            syncStore.setRow(name, rowId, row);
-          } else if (name === 'review_assignments') {
-            const rowId = `${row.review_id}::${row.user_id}`;
-            syncStore.setRow(name, rowId, row);
-          } else {
-            syncStore.setRow(name, row.id, row);
+            if (name === 'checklist_answers' && Array.isArray(row.answers)) {
+              syncStore.setRow(name, row.id, { ...row, answers: JSON.stringify(row.answers) });
+            } else if (name === 'project_members') {
+              const rowId = `${row.project_id}::${row.user_id}`;
+              syncStore.setRow(name, rowId, row);
+            } else if (name === 'review_assignments') {
+              const rowId = `${row.review_id}::${row.user_id}`;
+              syncStore.setRow(name, rowId, row);
+            } else {
+              syncStore.setRow(name, row.id, row);
+            }
           }
         }
       }
-    }
+    });
     // await synchronizer1.destroy();
     // await synchronizer2.destroy();
     // console.log(syncStore.getTables());

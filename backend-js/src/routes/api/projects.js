@@ -43,19 +43,19 @@ export const projectsPlugin = new Elysia({ prefix: '/projects' })
       // const ownerId = user.sub;
       const ownerId = '11111111-1111-1111-1111-111111111111';
 
-      // Insert project
-      await db.insert(projects).values({
-        id: projectId,
-        name,
-        ownerId,
-        updatedAt: new Date(now),
-      });
-
-      // Add creator as a member (role: 'owner')
-      await db.insert(projectMembers).values({
-        projectId,
-        userId: ownerId,
-        role: 'owner',
+      // Insert project and add creator as a member in a transaction
+      await db.transaction(async (trx) => {
+        await trx.insert(projects).values({
+          id: projectId,
+          name,
+          ownerId,
+          updatedAt: new Date(now),
+        });
+        await trx.insert(projectMembers).values({
+          projectId,
+          userId: ownerId,
+          role: 'owner',
+        });
       });
 
       // Return response

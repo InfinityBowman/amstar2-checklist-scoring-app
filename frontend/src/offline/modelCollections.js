@@ -2,10 +2,13 @@ import { solidStore } from './solidStore.js';
 import * as projectAPI from '@api/projectService';
 import * as reviewAPI from '@api/reviewService';
 import * as checklistAPI from '@api/checklistService';
+import { createSignal } from 'solid-js';
 
 export class Project {
   constructor(data) {
-    if (!data.id) data.id = crypto.randomUUID();
+    const [id, setId] = createSignal(data.id || crypto.randomUUID());
+    this._id = id;
+    this._setId = setId;
     Object.assign(this, data);
   }
   reviews() {
@@ -15,12 +18,21 @@ export class Project {
     return solidStore.getProjectMembers(this.id);
   }
   async save() {
+    this.sync_status = 'unsynced';
     await solidStore.saveProject(this);
     let result = await projectAPI.createProject(this.name);
     console.log(result);
+    this.sync_status = 'synced';
+    await solidStore.saveProject(this);
+    solidStore.changeProjectId(this.id, result.id);
     this.id = result.id;
   }
-
+  get id() {
+    return this._id();
+  }
+  set id(newId) {
+    this._setId(newId);
+  }
   async delete() {
     await solidStore.deleteProject(this.id);
     projectAPI.deleteProject(this.id);

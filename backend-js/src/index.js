@@ -25,7 +25,7 @@ const apiRouter = new Elysia({ prefix: '/api/v1' })
 
 const logCorsPlugin = new Elysia().onRequest(({ request }) => {
   if (request.method === 'OPTIONS') {
-    console.log('[CORS] OPTIONS request:', request.url, request.headers);
+    // console.log('[CORS] OPTIONS request:', request.url, request.headers);
   }
 });
 // Create the main app

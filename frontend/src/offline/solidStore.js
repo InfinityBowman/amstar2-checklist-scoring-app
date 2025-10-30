@@ -19,6 +19,7 @@ export const schema = {
     name: { type: 'string' }, // Project name/title
     updated_at: { type: 'string' }, // Timestamp (ISO 8601)
     owner_id: { type: 'number' }, // FK to users.id
+    sync_status: { type: 'string' }, // 'synced', 'unsynced'
   },
   project_members: {
     id: { type: 'string' }, // Will contain "project_id::user_id"
@@ -265,11 +266,31 @@ export async function createReactiveStore() {
   // CRUD Operations for Projects
   const saveProject = async (project) => {
     if (!project.id) throw new Error('Project must have an ID');
-    let item = { id: project.id, name: project.name, owner_id: 1234, updated_at: new Date().toISOString() };
+    let item = {
+      id: project.id,
+      name: project.name,
+      owner_id: 1234,
+      updated_at: new Date().toISOString(),
+      sync_status: project.sync_status || 'synced',
+    };
     // enqueueOperation('CREATE_PROJECT', project.name, project.id, getStoreSnapshot(tinyStore));
     tinyStore.setRow('projects', project.id, item);
     console.log('Saved project:', item, tinyStore.getTable('projects'));
   };
+
+  function changeProjectId(oldId, newId) {
+    const project = solidStore.projects().find((p) => p.id === oldId);
+    if (!project) return false;
+
+    // Remove old project
+    solidStore.tinyStore.delRow('projects', oldId);
+
+    // Add new project with new id
+    const newProject = { ...project, id: newId };
+    solidStore.tinyStore.setRow('projects', newId, newProject);
+
+    return true;
+  }
 
   const deleteProject = async (projectId) => {
     tinyStore.delRow('projects', projectId);
@@ -553,6 +574,7 @@ export async function createReactiveStore() {
     saveProject,
     deleteProject,
     setCurrentProject,
+    changeProjectId,
 
     // Review operations
     addReview,
