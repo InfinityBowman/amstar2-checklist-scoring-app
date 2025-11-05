@@ -89,9 +89,6 @@ def generate_verification_code() -> str:
     """Generate a random 6-digit verification code."""
     return f"{randint(100000, 999999)}"
 
-def mock_send_verification_email(email: str, code: str) -> None:
-    """Mock sending verification email (replace with real email service later)"""
-    print(f"Sending verification code {code} to email {email}")
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
