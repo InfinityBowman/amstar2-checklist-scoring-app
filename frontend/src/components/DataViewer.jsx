@@ -5,18 +5,17 @@ export default function DataViewer() {
   const { projects, reviews, checklists, checklistAnswers, projectMembers, reviewAssignments, state, isLoaded } =
     solidStore;
 
-  createEffect(() => {
-    console.log('Store data updated:', {
-      projects: projects().length,
-      reviews: reviews().length,
-      checklists: checklists().length,
-      answers: checklistAnswers().length,
-      members: projectMembers().length,
-      assignments: reviewAssignments().length,
-    });
-  });
+  // createEffect(() => {
+  //   console.log('Store data updated:', {
+  //     projects: projects().length,
+  //     reviews: reviews().length,
+  //     checklists: checklists().length,
+  //     answers: checklistAnswers().length,
+  //     members: projectMembers().length,
+  //     assignments: reviewAssignments().length,
+  //   });
+  // });
 
-  // Helper to truncate UUIDs
   const short = (id) => id;
 
   return (
@@ -198,25 +197,6 @@ export default function DataViewer() {
                   </For>
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-
-        {/* Current Selections - Compact Version */}
-        <div class="mt-2 bg-white p-2 rounded shadow">
-          <h2 class="font-bold">Current Selections</h2>
-          <div class="grid grid-cols-3 gap-2 text-xs mt-1">
-            <div>
-              <div class="font-medium">Project</div>
-              <div class="bg-gray-50 p-1 rounded">{state.currentProject?.name || 'None'}</div>
-            </div>
-            <div>
-              <div class="font-medium">Review</div>
-              <div class="bg-gray-50 p-1 rounded">{state.currentReview?.name || 'None'}</div>
-            </div>
-            <div>
-              <div class="font-medium">Checklist</div>
-              <div class="bg-gray-50 p-1 rounded">{state.currentChecklist?.type || 'None'}</div>
             </div>
           </div>
         </div>
