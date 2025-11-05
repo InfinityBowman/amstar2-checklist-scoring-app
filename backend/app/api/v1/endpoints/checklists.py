@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, text
 from uuid import UUID
 from datetime import datetime
 
@@ -44,10 +44,10 @@ async def create_checklist(
     
     # Check if current user is assigned to the review if they're making themselves the reviewer
     if checklist_in.reviewer_id:
-        query = """
+        query = text("""
         SELECT 1 FROM review_assignments
         WHERE review_id = :review_id AND user_id = :user_id
-        """
+        """)
         
         result = await db.execute(
             query,
