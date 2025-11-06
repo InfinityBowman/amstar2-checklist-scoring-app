@@ -33,10 +33,7 @@ export default function AppRoutes() {
         <Route path="/dataviewer" component={DataViewer} />
         {/* <Route path="/project/new" component={CreateProject} /> */}
         <Route path="/projects/:projectId" component={ProjectDashboard} />
-        <Route
-          path="/projects/:projectId/reviews/:reviewId/checklists/:checklistId"
-          component={AMSTAR2Checklist}
-        />
+        <Route path="/projects/:projectId/reviews/:reviewId/checklists/:checklistId" component={AMSTAR2Checklist} />
         <Route path="/checklist/:checklistId" component={AMSTAR2Checklist} />
         <Route path="/merge/:checklistIdA/:checklistIdB" component={AMSTAR2Merge} />
         <Route

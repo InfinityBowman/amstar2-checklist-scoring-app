@@ -1,5 +1,5 @@
 // API Configuration - Use Caddy proxy when available
-const API_BASE_URL = 'https://localhost'
+const API_BASE_URL = 'https://localhost';
 const API_PREFIX = import.meta.env.VITE_API_PREFIX || '/api/v1';
 
 // Ensure API_BASE_URL doesn't already include the API prefix
