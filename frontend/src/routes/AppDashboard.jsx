@@ -24,7 +24,7 @@ export default function AppDashboard() {
         name: projectName().trim(),
         createdAt: Date.now(),
         checklists: [],
-      })
+      }),
     );
     setProjectName('');
     handleProjectClick(newProject);
@@ -76,9 +76,9 @@ export default function AppDashboard() {
             {(project) => (
               <div
                 class={`p-5 rounded-xl border bg-white shadow-sm cursor-pointer transition hover:shadow-md ${
-                  currentProject() && currentProject().id === project.id
-                    ? 'border-blue-400 bg-blue-50'
-                    : 'border-gray-200'
+                  currentProject() && currentProject().id === project.id ?
+                    'border-blue-400 bg-blue-50'
+                  : 'border-gray-200'
                 }`}
                 onClick={() => handleProjectClick(project)}
               >
@@ -94,9 +94,7 @@ export default function AppDashboard() {
                     ✕
                   </button>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">
-                  Created: {new Date(project.createdAt).toLocaleDateString()}
-                </p>
+                <p class="text-xs text-gray-500 mt-1">Created: {new Date(project.createdAt).toLocaleDateString()}</p>
                 <p class="text-sm text-gray-600 mt-2 line-clamp-2">
                   {project.description || 'No description provided.'}
                 </p>
