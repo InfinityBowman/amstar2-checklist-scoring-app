@@ -86,7 +86,11 @@ export default function ResetPassword() {
               onInput={(e) => setEmail(e.target.value)}
               class="w-full p-2 border border-gray-300 rounded-lg"
             />
-            <button onClick={handleRequest} class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2" disabled={loading()}>
+            <button
+              onClick={handleRequest}
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2"
+              disabled={loading()}
+            >
               {loading() ? 'Sending...' : 'Send Verification Code'}
             </button>
           </>
@@ -102,7 +106,11 @@ export default function ResetPassword() {
               onInput={(e) => setCode(e.target.value)}
               class="w-full p-2 border border-gray-300 rounded-lg"
             />
-            <button onClick={handleVerify} class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2" disabled={loading()}>
+            <button
+              onClick={handleVerify}
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2"
+              disabled={loading()}
+            >
               {loading() ? 'Verifying...' : 'Verify Code'}
             </button>
             {error() && <p class="text-red-600 text-xs mt-2">{error()}</p>}
@@ -112,8 +120,16 @@ export default function ResetPassword() {
           <>
             <h2 class="text-xl font-bold text-gray-900 mb-2">Set New Password</h2>
             <PasswordInput password={newPassword()} onPasswordChange={setNewPassword} placeholder="New password" />
-            <PasswordInput password={confirmPassword()} onPasswordChange={setConfirmPassword} placeholder="Confirm password" />
-            <button onClick={handleReset} class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2" disabled={loading()}>
+            <PasswordInput
+              password={confirmPassword()}
+              onPasswordChange={setConfirmPassword}
+              placeholder="Confirm password"
+            />
+            <button
+              onClick={handleReset}
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg mt-2"
+              disabled={loading()}
+            >
               {loading() ? 'Resetting...' : 'Reset Password'}
             </button>
             {error() && <p class="text-red-600 text-xs mt-2">{error()}</p>}
