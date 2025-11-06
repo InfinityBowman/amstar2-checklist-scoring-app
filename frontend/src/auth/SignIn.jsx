@@ -94,6 +94,20 @@ export default function SignIn() {
             </div>
           </AnimatedShow>
         </button>
+
+        <div class="text-center mt-1 sm:mt-2">
+          <a
+            href="/reset-password"
+            class="text-indigo-600 hover:underline text-xs sm:text-sm font-semibold"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/reset-password');
+            }}
+          >
+            Forgot password?
+          </a>
+        </div>
+
         <div class="text-center text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4">
           Don&apos;t have an account?{' '}
           <a
