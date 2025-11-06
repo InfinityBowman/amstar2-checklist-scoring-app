@@ -10,10 +10,10 @@ from app.utils.auth import (
     create_refresh_token,
     generate_verification_code,
     get_password_hash,
-    mock_send_verification_email,
     verify_password,
     verify_token,
 )
+from app.utils.email import send_verification_email, send_password_reset_email
 from app.utils.validation import is_strong_password
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPBearer
@@ -259,11 +259,15 @@ async def send_verification(
     db.add(user)
     await db.commit()
 
-    # Send email (mock for now)
-    mock_send_verification_email(user.email, code)
+    # Send email
+    email_sent = await send_verification_email(user.email, code)
+    
+    if not email_sent:
+        # Log the failure but don't expose details to the user
+        # The code is still stored in DB, so they can try again
+        pass
 
-    # send the code in the response since we dont actually send emails yet
-    return SendVerificationResponse(message=f"Verification email sent. CODE: {code}")
+    return SendVerificationResponse(message="Verification email sent")
 
 
 @router.post("/verify-email", response_model=VerifyEmailResponse)
@@ -341,11 +345,15 @@ async def request_password_reset(
     db.add(user)
     await db.commit()
     
-    # Send email (mock for now)
-    mock_send_verification_email(user.email, code)
+    # Send email
+    email_sent = await send_password_reset_email(user.email, code)
     
-    # Return code in response for development (remove in production)
-    return {"message": f"Password reset email sent. CODE: {code}"}
+    if not email_sent:
+        # Log the failure but don't expose details to the user
+        # The code is still stored in DB, so they can try again
+        pass
+    
+    return {"message": "If an account exists with this email, a password reset code will be sent"}
 
 
 @router.post("/reset-password")

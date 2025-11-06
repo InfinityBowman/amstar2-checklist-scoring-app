@@ -41,6 +41,16 @@ services:
       - API_PREFIX=${API_PREFIX}
       - ENV=${ENV}
       - LOG_LEVEL=${LOG_LEVEL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - EMAIL_FROM_NAME=${EMAIL_FROM_NAME}
+      - FRONTEND_URL=${FRONTEND_URL}
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     depends_on:
       postgres:
         condition: service_healthy

@@ -27,6 +27,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=15, description="Access token expiration in minutes")
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7, description="Refresh token expiration in days")
 
+    # SMTP Email Settings
+    SMTP_HOST: str = Field(default="smtp.gmail.com", description="SMTP server host")
+    SMTP_PORT: int = Field(default=587, description="SMTP server port")
+    SMTP_USER: str = Field(default="", description="SMTP username/email")
+    SMTP_PASS: str = Field(default="", description="SMTP password/app password")
+    EMAIL_FROM: str = Field(default="", description="Email sender address")
+    EMAIL_FROM_NAME: str = Field(default="CoRATES", description="Email sender name")
+    FRONTEND_URL: str = Field(default="http://localhost:5173", description="Frontend URL for links in emails")
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
