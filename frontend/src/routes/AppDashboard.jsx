@@ -4,7 +4,6 @@ import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
 import { createProject } from '@offline/project.js';
 import { generateUUID } from '@offline/localDB.js';
-import { checkHealth, checkHealthDb } from '../api/authService.js';
 import { slugify } from './Routes.jsx';
 
 export default function AppDashboard() {
@@ -25,10 +24,9 @@ export default function AppDashboard() {
         name: projectName().trim(),
         createdAt: Date.now(),
         checklists: [],
-      }),
+      })
     );
     setProjectName('');
-    // Navigate to the new project
     handleProjectClick(newProject);
   };
 
@@ -39,58 +37,79 @@ export default function AppDashboard() {
   };
 
   return (
-    <div class="p-4">
-      <h2 class="text-xl font-bold mb-3">Your Projects</h2>
-      <Show when={projects().length !== 0} fallback={<div class="text-sm text-gray-500">No projects found.</div>}>
-        <ul class="space-y-1">
+    <div class="min-h-screen bg-gray-50 p-6">
+      {/* Header */}
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-800">📁 Your Projects</h1>
+          <p class="text-sm text-gray-500">Manage and explore your projects easily</p>
+        </div>
+        <div class="mt-4 sm:mt-0 flex gap-2">
+          <input
+            type="text"
+            class="px-3 py-2 border border-gray-300 rounded-lg w-56 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="New project name"
+            value={projectName()}
+            onInput={(e) => setProjectName(e.target.value)}
+          />
+          <button
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            onClick={handleAddProject}
+            disabled={!projectName().trim()}
+          >
+            + Create
+          </button>
+        </div>
+      </div>
+
+      {/* Project list */}
+      <Show
+        when={projects().length > 0}
+        fallback={
+          <div class="text-gray-500 text-center py-10 border border-dashed border-gray-300 rounded-lg bg-white">
+            No projects yet. Start by creating one above!
+          </div>
+        }
+      >
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <For each={projects()}>
             {(project) => (
-              <li
-                class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between ${
-                  currentProject() && currentProject().id === project.id ?
-                    'bg-blue-50 border-blue-300'
-                  : 'hover:bg-gray-100'
+              <div
+                class={`p-5 rounded-xl border bg-white shadow-sm cursor-pointer transition hover:shadow-md ${
+                  currentProject() && currentProject().id === project.id
+                    ? 'border-blue-400 bg-blue-50'
+                    : 'border-gray-200'
                 }`}
                 onClick={() => handleProjectClick(project)}
               >
-                <div>
-                  <div class="font-medium">{project.name}</div>
-                  <div class="text-xs text-gray-600">{project.description}</div>
-                  <div class="text-xs text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
+                <div class="flex items-start justify-between">
+                  <h3 class="text-lg font-medium text-gray-800">{project.name}</h3>
+                  <button
+                    class="text-red-500 hover:text-red-700 text-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteProject(project.id);
+                    }}
+                  >
+                    ✕
+                  </button>
                 </div>
-                <button
-                  class="ml-0 sm:ml-4 mt-2 sm:mt-0 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteProject(project.id);
-                  }}
-                >
-                  Delete
-                </button>
-              </li>
+                <p class="text-xs text-gray-500 mt-1">
+                  Created: {new Date(project.createdAt).toLocaleDateString()}
+                </p>
+                <p class="text-sm text-gray-600 mt-2 line-clamp-2">
+                  {project.description || 'No description provided.'}
+                </p>
+              </div>
             )}
           </For>
-        </ul>
+        </div>
       </Show>
-      <div class="mt-4 flex items-center gap-2">
-        <input
-          type="text"
-          class="px-2 py-1 border rounded w-48 text-sm"
-          placeholder="Project name"
-          value={projectName()}
-          onInput={(e) => setProjectName(e.target.value)}
-        />
+
+      {/* Example project */}
+      <div class="mt-10 text-center">
         <button
-          class="px-3 py-1.5 bg-green-500 text-white rounded hover:bg-green-600 transition text-sm"
-          onClick={handleAddProject}
-          disabled={!projectName().trim()}
-        >
-          + Add New Project
-        </button>
-      </div>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button
-          class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600 transition text-sm"
+          class="px-5 py-2.5 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition text-sm"
           onClick={async () => {
             const exampleProject = await createExampleProject();
             console.log('Loaded example project:', exampleProject);
@@ -98,18 +117,6 @@ export default function AppDashboard() {
           }}
         >
           Load Example Project
-        </button>
-        <button
-          onClick={checkHealth}
-          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
-        >
-          Check Health
-        </button>
-        <button
-          onClick={checkHealthDb}
-          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
-        >
-          Check Health DB
         </button>
       </div>
     </div>
