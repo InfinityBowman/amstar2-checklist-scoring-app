@@ -104,7 +104,7 @@ export default function App(props) {
         {/* Main content area, fades in after page refresh */}
         <AnimatedShow
           class="flex flex-1"
-          when={!dataLoading() && user()}
+          when={!dataLoading()}
           fallback={<div class="flex-1 flex items-center justify-center">Loading...</div>}
         >
           <div class="flex-1 min-h-0 overflow-y-auto">{props.children}</div>
