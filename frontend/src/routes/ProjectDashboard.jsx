@@ -34,15 +34,11 @@ export default function ProjectDashboard() {
 
   const handleAddReview = async (reviewName) => {
     if (reviewName.trim() === '') return;
-    console.log('Creating review:', reviewName, 'for project', currentProject().id);
     let resp = await createReview(reviewName, currentProject().id);
-    console.log('Created review response:', resp);
   };
 
   const handleAddChecklist = async (reviewId, checklistName) => {
     try {
-      console.log('Creating checklist for review:', reviewId);
-      // Create the checklist in the backend (returns checklist object with id)
       const checklistResp = await createChecklist(reviewId);
       // Create a new checklist object with the backend id
       const newChecklist = createAMSTARChecklist({
