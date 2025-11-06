@@ -61,7 +61,6 @@ export default function DataLoader() {
 
   async function syncToTinyBase() {
     const syncStore = solidStore.tinyStore;
-
     const currentShapes = shapes();
     // For each table, set all rows in TinyBase
     const tablesToSync = [
@@ -98,6 +97,8 @@ export default function DataLoader() {
         }
       }
     }
+    solidStore.persister.save();
+    solidStore.persister.load();
     // console.log('Synced to TinyBase:', syncStore.getTables());
   }
   let synchronizer1 = null;

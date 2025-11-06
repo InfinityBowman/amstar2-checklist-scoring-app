@@ -86,8 +86,9 @@ export async function createReactiveStore() {
 
   const persister = createOpfsPersister(tinyStore, handle);
   // Make sure to load first so we dont save an empty DB over existing data
-  await persister.startAutoLoad();
-  await persister.startAutoSave();
+  // await persister.startAutoLoad();
+  persister.load();
+  // await persister.startAutoSave();
   // console.log(tinyStore.getTables());
 
   // Create solid signals for each table in the schema
@@ -607,6 +608,7 @@ export async function createReactiveStore() {
 
     // Store
     tinyStore,
+    persister,
     getStoreSnapshot,
     loadStoreSnapshot,
   };

@@ -35,6 +35,10 @@ export default function ChartSection(props) {
     }
 
     const reviews = getReviewsForProject(props.project.id);
+    if (!reviews || reviews.length === 0) {
+      setChecklistData([]);
+      return;
+    }
     const data = reviews.flatMap((review) => {
       const checklists = getChecklistsForReview(review.id);
 
@@ -62,7 +66,7 @@ export default function ChartSection(props) {
         const answersObj = getAnswers(newChecklist);
 
         return {
-          label: checklist.id, // Use checklist ID as label since checklists don't have names
+          label: `${review.name} - ${reviewer?.name || 'Unassigned'}`,
           reviewer: reviewer?.name || 'Unassigned',
           reviewName: review.name,
           questions: questionOrder.map((q) => answersObj[q]),
@@ -70,7 +74,6 @@ export default function ChartSection(props) {
       });
     });
 
-    console.log('Chart data:', data);
     setChecklistData(data);
   });
 

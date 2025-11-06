@@ -34,14 +34,14 @@ export default function ProjectMetadata(props) {
           <FiUsers class="w-4 h-4 mr-2 text-gray-400" />
           <span class="text-sm text-gray-600 mr-2">Members:</span>
           <div class="flex flex-wrap gap-1">
-            <For each={props.members}>
+            <For each={props.members()}>
               {(member) => (
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   {getUserName(member.user_id)}
                 </span>
               )}
             </For>
-            {(!props.members || props.members.length === 0) && (
+            {(!props.members() || props.members().length === 0) && (
               <span class="text-xs text-gray-400 italic">No members</span>
             )}
           </div>

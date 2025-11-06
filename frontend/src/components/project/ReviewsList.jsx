@@ -8,13 +8,13 @@ export default function ReviewsList(props) {
         <h3 class="text-lg font-semibold text-gray-900">Reviews</h3>
         <div class="ml-auto">
           <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            {props.reviews?.length || 0} reviews
+            {props.reviews()?.length || 0} reviews
           </span>
         </div>
       </div>
 
       <div class="space-y-3">
-        <For each={props.reviews || []}>
+        <For each={props.reviews() || []}>
           {(review) => (
             <ReviewItem
               review={review}
@@ -26,7 +26,7 @@ export default function ReviewsList(props) {
           )}
         </For>
 
-        {(!props.reviews || props.reviews.length === 0) && (
+        {(!props.reviews() || props.reviews().length === 0) && (
           <div class="text-center py-8 bg-white rounded-lg border-2 border-dashed border-gray-300">
             <div class="text-gray-400 mb-3">
               <svg class="mx-auto h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">

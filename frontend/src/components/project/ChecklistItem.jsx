@@ -37,7 +37,7 @@ export default function ChecklistItem(props) {
         </button>
 
         <button
-          class="ml-2 p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100"
+          class="mx-2 p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100"
           onClick={(e) => {
             e.stopPropagation();
             props.onDeleteChecklist(props.checklist.id);

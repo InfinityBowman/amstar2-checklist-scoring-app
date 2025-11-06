@@ -259,6 +259,10 @@ async def send_verification(
     db.add(user)
     await db.commit()
 
+    # If in development, return the code in the response instead of sending email
+    if getattr(settings, "ENV", "production") == "development":
+        return SendVerificationResponse(message=f"Verification code: {code}")
+
     # Send email
     email_sent = await send_verification_email(user.email, code)
     

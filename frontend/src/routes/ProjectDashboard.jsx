@@ -37,12 +37,12 @@ export default function ProjectDashboard() {
     let resp = await createReview(reviewName, currentProject().id);
   };
 
-  const handleAddChecklist = async (reviewId, checklistName) => {
+  const handleAddChecklist = async (reviewId) => {
     try {
       const checklistResp = await createChecklist(reviewId);
       // Create a new checklist object with the backend id
       const newChecklist = createAMSTARChecklist({
-        name: checklistName,
+        name: 'New Checklist',
         id: checklistResp.id,
         createdAt: Date.now(),
         reviewerName: '',
@@ -82,10 +82,13 @@ export default function ProjectDashboard() {
           onManageMembers={toggleMemberManager}
         />
         <ProjectMemberManager open={isOpen()} onClose={() => setIsOpen(false)} projectId={currentProject().id} />
-        <ProjectMetadata updatedAt={currentProject().updated_at} members={getProjectMembers(currentProject().id)} />
+        <ProjectMetadata
+          updatedAt={currentProject().updated_at}
+          members={() => getProjectMembers(currentProject().id)}
+        />
 
         <ReviewsList
-          reviews={getReviewsForProject(currentProject().id)}
+          reviews={() => getReviewsForProject(currentProject().id)}
           onDeleteReview={(reviewId) => deleteReview(reviewId)}
           onChecklistClick={handleChecklistClick}
           onDeleteChecklist={(checklistId) => deleteChecklist(checklistId)}
@@ -93,7 +96,7 @@ export default function ProjectDashboard() {
         />
         <AddReviewForm onAddReview={handleAddReview} />
 
-        <FileManagement />
+        {/* <FileManagement /> */}
 
         <ChartSection project={currentProject()} />
       </div>

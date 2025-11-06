@@ -3,7 +3,6 @@ import { solidStore } from '@offline/solidStore.js';
 
 export default function ReviewItem(props) {
   const { getChecklistsForReview } = solidStore;
-  const checklists = () => getChecklistsForReview(props.review.id);
 
   return (
     <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -31,7 +30,7 @@ export default function ReviewItem(props) {
 
       <div class="p-4">
         <ChecklistsSection
-          checklists={checklists()}
+          checklists={() => getChecklistsForReview(props.review.id)}
           reviewId={props.review.id}
           onChecklistClick={props.onChecklistClick}
           onDeleteChecklist={props.onDeleteChecklist}

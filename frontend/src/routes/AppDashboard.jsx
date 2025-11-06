@@ -1,4 +1,4 @@
-import { createSignal, Show, For } from 'solid-js';
+import { createSignal, Show, For, createEffect } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
 import { createProject } from '@api/projectService.js';
@@ -6,11 +6,18 @@ import { solidStore } from '@offline/solidStore';
 import { useAuth } from '@/auth/AuthStore.js';
 
 export default function AppDashboard() {
-  const { getProjectsForUser, deleteProject } = solidStore;
+  const { projects, getProjectsForUser, deleteProject } = solidStore;
   const { user } = useAuth();
 
   const navigate = useNavigate();
   const [projectName, setProjectName] = createSignal('');
+  const [userProjects, setUserProjects] = createSignal([]);
+
+  createEffect(() => {
+    if (user() && projects().length > 0) {
+      setUserProjects(getProjectsForUser(user().id));
+    }
+  });
 
   const handleProjectClick = (project) => {
     navigate(`/projects/${project.id}`);
@@ -81,7 +88,7 @@ export default function AppDashboard() {
 
         {/* Projects List */}
         <Show
-          when={user() && getProjectsForUser(user().id).length !== 0}
+          when={user() && userProjects().length !== 0}
           fallback={
             <div class="text-center py-12">
               <div class="text-gray-400 mb-4">
