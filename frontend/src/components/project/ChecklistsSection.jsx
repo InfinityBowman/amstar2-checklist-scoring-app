@@ -12,7 +12,7 @@ export default function ChecklistsSection(props) {
             <ChecklistItem
               checklist={cl}
               onChecklistClick={props.onChecklistClick}
-              onDeleteChecklist={(checklistId) => props.onDeleteChecklist(props.reviewId, checklistId)}
+              onDeleteChecklist={(checklistId) => props.onDeleteChecklist(checklistId)}
             />
           )}
         </For>

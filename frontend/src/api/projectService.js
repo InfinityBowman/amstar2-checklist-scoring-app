@@ -71,3 +71,26 @@ export async function addUserToProjectByEmail(projectId, email) {
     throw error;
   }
 }
+
+// Delete a project by ID
+export async function deleteProject(projectId) {
+  try {
+    const response = await authFetch(`${API_ENDPOINTS.PROJECTS}/${projectId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to delete project');
+    }
+
+    // No content expected on success
+    return true;
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    throw error;
+  }
+}

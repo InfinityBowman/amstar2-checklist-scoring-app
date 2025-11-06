@@ -5,6 +5,8 @@ import { useParams, useNavigate } from '@solidjs/router';
 import { slugify } from './Routes.jsx';
 import { generateUUID } from '@offline/localDB.js';
 import { createChecklist as createAMSTARChecklist } from '@offline/AMSTAR2Checklist.js';
+import { solidStore } from '@offline/solidStore';
+import { saveChecklistAnswer } from '@api/checklistService.js';
 
 export function Question1(props) {
   const state = () => props.checklistState().q1;
@@ -674,7 +676,9 @@ export default function AMSTAR2Checklist() {
   const [reviewName, setReviewName] = createSignal('');
   const [reviewerName, setReviewerName] = createSignal('');
   const [reviewDate, setReviewDate] = createSignal('');
-  const { currentChecklist, setCurrentChecklist, updateChecklist, dataLoading, _createChecklist } = useAppStore();
+  const { getAnswersForChecklist, getReviewerForChecklist, getReviewForChecklist } = solidStore;
+  const { dataLoading, _createChecklist } = useAppStore();
+  const [currentChecklist, setCurrentChecklist] = createSignal(null);
   const params = useParams();
   const navigate = useNavigate();
 
@@ -688,7 +692,7 @@ export default function AMSTAR2Checklist() {
   // });
 
   createEffect(async () => {
-    if (params.checklistSlug === 'new') {
+    if (params.checklistId === 'new') {
       // Create a new checklist
       const newChecklist = createAMSTARChecklist({
         name: 'New AMSTAR 2 Checklist',
@@ -698,20 +702,36 @@ export default function AMSTAR2Checklist() {
         reviewDate: '',
       });
       setCurrentChecklist(newChecklist);
-      // Optionally, update the route to the new checklist's slug
-      if (params.projectSlug && params.reviewSlug) {
-        const newChecklistSlug = slugify(newChecklist.name) + '-' + newChecklist.id;
-        navigate(`/projects/${params.projectSlug}/reviews/${params.reviewSlug}/checklists/${newChecklistSlug}`, {
+      // Update the route to the new checklist's slug
+      if (params.projectId && params.reviewId) {
+        navigate(`/projects/${params.projectId}/reviews/${params.reviewId}/checklists/${newChecklist.id}`, {
           replace: true,
         });
       }
-    } else if (params.checklistSlug !== undefined) {
-      const lastDash = params.checklistSlug.lastIndexOf('-');
-      let id = lastDash !== -1 ? params.checklistSlug.slice(lastDash + 1) : params.checklistSlug;
-      setCurrentChecklist({ id });
+    } else if (params.checklistId !== undefined) {
+      const answers = getAnswersForChecklist(params.checklistId);
+      const review = getReviewForChecklist(params.checklistId);
+      if (!review) return;
+
+      const newChecklist = createAMSTARChecklist({
+        name: review.name,
+        id: params.checklistId,
+        reviewerName: getReviewerForChecklist(params.checklistId)?.name,
+        createdAt: review.created_at,
+      });
+
+      // Populate checklist with answers from store
+      answers.forEach((answer) => {
+        if (newChecklist[answer.question_key]) {
+          newChecklist[answer.question_key].answers = answer.answers;
+          newChecklist[answer.question_key].critical = answer.critical;
+        }
+      });
+
+      setCurrentChecklist(newChecklist);
     } else {
       if (!dataLoading()) {
-        console.warn('AMSTAR2Checklist: No current checklist found for', params.checklistSlug);
+        console.warn('AMSTAR2Checklist: No current checklist found for', params.checklistId);
         // Go back to dashboard
         navigate(`/dashboard`);
       }
@@ -723,15 +743,34 @@ export default function AMSTAR2Checklist() {
     if (currentChecklist()) {
       setReviewName(currentChecklist().name || '');
       setReviewerName(currentChecklist().reviewerName || '');
-      setReviewDate(currentChecklist().reviewDate || '');
+      setReviewDate(currentChecklist().createdAt || '');
     }
   });
 
   // Handler to update checklist state
   const handleChecklistChange = (newState) => {
-    // Get a copy of the current checklist and update it
-    const updatedChecklist = { ...currentChecklist(), ...newState };
-    updateChecklist(updatedChecklist);
+    const prevChecklist = currentChecklist();
+    const updatedChecklist = { ...prevChecklist, ...newState };
+
+    // If a question key is present in newState, save it to backend
+    Object.keys(newState).forEach(async (key) => {
+      if (/^q\d+[a-z]*$/i.test(key) && updatedChecklist[key]) {
+        try {
+          await saveChecklistAnswer(
+            updatedChecklist.id,
+            key,
+            updatedChecklist[key].answers,
+            updatedChecklist[key].critical,
+          );
+        } catch (err) {
+          console.error('Failed to save answer for', key, err);
+          // Revert the change if failed
+          setCurrentChecklist((prev) => ({ ...prev, [key]: prevChecklist[key] }));
+          return;
+        }
+      }
+    });
+    setCurrentChecklist(updatedChecklist);
   };
 
   return (

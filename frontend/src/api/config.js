@@ -1,6 +1,5 @@
-// API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-// const API_BASE_URL = 'http://localhost:3004';
+// API Configuration - Use Caddy proxy when available
+const API_BASE_URL = 'https://localhost'
 const API_PREFIX = import.meta.env.VITE_API_PREFIX || '/api/v1';
 
 // Ensure API_BASE_URL doesn't already include the API prefix
@@ -33,8 +32,8 @@ export const API_ENDPOINTS = {
   // Checklist endpoints
   CHECKLISTS: `${baseUrl}${API_PREFIX}/checklists`,
 
-  // ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/shapes`,
-  ELECTRIC_SHAPE: `http://localhost:3000/v1/shape`,
+  // Use Caddy proxy for ElectricSQL when available, otherwise direct
+  ELECTRIC_SHAPE: `https://localhost/v1/shape`, // Through Caddy proxy
 
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,

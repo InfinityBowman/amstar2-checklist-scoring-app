@@ -151,6 +151,7 @@ function setCurrentChecklist(arg) {
   }
   const checklist = getChecklist(arg);
   setState('currentChecklist', checklist || null);
+
   return !!checklist;
 }
 

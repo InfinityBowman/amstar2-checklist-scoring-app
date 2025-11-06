@@ -1,35 +1,30 @@
 import { createSignal, Show, For } from 'solid-js';
-import { useAppStore } from '@/AppStore.js';
 import { useNavigate } from '@solidjs/router';
 import { createExampleProject } from '@offline/createExampleProject.js';
-import { createProject } from '@offline/project.js';
+import { createProject } from '@api/projectService.js';
 import { generateUUID } from '@offline/localDB.js';
-import { checkHealth, checkHealthDb } from '../api/authService.js';
-import { slugify } from './Routes.jsx';
+import { solidStore } from '@offline/solidStore';
+import { useAuth } from '@/auth/AuthStore.js';
 
 export default function AppDashboard() {
-  const { projects, currentProject, addProject, deleteProject } = useAppStore();
+  const { getProjectsForUser, deleteProject } = solidStore;
+  const { user } = useAuth();
+
   const navigate = useNavigate();
   const [projectName, setProjectName] = createSignal('');
 
   const handleProjectClick = (project) => {
-    const slug = slugify(project.name);
-    navigate(`/projects/${slug}-${project.id}`);
+    navigate(`/projects/${project.id}`);
   };
 
   const handleAddProject = async () => {
     if (!projectName().trim()) return;
-    const newProject = await addProject(
-      createProject({
-        id: await generateUUID(),
-        name: projectName().trim(),
-        createdAt: Date.now(),
-        checklists: [],
-      }),
-    );
+    try {
+      await createProject(projectName());
+    } catch (error) {
+      console.error('Error creating project:', error);
+    }
     setProjectName('');
-    // Navigate to the new project
-    handleProjectClick(newProject);
   };
 
   const handleDeleteProject = async (projectId) => {
@@ -41,22 +36,32 @@ export default function AppDashboard() {
   return (
     <div class="p-4">
       <h2 class="text-xl font-bold mb-3">Your Projects</h2>
-      <Show when={projects().length !== 0} fallback={<div class="text-sm text-gray-500">No projects found.</div>}>
+      <Show
+        when={user() && getProjectsForUser(user().id).length !== 0}
+        fallback={<div class="text-sm text-gray-500">No projects found.</div>}
+      >
         <ul class="space-y-1">
-          <For each={projects()}>
+          <For each={getProjectsForUser(user().id)}>
             {(project) => (
               <li
-                class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between ${
-                  currentProject() && currentProject().id === project.id ?
-                    'bg-blue-50 border-blue-300'
-                  : 'hover:bg-gray-100'
-                }`}
+                class={`p-2 border rounded cursor-pointer transition text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-gray-100`}
                 onClick={() => handleProjectClick(project)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleProjectClick(project);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Open project ${project.name}`}
               >
                 <div>
                   <div class="font-medium">{project.name}</div>
                   <div class="text-xs text-gray-600">{project.description}</div>
-                  <div class="text-xs text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</div>
+                  <div class="text-xs text-gray-400">
+                    Last updated: {new Date(project.updated_at).toLocaleDateString()}
+                  </div>
                 </div>
                 <button
                   class="ml-0 sm:ml-4 mt-2 sm:mt-0 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
@@ -72,6 +77,7 @@ export default function AppDashboard() {
           </For>
         </ul>
       </Show>
+
       <div class="mt-4 flex items-center gap-2">
         <input
           type="text"
@@ -98,18 +104,6 @@ export default function AppDashboard() {
           }}
         >
           Load Example Project
-        </button>
-        <button
-          onClick={checkHealth}
-          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
-        >
-          Check Health
-        </button>
-        <button
-          onClick={checkHealthDb}
-          class="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
-        >
-          Check Health DB
         </button>
       </div>
     </div>

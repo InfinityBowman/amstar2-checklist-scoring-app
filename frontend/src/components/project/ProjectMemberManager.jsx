@@ -3,7 +3,7 @@ import { Portal } from 'solid-js/web';
 import { useAppStore } from '@/AppStore';
 
 export default function ProjectMemberManager(props) {
-  const { searchUsers, addUserToProjectByEmail, currentProject } = useAppStore();
+  const { searchUsers, addUserToProjectByEmail } = useAppStore();
 
   // Local state
   const [searchQuery, setSearchQuery] = createSignal('');
@@ -29,7 +29,7 @@ export default function ProjectMemberManager(props) {
       debounceTimeout = setTimeout(async () => {
         try {
           const results = await searchUsers(query);
-          await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay
+          await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
           setSearchResults(results);
         } catch (err) {
           console.error('Search error:', err);
@@ -38,7 +38,7 @@ export default function ProjectMemberManager(props) {
         } finally {
           setIsSearching(false);
         }
-      }, 300);
+      }, 100);
     }
   });
 
@@ -62,14 +62,9 @@ export default function ProjectMemberManager(props) {
     setSuccess('');
 
     try {
-      const result = await addUserToProjectByEmail(currentProject().id, email());
+      const result = await addUserToProjectByEmail(props.projectId, email());
       setSuccess(`Added ${result.user.name} (${result.user.email}) to the project`);
       setEmail('');
-
-      // Notify parent component about the new member
-      if (props.onMemberAdded) {
-        props.onMemberAdded(result.user);
-      }
     } catch (err) {
       setError(err.message || 'Failed to add user to project');
     }
@@ -78,8 +73,29 @@ export default function ProjectMemberManager(props) {
   return (
     <Show when={props.open}>
       <Portal>
-        <div class="fixed inset-0 z-50 w-full flex items-center justify-center bg-black/40 overflow-auto py-8">
-          <div class="max-w-2xl w-full mx-auto p-6 md:p-8 bg-white rounded-xl shadow-lg border border-gray-100 m-4">
+        <div
+          class="fixed inset-0 z-50 w-full flex items-center justify-center bg-black/40 overflow-auto py-8"
+          tabIndex={-1}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              props.onClose?.();
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              props.onClose?.();
+            }
+          }}
+          aria-label="Close dialog on backdrop click or Escape"
+        >
+          <div
+            class="max-w-2xl w-full mx-auto p-6 md:p-8 bg-white rounded-xl shadow-lg border border-gray-100 m-4"
+            tabIndex={0}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={() => {}}
+            aria-modal="true"
+            role="dialog"
+          >
             <div class="flex justify-between items-start mb-6">
               <div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">Add Team Members</h3>
@@ -129,6 +145,15 @@ export default function ProjectMemberManager(props) {
                         {(user) => (
                           <li
                             onClick={() => handleSelectUser(user)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleSelectUser(user);
+                              }
+                            }}
+                            tabIndex={0}
+                            role="button"
+                            aria-label={`Select user ${user.name}`}
                             class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-150 flex items-center justify-between group"
                           >
                             <div class="flex items-center min-w-0">

@@ -2,7 +2,7 @@ import { For, createEffect, Show } from 'solid-js';
 import { solidStore } from '@offline/solidStore';
 
 export default function DataViewer() {
-  const { projects, reviews, checklists, checklistAnswers, projectMembers, reviewAssignments, state, isLoaded } =
+  const { projects, users, reviews, checklists, checklistAnswers, projectMembers, reviewAssignments, state, isLoaded } =
     solidStore;
 
   // createEffect(() => {
@@ -32,17 +32,62 @@ export default function DataViewer() {
             <div class="overflow-auto max-h-32">
               <table class="w-full">
                 <thead>
-                  <tr class="bg-gray-50 text-xs">
-                    <th class="p-1 text-left">ID</th>
-                    <th class="p-1 text-left">Name</th>
-                  </tr>
+                  <Show when={projects().length > 0}>
+                    <tr class="bg-gray-50 text-xs">
+                      <For each={Object.keys(projects()[0])}>{(key) => <th class="p-1 text-left">{key}</th>}</For>
+                    </tr>
+                  </Show>
                 </thead>
                 <tbody>
                   <For each={projects()}>
                     {(p) => (
                       <tr class="hover:bg-gray-50 border-t border-gray-100">
-                        <td class="p-1 font-mono">{short(p.id)}</td>
-                        <td class="p-1">{p.name}</td>
+                        <For each={Object.entries(p)}>
+                          {([key, value]) => (
+                            <td class="p-1 font-mono max-w-[100px] truncate">
+                              {typeof value === 'object' && value !== null ?
+                                JSON.stringify(value).substring(0, 20) +
+                                (JSON.stringify(value).length > 20 ? '...' : '')
+                              : String(value)}
+                            </td>
+                          )}
+                        </For>
+                      </tr>
+                    )}
+                  </For>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Users */}
+          <div class="bg-white p-2 rounded shadow">
+            <div class="flex justify-between items-center mb-1">
+              <h2 class="font-bold">Users ({users().length})</h2>
+            </div>
+            <div class="overflow-auto max-h-32">
+              <table class="w-full">
+                <thead>
+                  <Show when={users().length > 0}>
+                    <tr class="bg-gray-50 text-xs">
+                      <For each={Object.keys(users()[0])}>{(key) => <th class="p-1 text-left">{key}</th>}</For>
+                    </tr>
+                  </Show>
+                </thead>
+                <tbody>
+                  <For each={users()}>
+                    {(u) => (
+                      <tr class="hover:bg-gray-50 border-t border-gray-100">
+                        <For each={Object.entries(u)}>
+                          {([key, value]) => (
+                            <td class="p-1 font-mono max-w-[100px] truncate">
+                              {typeof value === 'object' && value !== null ?
+                                JSON.stringify(value).substring(0, 20) +
+                                (JSON.stringify(value).length > 20 ? '...' : '')
+                              : String(value)}
+                            </td>
+                          )}
+                        </For>
                       </tr>
                     )}
                   </For>
@@ -59,19 +104,26 @@ export default function DataViewer() {
             <div class="overflow-auto max-h-32">
               <table class="w-full">
                 <thead>
-                  <tr class="bg-gray-50 text-xs">
-                    <th class="p-1 text-left">ID</th>
-                    <th class="p-1 text-left">Name</th>
-                    <th class="p-1 text-left">Project</th>
-                  </tr>
+                  <Show when={reviews().length > 0}>
+                    <tr class="bg-gray-50 text-xs">
+                      <For each={Object.keys(reviews()[0])}>{(key) => <th class="p-1 text-left">{key}</th>}</For>
+                    </tr>
+                  </Show>
                 </thead>
                 <tbody>
                   <For each={reviews()}>
                     {(r) => (
                       <tr class="hover:bg-gray-50 border-t border-gray-100">
-                        <td class="p-1 font-mono">{short(r.id)}</td>
-                        <td class="p-1">{r.name}</td>
-                        <td class="p-1 font-mono">{short(r.project_id)}</td>
+                        <For each={Object.entries(r)}>
+                          {([key, value]) => (
+                            <td class="p-1 font-mono max-w-[100px] truncate">
+                              {typeof value === 'object' && value !== null ?
+                                JSON.stringify(value).substring(0, 20) +
+                                (JSON.stringify(value).length > 20 ? '...' : '')
+                              : String(value)}
+                            </td>
+                          )}
+                        </For>
                       </tr>
                     )}
                   </For>
@@ -88,19 +140,26 @@ export default function DataViewer() {
             <div class="overflow-auto max-h-32">
               <table class="w-full">
                 <thead>
-                  <tr class="bg-gray-50 text-xs">
-                    <th class="p-1 text-left">ID</th>
-                    <th class="p-1 text-left">Type</th>
-                    <th class="p-1 text-left">Review</th>
-                  </tr>
+                  <Show when={checklists().length > 0}>
+                    <tr class="bg-gray-50 text-xs">
+                      <For each={Object.keys(checklists()[0])}>{(key) => <th class="p-1 text-left">{key}</th>}</For>
+                    </tr>
+                  </Show>
                 </thead>
                 <tbody>
                   <For each={checklists()}>
                     {(c) => (
                       <tr class="hover:bg-gray-50 border-t border-gray-100">
-                        <td class="p-1 font-mono">{short(c.id)}</td>
-                        <td class="p-1">{c.type}</td>
-                        <td class="p-1 font-mono">{short(c.review_id)}</td>
+                        <For each={Object.entries(c)}>
+                          {([key, value]) => (
+                            <td class="p-1 font-mono max-w-[100px] truncate">
+                              {typeof value === 'object' && value !== null ?
+                                JSON.stringify(value).substring(0, 20) +
+                                (JSON.stringify(value).length > 20 ? '...' : '')
+                              : String(value)}
+                            </td>
+                          )}
+                        </For>
                       </tr>
                     )}
                   </For>
@@ -117,25 +176,28 @@ export default function DataViewer() {
             <div class="overflow-auto max-h-32">
               <table class="w-full">
                 <thead>
-                  <tr class="bg-gray-50 text-xs">
-                    <th class="p-1 text-left">Checklist</th>
-                    <th class="p-1 text-left">Question</th>
-                    <th class="p-1 text-left">Answer</th>
-                  </tr>
+                  <Show when={checklistAnswers().length > 0}>
+                    <tr class="bg-gray-50 text-xs">
+                      <For each={Object.keys(checklistAnswers()[0])}>
+                        {(key) => <th class="p-1 text-left">{key}</th>}
+                      </For>
+                    </tr>
+                  </Show>
                 </thead>
                 <tbody>
                   <For each={checklistAnswers()}>
                     {(a) => (
                       <tr class="hover:bg-gray-50 border-t border-gray-100">
-                        <td class="p-1 font-mono">{short(a.checklist_id)}</td>
-                        <td class="p-1">{a.question_key}</td>
-                        <td class="p-1 truncate max-w-[100px]">
-                          {typeof a.answers === 'string' ?
-                            a.answers.length > 15 ?
-                              a.answers.substring(0, 15) + '...'
-                            : a.answers
-                          : JSON.stringify(a.answers).substring(0, 15) + '...'}
-                        </td>
+                        <For each={Object.entries(a)}>
+                          {([key, value]) => (
+                            <td class="p-1 font-mono max-w-[100px] truncate">
+                              {typeof value === 'object' && value !== null ?
+                                JSON.stringify(value).substring(0, 20) +
+                                (JSON.stringify(value).length > 20 ? '...' : '')
+                              : String(value)}
+                            </td>
+                          )}
+                        </For>
                       </tr>
                     )}
                   </For>
@@ -152,19 +214,26 @@ export default function DataViewer() {
             <div class="overflow-auto max-h-32">
               <table class="w-full">
                 <thead>
-                  <tr class="bg-gray-50 text-xs">
-                    <th class="p-1 text-left">Project</th>
-                    <th class="p-1 text-left">User</th>
-                    <th class="p-1 text-left">Role</th>
-                  </tr>
+                  <Show when={projectMembers().length > 0}>
+                    <tr class="bg-gray-50 text-xs">
+                      <For each={Object.keys(projectMembers()[0])}>{(key) => <th class="p-1 text-left">{key}</th>}</For>
+                    </tr>
+                  </Show>
                 </thead>
                 <tbody>
                   <For each={projectMembers()}>
                     {(m) => (
                       <tr class="hover:bg-gray-50 border-t border-gray-100">
-                        <td class="p-1 font-mono">{short(m.project_id)}</td>
-                        <td class="p-1 font-mono">{short(m.user_id)}</td>
-                        <td class="p-1">{m.role}</td>
+                        <For each={Object.entries(m)}>
+                          {([key, value]) => (
+                            <td class="p-1 font-mono max-w-[100px] truncate">
+                              {typeof value === 'object' && value !== null ?
+                                JSON.stringify(value).substring(0, 20) +
+                                (JSON.stringify(value).length > 20 ? '...' : '')
+                              : String(value)}
+                            </td>
+                          )}
+                        </For>
                       </tr>
                     )}
                   </For>
@@ -181,17 +250,28 @@ export default function DataViewer() {
             <div class="overflow-auto max-h-32">
               <table class="w-full">
                 <thead>
-                  <tr class="bg-gray-50 text-xs">
-                    <th class="p-1 text-left">Review</th>
-                    <th class="p-1 text-left">User</th>
-                  </tr>
+                  <Show when={reviewAssignments().length > 0}>
+                    <tr class="bg-gray-50 text-xs">
+                      <For each={Object.keys(reviewAssignments()[0])}>
+                        {(key) => <th class="p-1 text-left">{key}</th>}
+                      </For>
+                    </tr>
+                  </Show>
                 </thead>
                 <tbody>
                   <For each={reviewAssignments()}>
                     {(a) => (
                       <tr class="hover:bg-gray-50 border-t border-gray-100">
-                        <td class="p-1 font-mono">{short(a.review_id)}</td>
-                        <td class="p-1 font-mono">{short(a.user_id)}</td>
+                        <For each={Object.entries(a)}>
+                          {([key, value]) => (
+                            <td class="p-1 font-mono max-w-[100px] truncate">
+                              {typeof value === 'object' && value !== null ?
+                                JSON.stringify(value).substring(0, 20) +
+                                (JSON.stringify(value).length > 20 ? '...' : '')
+                              : String(value)}
+                            </td>
+                          )}
+                        </For>
                       </tr>
                     )}
                   </For>

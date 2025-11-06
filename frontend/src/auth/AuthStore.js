@@ -12,7 +12,7 @@ function createAuthStore() {
 
   async function initializeAuth() {
     setAuthLoading(true);
-    console.log('Initializing auth...');
+    // console.log('Initializing auth...');
     try {
       await authService.refreshAccessToken();
       const u = await authService.getCurrentUser();

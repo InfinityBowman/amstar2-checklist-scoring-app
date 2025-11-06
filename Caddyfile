@@ -1,0 +1,21 @@
+# Caddyfile for local development with HTTP/2
+
+localhost {
+encode gzip
+
+    # Proxy frontend (only /amstar2-checklist-scoring-app)
+    reverse_proxy /amstar2-checklist-scoring-app* {
+    	to http://localhost:5173
+    }
+
+    # Proxy backend API
+    reverse_proxy /api/* {
+    	to http://localhost:8000
+    }
+
+    # Proxy ElectricSQL shape endpoint
+    reverse_proxy /v1/shape* {
+    	to http://localhost:3000
+    }
+
+}

@@ -1,9 +1,7 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js';
 import { createShape } from '@electric-sql/solid';
 import { API_ENDPOINTS } from '@api/config.js';
-import { createMergeableStore } from 'tinybase';
-import { createLocalSynchronizer } from 'tinybase/synchronizers/synchronizer-local';
-import { solidStore, schema } from '@offline/solidStore';
+import { solidStore } from '@offline/solidStore';
 import { useAuth } from '@/auth/AuthStore.js';
 
 export default function DataLoader() {
@@ -15,7 +13,7 @@ export default function DataLoader() {
   // Get access token should probably refetch if it expires
   const { user, getAccessToken } = useAuth();
 
-  console.log('%cDataLoader mounted', 'color: green;');
+  // console.log('%cDataLoader mounted', 'color: green;');
 
   createEffect(() => {
     if (user()) {
@@ -62,33 +60,20 @@ export default function DataLoader() {
   });
 
   async function syncToTinyBase() {
-    const syncStore = createMergeableStore();
-    syncStore.setSchema(schema);
-
-    // Clean up existing synchronizers if they exist
-    if (synchronizer1) await synchronizer1.destroy();
-    if (synchronizer2) await synchronizer2.destroy();
-
-    // Create new synchronizers
-    synchronizer1 = createLocalSynchronizer(solidStore.tinyStore);
-    synchronizer2 = createLocalSynchronizer(syncStore);
-
-    // Start syncing
-    synchronizer1.startSync();
-    synchronizer2.startSync();
-
-    console.log('Syncing Electric data to TinyBase store...');
+    const syncStore = solidStore.tinyStore;
 
     const currentShapes = shapes();
     // For each table, set all rows in TinyBase
     const tablesToSync = [
       { name: 'projects', data: currentShapes.projects?.data() ?? [] },
+      { name: 'users', data: currentShapes.users?.data() ?? [] },
       { name: 'reviews', data: currentShapes.reviews?.data() ?? [] },
       { name: 'checklists', data: currentShapes.checklists?.data() ?? [] },
       { name: 'checklist_answers', data: currentShapes.checklist_answers?.data() ?? [] },
       { name: 'project_members', data: currentShapes.project_members?.data() ?? [] },
       { name: 'review_assignments', data: currentShapes.review_assignments?.data() ?? [] },
     ];
+    // console.log('Tables to sync:', tablesToSync);
 
     for (const { name, data } of tablesToSync) {
       if (Array.isArray(data)) {
@@ -113,9 +98,7 @@ export default function DataLoader() {
         }
       }
     }
-    // await synchronizer1.destroy();
-    // await synchronizer2.destroy();
-    console.log(syncStore.getTables());
+    // console.log('Synced to TinyBase:', syncStore.getTables());
   }
   let synchronizer1 = null;
   let synchronizer2 = null;
@@ -153,7 +136,7 @@ export default function DataLoader() {
 
   createEffect(() => {
     if (user()) {
-      console.log('User changed, triggering sync...');
+      // console.log('User changed, triggering sync...');
       debouncedSync();
     }
   });

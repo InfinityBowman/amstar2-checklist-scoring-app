@@ -9,6 +9,11 @@ import { enqueueOperation } from '@api/syncService.js';
 const tinyStore = createMergeableStore();
 
 export const schema = {
+  users: {
+    id: { type: 'string' }, // Unique user ID
+    email: { type: 'string' }, // User email
+    name: { type: 'string' }, // User name
+  },
   projects: {
     id: { type: 'string' }, // Unique project ID
     name: { type: 'string' }, // Project name/title
@@ -25,7 +30,7 @@ export const schema = {
     id: { type: 'string' }, // Unique review ID
     project_id: { type: 'string' }, // Foreign key to projects.id
     name: { type: 'string' }, // Review name/title
-    created_at: { type: 'number' }, // Timestamp (ms)
+    created_at: { type: 'string' }, // Timestamp (ms)
     // pdf_file_name: { type: 'string' }, // PDF file name
   },
   review_assignments: {
@@ -81,12 +86,13 @@ export async function createReactiveStore() {
 
   const persister = createOpfsPersister(tinyStore, handle);
   // Make sure to load first so we dont save an empty DB over existing data
-  // await persister.startAutoLoad();
-  // await persister.startAutoSave();
-  console.log(tinyStore.getTables());
+  await persister.startAutoLoad();
+  await persister.startAutoSave();
+  // console.log(tinyStore.getTables());
 
   // Create solid signals for each table in the schema
   const [projects, setProjects] = createSignal([]);
+  const [users, setUsers] = createSignal([]);
   const [reviews, setReviews] = createSignal([]);
   const [checklists, setChecklists] = createSignal([]);
   const [checklistAnswers, setChecklistAnswers] = createSignal([]);
@@ -105,7 +111,7 @@ export async function createReactiveStore() {
   function setupListeners() {
     // Projects listener
     const projectsListener = tinyStore.addTableListener('projects', () => {
-      console.log('Projects table changed');
+      // console.log('Projects table changed');
       // return;
       const projectsData = Object.entries(tinyStore.getTable('projects') || {}).map(([id, project]) => ({
         ...project,
@@ -114,9 +120,20 @@ export async function createReactiveStore() {
       setProjects(projectsData);
     });
 
+    // Users listener
+    const usersListener = tinyStore.addTableListener('users', () => {
+      // console.log('Users table changed');
+      // return;
+      const usersData = Object.entries(tinyStore.getTable('users') || {}).map(([id, user]) => ({
+        ...user,
+        id,
+      }));
+      setUsers(usersData);
+    });
+
     // Reviews listener
     const reviewsListener = tinyStore.addTableListener('reviews', () => {
-      console.log('Reviews table changed');
+      // console.log('Reviews table changed');
       // return;
 
       const reviewsData = Object.entries(tinyStore.getTable('reviews') || {}).map(([id, review]) => ({
@@ -128,7 +145,7 @@ export async function createReactiveStore() {
 
     // Checklists listener
     const checklistsListener = tinyStore.addTableListener('checklists', () => {
-      console.log('Checklists table changed');
+      // console.log('Checklists table changed');
       // return;
       const checklistsData = Object.entries(tinyStore.getTable('checklists') || {}).map(([id, checklist]) => ({
         ...checklist,
@@ -139,7 +156,7 @@ export async function createReactiveStore() {
 
     // Checklist answers listener
     const answersListener = tinyStore.addTableListener('checklist_answers', () => {
-      console.log('Checklist answers table changed');
+      // console.log('Checklist answers table changed');
       // return;
       const answersData = Object.entries(tinyStore.getTable('checklist_answers') || {}).map(([id, answer]) => {
         // Parse JSON answers field if it's a string
@@ -162,7 +179,7 @@ export async function createReactiveStore() {
 
     // Project members listener
     const membersListener = tinyStore.addTableListener('project_members', () => {
-      console.log('Project members table changed');
+      // console.log('Project members table changed');
       // return;
       const membersData = Object.entries(tinyStore.getTable('project_members') || {}).map(([id, member]) => ({
         ...member,
@@ -173,7 +190,7 @@ export async function createReactiveStore() {
 
     // Review assignments listener
     const assignmentsListener = tinyStore.addTableListener('review_assignments', () => {
-      console.log('Review assignments table changed');
+      // console.log('Review assignments table changed');
       // return;
       const assignmentsData = Object.entries(tinyStore.getTable('review_assignments') || {}).map(
         ([id, assignment]) => ({ ...assignment, id }),
@@ -184,6 +201,7 @@ export async function createReactiveStore() {
     // Return cleanup function
     return () => {
       tinyStore.removeTableListener(projectsListener);
+      tinyStore.removeTableListener(usersListener);
       tinyStore.removeTableListener(reviewsListener);
       tinyStore.removeTableListener(checklistsListener);
       tinyStore.removeTableListener(answersListener);
@@ -202,6 +220,12 @@ export async function createReactiveStore() {
       id,
     }));
     setProjects(projectsData);
+
+    const usersData = Object.entries(tinyStore.getTable('users') || {}).map(([id, user]) => ({
+      ...user,
+      id,
+    }));
+    setUsers(usersData);
 
     const reviewsData = Object.entries(tinyStore.getTable('reviews') || {}).map(([id, review]) => ({ ...review, id }));
     setReviews(reviewsData);
@@ -240,7 +264,7 @@ export async function createReactiveStore() {
   });
 
   // CRUD Operations for Projects
-  const saveProject = async (project) => {
+  const addProject = async (project) => {
     if (!project.id) throw new Error('Project must have an ID');
     let item = { id: project.id, name: project.name, owner_id: 1234, updated_at: new Date().toISOString() };
     enqueueOperation('CREATE_PROJECT', project.name, project.id, getStoreSnapshot(tinyStore));
@@ -325,7 +349,7 @@ export async function createReactiveStore() {
   };
 
   // CRUD Operations for Reviews
-  const saveReview = async (review) => {
+  const addReview = async (review) => {
     if (!review.id) throw new Error('Review must have an ID');
     if (!review.project_id) throw new Error('Review must have a project_id');
     tinyStore.setRow('reviews', review.id, review);
@@ -370,7 +394,7 @@ export async function createReactiveStore() {
   };
 
   // CRUD Operations for Checklists
-  const saveChecklist = async (checklist) => {
+  const addChecklist = async (checklist) => {
     if (!checklist.id) throw new Error('Checklist must have an ID');
     if (!checklist.review_id) throw new Error('Checklist must have a review_id');
     tinyStore.setRow('checklists', checklist.id, checklist);
@@ -419,7 +443,7 @@ export async function createReactiveStore() {
   };
 
   // Project Members operations
-  const saveProjectMember = async (projectId, userId, role = 'member') => {
+  const addProjectMember = async (projectId, userId, role = 'member') => {
     const id = `${projectId}::${userId}`;
     const member = {
       project_id: projectId,
@@ -437,7 +461,7 @@ export async function createReactiveStore() {
   };
 
   // CRUD Operations for  Review Assignments
-  const saveReviewAssignment = async (reviewId, userId) => {
+  const addReviewAssignment = async (reviewId, userId) => {
     const id = `${reviewId}::${userId}`;
     const assignment = {
       review_id: reviewId,
@@ -484,6 +508,23 @@ export async function createReactiveStore() {
     return projects().filter((p) => memberProjectIds.includes(p.id));
   };
 
+  const getReviewerForChecklist = (checklistId) => {
+    const checklist = checklists().find((c) => c.id === checklistId);
+    if (!checklist || !checklist.reviewer_id) return null;
+    return users().find((u) => u.id === checklist.reviewer_id) || null;
+  };
+
+  const getReviewForChecklist = (checklistId) => {
+    const checklist = checklists().find((c) => c.id === checklistId);
+    if (!checklist) return null;
+    return reviews().find((r) => r.id === checklist.review_id) || null;
+  };
+
+  const getUserName = (userId) => {
+    const user = users().find((u) => u.id === userId);
+    return user ? user.name : 'Unknown User';
+  };
+
   const getStoreSnapshot = () => {
     return {
       projects: tinyStore.getTable('projects') || {},
@@ -514,6 +555,7 @@ export async function createReactiveStore() {
   return {
     // Data signals
     projects,
+    users,
     reviews,
     checklists,
     checklistAnswers,
@@ -526,17 +568,17 @@ export async function createReactiveStore() {
     isLoaded: () => !state.dataLoading,
 
     // Project operations
-    saveProject,
+    addProject,
     deleteProject,
     setCurrentProject,
 
     // Review operations
-    saveReview,
+    addReview,
     deleteReview,
     setCurrentReview,
 
     // Checklist operations
-    saveChecklist,
+    addChecklist,
     deleteChecklist,
     setCurrentChecklist,
 
@@ -545,20 +587,23 @@ export async function createReactiveStore() {
     deleteChecklistAnswer,
 
     // Project member operations
-    saveProjectMember,
+    addProjectMember,
     deleteProjectMember,
 
     // Review assignment operations
-    saveReviewAssignment,
+    addReviewAssignment,
     deleteReviewAssignment,
 
     // Relationship helpers
     getReviewsForProject,
     getChecklistsForReview,
     getAnswersForChecklist,
+    getReviewForChecklist,
     getProjectMembers,
     getReviewAssignments,
     getProjectsForUser,
+    getReviewerForChecklist,
+    getUserName,
 
     // Store
     tinyStore,

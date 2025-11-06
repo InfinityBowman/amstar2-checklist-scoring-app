@@ -1,14 +1,19 @@
+import { solidStore } from '@offline/solidStore.js';
+
 export default function ChecklistItem(props) {
+  const { getReviewerForChecklist } = solidStore;
+
   return (
     <li class="list-none p-0 m-0">
-      <div class="flex items-center justify-between border rounded px-2 py-1 bg-white">
+      <div class="flex items-center justify-between border rounded px-2 py-1 bg-white hover:bg-blue-50">
         <button
-          class="flex-grow text-left bg-transparent border-0 hover:bg-blue-50 cursor-pointer py-1"
-          onClick={() => props.onChecklistClick(props.checklist)}
+          class="flex-grow text-left bg-transparent border-0 cursor-pointer py-1"
+          onClick={() => props.onChecklistClick(getReviewerForChecklist(props.checklist.id), props.checklist)}
         >
           <span class="font-semibold">{props.checklist.name}</span>
           <span class="ml-2 text-xs text-gray-600">
-            Reviewer: {props.checklist.reviewerName || <span class="italic text-gray-400">Unassigned</span>}
+            Reviewer:{' '}
+            {getReviewerForChecklist(props.checklist.id)?.name || <span class="italic text-gray-400">Unassigned</span>}
           </span>
         </button>
         <button

@@ -162,8 +162,8 @@ async def signin(
         key="refresh",
         value=refresh_token,
         httponly=True,
-        secure=settings.ENV == "production",  # Only use secure in production
-        samesite="strict",
+        secure=True,
+        samesite="lax",
         path="/",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS
         * 24
@@ -216,7 +216,7 @@ async def refresh_token(
 
     except HTTPException:
         # Clear invalid refresh token cookie
-        response.delete_cookie(key="refresh", path="/")
+        response.delete_cookie(key="refresh", path="/", secure=True, samesite="lax")
         raise
 
 
@@ -227,7 +227,7 @@ async def signout(response: Response):
 
     No request body required. Clears the refresh token cookie.
     """
-    response.delete_cookie(key="refresh", path="/")
+    response.delete_cookie(key="refresh", path="/", secure=True, samesite="lax")
     return {"message": "Successfully signed out"}
 
 

@@ -5,6 +5,7 @@ export async function createChecklist(reviewId, reviewerId = null) {
   try {
     const checklistData = {
       review_id: reviewId,
+      reviewer_id: reviewerId,
       type: 'amstar',
     };
 
@@ -28,6 +29,28 @@ export async function createChecklist(reviewId, reviewerId = null) {
     return await response.json();
   } catch (error) {
     console.error('Error creating checklist:', error);
+    throw error;
+  }
+}
+
+export async function deleteChecklist(checklistId) {
+  try {
+    const response = await authFetch(`${API_ENDPOINTS.CHECKLISTS}/${checklistId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to delete checklist');
+    }
+
+    // No content expected on success
+    return true;
+  } catch (error) {
+    console.error('Error deleting checklist:', error);
     throw error;
   }
 }
