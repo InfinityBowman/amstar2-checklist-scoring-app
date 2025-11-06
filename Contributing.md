@@ -5,6 +5,7 @@
 - [Docker](https://www.docker.com/get-started)
 - [Git](https://git-scm.com/downloads)
 - [Node](https://nodejs.org/en/download)
+- [Caddy](https://caddyserver.com/download)
 
 ## Quick Start
 
@@ -28,10 +29,13 @@
    npm run build # this is needed to build custom packages
    npm run dev
 
+   # Run Caddy server
+   caddy run # start the https reverse proxy server
+
    # Run tests
    cd frontend
    npm test
-   
+
    # Or for tests with a nice UI
    npm run test:ui
 
@@ -45,6 +49,7 @@
    - **Cooler API Documentation**: http://localhost:8000/scalar
    - **Database**: localhost:54321 (PostgreSQL)
    - **Frontend**: [http://localhost:5173/amstar2-checklist-scoring-app/](http://localhost:5173/amstar2-checklist-scoring-app/)
+   - **Frontend (https)**: [https://localhost/amstar2-checklist-scoring-app/](https://localhost/amstar2-checklist-scoring-app/)
 
 ---
 

@@ -1,31 +1,51 @@
 import { For } from 'solid-js';
 import { solidStore } from '@offline/solidStore';
+import { FiUsers } from 'solid-icons/fi';
+import { AiFillCalendar } from 'solid-icons/ai';
 
 export default function ProjectMetadata(props) {
   const { getUserName } = solidStore;
 
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const isToday =
+      date.getFullYear() === now.getFullYear() &&
+      date.getMonth() === now.getMonth() &&
+      date.getDate() === now.getDate();
+    if (isToday) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else {
+      return date.toLocaleDateString();
+    }
+  }
+
   return (
-    <div>
-      <div class="mb-4 text-xs text-gray-500 flex items-center">
-        <svg
-          class="w-4 h-4 mr-1 text-gray-400"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-            clipRule="evenodd"
-          />
-        </svg>
-        Last updated: {new Date(props.updatedAt).toLocaleDateString()}
-      </div>
-      <div>
-        Members:
-        <ul class="list-disc list-inside text-xs text-gray-600">
-          <For each={props.members}>{(member) => <li>{getUserName(member.user_id)}</li>}</For>
-        </ul>
+    <div class="mb-6 p-2 ">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Last Updated */}
+        <div class="flex items-center text-sm text-gray-600">
+          <AiFillCalendar class="w-4 h-4 mr-2 text-gray-400" />
+          Created: <span class="font-medium ml-1">{formatDate(props.updatedAt)}</span>
+        </div>
+
+        {/* Members */}
+        <div class="flex items-center">
+          <FiUsers class="w-4 h-4 mr-2 text-gray-400" />
+          <span class="text-sm text-gray-600 mr-2">Members:</span>
+          <div class="flex flex-wrap gap-1">
+            <For each={props.members}>
+              {(member) => (
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {getUserName(member.user_id)}
+                </span>
+              )}
+            </For>
+            {(!props.members || props.members.length === 0) && (
+              <span class="text-xs text-gray-400 italic">No members</span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

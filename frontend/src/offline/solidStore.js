@@ -43,8 +43,8 @@ export const schema = {
     review_id: { type: 'string' }, // Foreign key to reviews.id
     reviewer_id: { type: 'string' }, // Optional, for multi-user
     type: { type: 'string' }, // e.g. 'amstar'
-    completed_at: { type: 'number' }, // Timestamp (ms), optional
-    updated_at: { type: 'number' }, // Timestamp (ms)
+    completed_at: { type: 'string' }, // Timestamp (ms), optional
+    updated_at: { type: 'string' }, // Timestamp (ms)
   },
   checklist_answers: {
     id: { type: 'string' }, // Unique answer ID (UUID)
@@ -52,7 +52,7 @@ export const schema = {
     question_key: { type: 'string' }, // e.g. 'q1', 'q2', etc.
     answers: { type: 'string' }, // JSON stringified array
     critical: { type: 'boolean' }, // true/false
-    updated_at: { type: 'number' }, // Timestamp (ms)
+    updated_at: { type: 'string' }, // Timestamp (ms)
   },
 };
 

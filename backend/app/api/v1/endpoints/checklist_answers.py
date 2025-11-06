@@ -43,11 +43,11 @@ async def create_or_update_answer(
         )
     
     # Check if a completed checklist can be edited
-    if checklist.completed_at is not None:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Cannot edit a completed checklist"
-        )
+    # if checklist.completed_at is not None:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="Cannot edit a completed checklist"
+    #     )
     
     # Check if the answer for this question already exists
     result = await db.execute(
@@ -63,6 +63,9 @@ async def create_or_update_answer(
         # Update the existing answer
         existing_answer.answers = answer_in.answers
         existing_answer.critical = answer_in.critical
+        # Touch the parent checklist to update its updated_at
+        from sqlalchemy.sql import func
+        checklist.updated_at = func.now()
         await db.commit()
         await db.refresh(existing_answer)
         return existing_answer
@@ -76,6 +79,9 @@ async def create_or_update_answer(
     )
     
     db.add(answer)
+    # Touch the parent checklist to update its updated_at
+    from sqlalchemy.sql import func
+    checklist.updated_at = func.now()
     await db.commit()
     await db.refresh(answer)
     

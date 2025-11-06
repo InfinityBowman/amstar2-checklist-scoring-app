@@ -695,13 +695,14 @@ export default function AMSTAR2Checklist() {
     if (params.checklistId === 'new') {
       // Create a new checklist
       const newChecklist = createAMSTARChecklist({
-        name: 'New AMSTAR 2 Checklist',
+        name: 'New 2 Checklist',
         id: await generateUUID(),
         createdAt: Date.now(),
         reviewerName: '',
         reviewDate: '',
       });
       setCurrentChecklist(newChecklist);
+
       // Update the route to the new checklist's slug
       if (params.projectId && params.reviewId) {
         navigate(`/projects/${params.projectId}/reviews/${params.reviewId}/checklists/${newChecklist.id}`, {

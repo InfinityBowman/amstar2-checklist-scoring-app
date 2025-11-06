@@ -21,7 +21,7 @@ export default function App(props) {
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [pendingDeleteId, setPendingDeleteId] = createSignal(null);
   const [pdfUrl, setPdfUrl] = createSignal(null);
-  const { user, authLoading, authFetch } = useAuth();
+  const { user } = useAuth();
 
   const { dataLoading, deleteChecklist, setCurrentChecklist, getChecklist } = useAppStore();
 
@@ -84,10 +84,6 @@ export default function App(props) {
     setPendingDeleteId(null);
   };
 
-  // createEffect(() => {
-  //   console.log(dataLoading(), authLoading());
-  // });
-
   return (
     <div class="flex flex-col h-screen overflow-y-hidden">
       {/* Navbar at the top */}
@@ -101,10 +97,14 @@ export default function App(props) {
           onDeleteChecklist={handleDeleteChecklist}
         />
 
+        <Show when={user()}>
+          <DataLoader />
+        </Show>
+
         {/* Main content area, fades in after page refresh */}
         <AnimatedShow
           class="flex flex-1"
-          when={!dataLoading()}
+          when={!dataLoading() && user()}
           fallback={<div class="flex-1 flex items-center justify-center">Loading...</div>}
         >
           <div class="flex-1 min-h-0 overflow-y-auto">{props.children}</div>
@@ -145,9 +145,6 @@ export default function App(props) {
         onCancel={cancelDeleteAll}
         onConfirm={confirmDeleteAll}
       />
-      <Show when={user()}>
-        <DataLoader />
-      </Show>
     </div>
   );
 }

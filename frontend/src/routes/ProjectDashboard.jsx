@@ -5,7 +5,6 @@ import { createChecklist, deleteChecklist, saveChecklistAnswer } from '@api/chec
 import { deleteProject } from '@api/projectService.js';
 import { solidStore } from '@offline/solidStore';
 import { createChecklist as createAMSTARChecklist } from '@offline/AMSTAR2Checklist.js';
-import { generateUUID } from '@offline/localDB.js';
 
 import ProjectMemberManager from '../components/project/ProjectMemberManager.jsx';
 import ProjectHeader from '../components/project/ProjectHeader';
@@ -47,12 +46,12 @@ export default function ProjectDashboard() {
       const checklistResp = await createChecklist(reviewId);
       // Create a new checklist object with the backend id
       const newChecklist = createAMSTARChecklist({
-        name: 'New AMSTAR 2 Checklist',
+        name: checklistName,
         id: checklistResp.id,
         createdAt: Date.now(),
         reviewerName: '',
-        reviewDate: '',
       });
+
       // Save all default answers for this checklist
       await Promise.all(
         Object.keys(newChecklist).map(async (key) => {
@@ -89,8 +88,6 @@ export default function ProjectDashboard() {
         <ProjectMemberManager open={isOpen()} onClose={() => setIsOpen(false)} projectId={currentProject().id} />
         <ProjectMetadata updatedAt={currentProject().updated_at} members={getProjectMembers(currentProject().id)} />
 
-        <AddReviewForm onAddReview={handleAddReview} />
-
         <ReviewsList
           reviews={getReviewsForProject(currentProject().id)}
           onDeleteReview={(reviewId) => deleteReview(reviewId)}
@@ -98,10 +95,11 @@ export default function ProjectDashboard() {
           onDeleteChecklist={(checklistId) => deleteChecklist(checklistId)}
           onAddChecklist={handleAddChecklist}
         />
+        <AddReviewForm onAddReview={handleAddReview} />
 
         <FileManagement />
 
-        <ChartSection />
+        <ChartSection project={currentProject()} />
       </div>
     </Show>
   );
