@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { useAuth } from './AuthProvider.jsx';
+import { useAuth } from './AuthStore.js';
 import PasswordInput from './PasswordInput.jsx';
 
 export default function ResetPassword() {
