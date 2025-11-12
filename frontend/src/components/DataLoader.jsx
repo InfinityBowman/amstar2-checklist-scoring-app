@@ -98,7 +98,7 @@ export default function DataLoader() {
       }
     }
     solidStore.persister.save();
-    solidStore.persister.load();
+    // solidStore.persister.load();
     // console.log('Synced to TinyBase:', syncStore.getTables());
   }
   let synchronizer1 = null;

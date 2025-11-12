@@ -51,9 +51,9 @@ async def seed_database():
     Seed the database with initial data for development.
     Only runs in development mode.
     """
-    if os.getenv("ENV", "development") != "development":
-        logger.info("Skipping database seeding in non-development environment")
-        return
+    # if os.getenv("ENV", "development") != "development":
+    #     logger.info("Skipping database seeding in non-development environment")
+    #     return
     
     # Check if database is already seeded
     needs_seeding = await check_needs_seeding()
@@ -207,9 +207,9 @@ async def seed_demo_projects():
             # Add each project
             for project in demo_projects:
                 sql = f"""
-                INSERT INTO projects (id, owner_id, name, updated_at)
+                INSERT INTO projects (id, owner_id, name, created_at, updated_at)
                 VALUES 
-                ('{project['id']}', '{project['owner_id']}', '{project['name']}', NOW());
+                ('{project['id']}', '{project['owner_id']}', '{project['name']}', NOW(), NOW());
                 """
                 try:
                     await db.execute(text(sql))
