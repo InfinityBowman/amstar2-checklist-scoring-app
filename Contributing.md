@@ -23,15 +23,17 @@
    cd frontend
    npm run dev:all
 
-   # Alternatively, for frontend dev (--build is needed to pull in new changes to docker, if no changes are made, then it can be left out)
+  # If browser shows unsafe url at https location, proceed anyways
+
+   # Alternatively, a more manual approach
    cd frontend
    npm run docker
    npm install
-   npm run build # this is needed to build custom packages
+   npm run build:packages # this is needed to build custom packages
    npm run dev
 
    # Run Caddy server
-   caddy run # start the https reverse proxy server
+   caddy run # start the https reverse proxy server - needed for electricsql http streams
 
    # Run tests
    cd frontend
