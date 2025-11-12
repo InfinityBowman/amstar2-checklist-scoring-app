@@ -20,7 +20,8 @@
 
    ```bash
    # Build and start all services
-   docker-compose up --build -d
+   cd frontend
+   npm run dev:all
 
    # Alternatively, for frontend dev (--build is needed to pull in new changes to docker, if no changes are made, then it can be left out)
    cd frontend

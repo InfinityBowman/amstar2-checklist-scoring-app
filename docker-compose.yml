@@ -74,27 +74,27 @@ services:
       postgres:
         condition: service_healthy
 
-  bun-proxy:
-    build:
-      context: ./backend-js
-      dockerfile: Dockerfile
-    container_name: corates_bun_proxy
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      - ELECTRIC_URL=http://electric:3000
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
-      - API_PREFIX=${API_PREFIX}
-      - PORT=3004
-    depends_on:
-      - electric
-    ports:
-      - '3004:3004'
-    working_dir: /app
-    command: bun run dev
-    volumes:
-      - ./backend-js:/app
+  # bun-proxy:
+  #   build:
+  #     context: ./backend-js
+  #     dockerfile: Dockerfile
+  #   container_name: corates_bun_proxy
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - ELECTRIC_URL=http://electric:3000
+  #     - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+  #     - API_PREFIX=${API_PREFIX}
+  #     - PORT=3004
+  #   depends_on:
+  #     - electric
+  #   ports:
+  #     - '3004:3004'
+  #   working_dir: /app
+  #   command: bun run dev
+  #   volumes:
+  #     - ./backend-js:/app
 
   frontend:
     build:

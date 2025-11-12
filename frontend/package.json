@@ -5,8 +5,8 @@
   "homepage": "https://InfinityBowman.github.io/amstar2-checklist-scoring-app",
   "scripts": {
     "dev": "vite dev",
+    "dev:all": "npm run build:packages && concurrently \"npm run dev\" \"caddy run\" \"npm run docker\"",
     "docker": "docker compose up --build backend postgres electric -d",
-    "docker:bun": "docker compose up --build backend postgres electric bun-proxy",
     "build": "npm run build:packages && vite build",
     "build:packages": "for d in packages/*; do (cd \"$d\" && npm run build); done",
     "preview": "vite preview",
@@ -44,6 +44,7 @@
     "@tailwindcss/vite": "^4.1.13",
     "@testing-library/jest-dom": "^6.8.0",
     "@vitest/ui": "^3.2.4",
+    "concurrently": "^9.2.1",
     "eslint": "^9.37.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-solid": "^0.14.5",
