@@ -13,7 +13,7 @@ from app.utils.auth import get_current_user
 router = APIRouter()
 
 
-@router.post("/", response_model=ReviewResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ReviewResponse, status_code=status.HTTP_201_CREATED)
 async def create_review(
     review_in: ReviewCreate,
     current_user: User = Depends(get_current_user),
@@ -69,3 +69,33 @@ async def create_review(
     await db.refresh(review)
     
     return review
+
+
+# Delete a review (only project owner can delete)
+from fastapi import Path
+
+@router.delete("/{review_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_review(
+    review_id: UUID = Path(..., description="The ID of the review to delete"),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_session)
+):
+    # Fetch the review and its project
+    result = await db.execute(select(Review).where(Review.id == review_id))
+    review = result.scalar_one_or_none()
+    if not review:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Review not found")
+
+    # Fetch the project
+    result = await db.execute(select(Project).where(Project.id == review.project_id))
+    project = result.scalar_one_or_none()
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
+    # Only the project owner can delete
+    if project.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the project owner can delete reviews")
+
+    await db.delete(review)
+    await db.commit()
+    return None

@@ -5,6 +5,7 @@
 - [Docker](https://www.docker.com/get-started)
 - [Git](https://git-scm.com/downloads)
 - [Node](https://nodejs.org/en/download)
+- [Caddy](https://caddyserver.com/download)
 
 ## Quick Start
 
@@ -19,17 +20,30 @@
 
    ```bash
    # Build and start all services
-   docker-compose up --build -d
+   cd frontend
+   npm run dev:all
 
-   # Alternatively, for frontend dev (--build is needed to pull in new changes to docker, if no changes are made, then it can be left out)
+  # If browser shows unsafe url at https location, proceed anyways
+
+   # Alternatively, a more manual approach
    cd frontend
    npm run docker
    npm install
-   npm run build # this is needed to build custom packages
+   npm run build:packages # this is needed to build custom packages
    npm run dev
 
-   # View logs (optional)
-   docker-compose logs -f
+   # Run Caddy server
+   caddy run # start the https reverse proxy server - needed for electricsql http streams
+
+   # Run tests
+   cd frontend
+   npm test
+
+   # Or for tests with a nice UI
+   npm run test:ui
+
+   # View logs
+   docker compose logs -f
    ```
 
 3. **Access the Application**
@@ -38,6 +52,7 @@
    - **Cooler API Documentation**: http://localhost:8000/scalar
    - **Database**: localhost:54321 (PostgreSQL)
    - **Frontend**: [http://localhost:5173/amstar2-checklist-scoring-app/](http://localhost:5173/amstar2-checklist-scoring-app/)
+   - **Frontend (https)**: [https://localhost/amstar2-checklist-scoring-app/](https://localhost/amstar2-checklist-scoring-app/)
 
 ---
 

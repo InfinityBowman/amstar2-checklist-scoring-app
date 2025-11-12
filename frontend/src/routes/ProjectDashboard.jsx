@@ -1,13 +1,12 @@
-import { useAppStore } from '@/AppStore.js';
 import { createEffect, Show, createSignal } from 'solid-js';
 import { useNavigate, useParams } from '@solidjs/router';
-import { createChecklist } from '@offline/AMSTAR2Checklist.js';
-import { createReview } from '@offline/review.js';
-import { generateUUID } from '@offline/localDB.js';
-import { slugify } from './Routes.jsx';
-import ProjectMemberManager from '../components/project/ProjectMemberManager.jsx';
+import { createReview, deleteReview } from '@api/reviewService.js';
+import { createChecklist, deleteChecklist, saveChecklistAnswer } from '@api/checklistService.js';
+import { deleteProject } from '@api/projectService.js';
+import { solidStore } from '@offline/solidStore';
+import { createChecklist as createAMSTARChecklist } from '@offline/AMSTAR2Checklist.js';
 
-// Import new components
+import ProjectMemberManager from '../components/project/ProjectMemberManager.jsx';
 import ProjectHeader from '../components/project/ProjectHeader';
 import ProjectMetadata from '../components/project/ProjectMetadata';
 import AddReviewForm from '../components/project/AddReviewForm';
@@ -16,30 +15,17 @@ import FileManagement from '../components/project/FileManagement';
 import ChartSection from '../components/project/ChartSection';
 
 export default function ProjectDashboard() {
-  const {
-    currentProject,
-    setCurrentProject,
-    deleteProject,
-    addReview,
-    deleteReview,
-    addChecklistToReview,
-    deleteChecklistFromReview,
-  } = useAppStore();
+  const { projects, getReviewsForProject, getProjectMembers } = solidStore;
+  const [currentProject, setCurrentProject] = createSignal(null);
 
   const params = useParams();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = createSignal(false);
 
-  function getProjectIdFromParam(param) {
-    if (!param) return null;
-    const lastDash = param.lastIndexOf('-');
-    return lastDash !== -1 ? param.slice(lastDash + 1) : param;
-  }
-
   createEffect(() => {
-    const projectId = getProjectIdFromParam(params.projectSlug);
+    const projectId = params.projectId;
     if (projectId) {
-      setCurrentProject(projectId);
+      setCurrentProject(projects().find((p) => p.id === projectId) || null);
     } else {
       console.warn('ProjectDashboard: No project found for', projectId);
       navigate(`/dashboard`);
@@ -47,51 +33,44 @@ export default function ProjectDashboard() {
   });
 
   const handleAddReview = async (reviewName) => {
-    const review = createReview({
-      id: await generateUUID(),
-      name: reviewName,
-      createdAt: Date.now(),
-      checklists: [],
-    });
-    await addReview(currentProject().id, review);
+    if (reviewName.trim() === '') return;
+    let resp = await createReview(reviewName, currentProject().id);
   };
 
-  const handleAddChecklist = async (reviewId, checklistName) => {
-    const checklist = createChecklist({
-      name: checklistName,
-      id: await generateUUID(),
-      createdAt: Date.now(),
-      reviewerName: 'Unassigned',
-    });
-    await addChecklistToReview(currentProject().id, reviewId, checklist);
-  };
+  const handleAddChecklist = async (reviewId) => {
+    try {
+      const checklistResp = await createChecklist(reviewId);
+      // Create a new checklist object with the backend id
+      const newChecklist = createAMSTARChecklist({
+        name: 'New Checklist',
+        id: checklistResp.id,
+        createdAt: Date.now(),
+        reviewerName: '',
+      });
 
-  const handleChecklistClick = (checklist) => {
-    const checklistSlug = slugify(checklist.name);
-    const projectSlug = slugify(currentProject().name);
-    const review = (currentProject().reviews || []).find((r) =>
-      (r.checklists || []).some((cl) => cl.id === checklist.id),
-    );
-    if (!review) {
-      console.error('Review not found for checklist', checklist);
-      return;
+      // Save all default answers for this checklist
+      await Promise.all(
+        Object.keys(newChecklist).map(async (key) => {
+          if (/^q\d+[a-z]*$/i.test(key) && newChecklist[key]) {
+            try {
+              await saveChecklistAnswer(newChecklist.id, key, newChecklist[key].answers, newChecklist[key].critical);
+            } catch (err) {
+              console.error('Failed to save answer for', key, err);
+            }
+          }
+        }),
+      );
+    } catch (error) {
+      console.error('Error creating checklist:', error);
     }
-    const reviewSlug = slugify(review.name);
-    navigate(
-      `/projects/${projectSlug}-${currentProject().id}/reviews/${reviewSlug}-${review.id}/checklists/${checklistSlug}-${checklist.id}`,
-    );
+  };
+
+  const handleChecklistClick = (review, checklist) => {
+    navigate(`/projects/${currentProject().id}/reviews/${review.id}/checklists/${checklist.id}`);
   };
 
   const toggleMemberManager = () => {
-    console.log('Toggling member manager', isOpen());
     setIsOpen(!isOpen());
-  };
-
-  const handleMemberAdded = (user) => {
-    // Update local state or refresh project details
-    console.log('New member added:', user);
-    // Close the modal after member is added
-    setIsOpen(false);
   };
 
   return (
@@ -102,28 +81,24 @@ export default function ProjectDashboard() {
           onDeleteProject={deleteProject}
           onManageMembers={toggleMemberManager}
         />
-        <ProjectMemberManager
-          open={isOpen()}
-          onClose={() => setIsOpen(false)}
-          projectId={currentProject().id}
-          onMemberAdded={handleMemberAdded}
+        <ProjectMemberManager open={isOpen()} onClose={() => setIsOpen(false)} projectId={currentProject().id} />
+        <ProjectMetadata
+          updatedAt={currentProject().updated_at}
+          members={() => getProjectMembers(currentProject().id)}
         />
-        <ProjectMetadata createdAt={currentProject().createdAt} />
-
-        <AddReviewForm onAddReview={handleAddReview} />
 
         <ReviewsList
-          onDeleteReview={(reviewId) => deleteReview(currentProject().id, reviewId)}
+          reviews={() => getReviewsForProject(currentProject().id)}
+          onDeleteReview={(reviewId) => deleteReview(reviewId)}
           onChecklistClick={handleChecklistClick}
-          onDeleteChecklist={(reviewId, checklistId) =>
-            deleteChecklistFromReview(currentProject().id, reviewId, checklistId)
-          }
+          onDeleteChecklist={(checklistId) => deleteChecklist(checklistId)}
           onAddChecklist={handleAddChecklist}
         />
+        <AddReviewForm onAddReview={handleAddReview} />
 
-        <FileManagement />
+        {/* <FileManagement /> */}
 
-        <ChartSection />
+        <ChartSection project={currentProject()} />
       </div>
     </Show>
   );

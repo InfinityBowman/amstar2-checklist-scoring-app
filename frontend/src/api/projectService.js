@@ -4,6 +4,7 @@ import { authFetch } from './authService.js';
 export async function createProject(name) {
   console.log('Creating project with name:', name);
   try {
+    let start = performance.now();
     const response = await authFetch(`${API_ENDPOINTS.PROJECTS}`, {
       method: 'POST',
       headers: {
@@ -11,13 +12,17 @@ export async function createProject(name) {
       },
       body: JSON.stringify({ name }),
     });
+    let end = performance.now();
+    console.log(`createProject API call took ${end - start} ms`);
 
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || 'Failed to create project');
     }
+    let responseJson = await response.json();
+    console.log('Project created successfully:', responseJson);
 
-    return await response.json();
+    return responseJson;
   } catch (error) {
     console.error('Error creating project:', error);
     throw error;
@@ -63,6 +68,29 @@ export async function addUserToProjectByEmail(projectId, email) {
     return await response.json();
   } catch (error) {
     console.error('Error adding user to project by email:', error);
+    throw error;
+  }
+}
+
+// Delete a project by ID
+export async function deleteProject(projectId) {
+  try {
+    const response = await authFetch(`${API_ENDPOINTS.PROJECTS}/${projectId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to delete project');
+    }
+
+    // No content expected on success
+    return true;
+  } catch (error) {
+    console.error('Error deleting project:', error);
     throw error;
   }
 }

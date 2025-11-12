@@ -1,5 +1,5 @@
-// API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// API Configuration - Use Caddy proxy
+const API_BASE_URL = 'https://localhost';
 const API_PREFIX = import.meta.env.VITE_API_PREFIX || '/api/v1';
 
 // Ensure API_BASE_URL doesn't already include the API prefix
@@ -7,13 +7,6 @@ let baseUrl = API_BASE_URL;
 if (baseUrl.endsWith('/api/v1')) {
   baseUrl = baseUrl.replace('/api/v1', '');
 }
-
-// Debug logging
-// console.log('VITE_API_URL env var:', import.meta.env.VITE_API_URL);
-// console.log('API_PREFIX env var:', import.meta.env.VITE_API_PREFIX);
-// console.log('API_BASE_URL:', API_BASE_URL);
-// console.log('baseUrl:', baseUrl);
-// console.log('Full API base URL:', `${baseUrl}${API_PREFIX}`);
 
 export const API_ENDPOINTS = {
   // Auth endpoints
@@ -39,7 +32,8 @@ export const API_ENDPOINTS = {
   // Checklist endpoints
   CHECKLISTS: `${baseUrl}${API_PREFIX}/checklists`,
 
-  ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric/shape`,
+  // Use Caddy proxy for ElectricSQL when available, otherwise direct
+  ELECTRIC_SHAPE: `https://localhost/v1/shape`, // Through Caddy proxy
 
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,

@@ -13,7 +13,7 @@ import NotFound from './NotFound.jsx';
 import Offline from './Offline.jsx';
 import useOnlineStatus from '@primitives/useOnlineStatus.js';
 import AMSTAR2Merge from './AMSTAR2Merge.jsx';
-import Electric from './Electric.jsx';
+import DataViewer from '@/components/DataViewer.jsx';
 
 export const BASEPATH = '/amstar2-checklist-scoring-app';
 
@@ -30,15 +30,12 @@ export default function AppRoutes() {
       <Route path="/" component={App}>
         <Route path="/" component={Home} />
         <Route path="/dashboard" component={AppDashboard} />
-        <Route path="/electric" component={Electric} />
+        <Route path="/dataviewer" component={DataViewer} />
         {/* <Route path="/project/new" component={CreateProject} /> */}
-        <Route path="/projects/:projectSlug" component={ProjectDashboard} />
-        <Route
-          path="/projects/:projectSlug/reviews/:reviewSlug/checklists/:checklistSlug"
-          component={AMSTAR2Checklist}
-        />
-        <Route path="/checklist/:checklistSlug" component={AMSTAR2Checklist} />
-        <Route path="/merge/:checklistSlugA/:checklistSlugB" component={AMSTAR2Merge} />
+        <Route path="/projects/:projectId" component={ProjectDashboard} />
+        <Route path="/projects/:projectId/reviews/:reviewId/checklists/:checklistId" component={AMSTAR2Checklist} />
+        <Route path="/checklist/:checklistId" component={AMSTAR2Checklist} />
+        <Route path="/merge/:checklistIdA/:checklistIdB" component={AMSTAR2Merge} />
         <Route
           path="/signin"
           component={() => (

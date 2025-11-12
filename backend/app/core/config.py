@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     # CORS
     ALLOWED_ORIGINS: str | list[str] = Field(
-        default_factory=lambda: ["http://localhost:5173"],
+        default_factory=lambda: ["http://localhost:5173", "https://localhost"],
         description="Comma-separated list or JSON list of allowed origins",
     )
 

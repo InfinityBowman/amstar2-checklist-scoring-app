@@ -28,15 +28,36 @@ export default function SignIn() {
       navigate('/dashboard', { replace: true });
       setLoading(false);
     } catch (err) {
-      let msg = JSON.parse(err.message).detail;
+      let errorDetail;
 
-      // If user has made account but not verified email
-      if (msg.includes('Email not verified')) {
+      // Try to parse error message as JSON
+      try {
+        // First try to parse the entire message
+        const errorJson = JSON.parse(err.message);
+        errorDetail = errorJson.detail;
+      } catch {
+        try {
+          // If that fails, check if detail is already a string
+          errorDetail = err.message;
+        } catch {
+          // If all parsing fails, use the raw message
+          errorDetail = String(err.message);
+        }
+      }
+
+      console.log('Error detail:', errorDetail); // For debugging
+
+      // Check for email verification
+      if (
+        errorDetail &&
+        typeof errorDetail === 'string' &&
+        (errorDetail.includes('Email not verified') || errorDetail.includes('email_verified_at is null'))
+      ) {
         navigate('/verify-email', { replace: true });
       } else {
-        setLoading(false);
         setError('Incorrect email or password');
       }
+      setLoading(false);
     }
   }
 

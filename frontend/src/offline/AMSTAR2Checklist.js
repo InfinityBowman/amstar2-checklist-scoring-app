@@ -26,6 +26,13 @@ export function createChecklist({ name = null, id = null, createdAt = Date.now()
     throw new Error('AMSTAR2Checklist requires a non-empty string name.');
   }
 
+  let d = new Date(createdAt);
+  if (isNaN(d)) d = Date.now();
+  // Pad month and day
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  createdAt = `${d.getFullYear()}-${mm}-${dd}`;
+
   return {
     name: name,
     reviewerName: reviewerName || '',

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
-    auth_router, users_router, electric_router,
+    auth_router, users_router,
     projects_router, project_members_router, reviews_router,
     review_assignments_router, checklists_router, checklist_answers_router
 )
@@ -13,9 +13,6 @@ api_router.include_router(auth_router, prefix="/auth", tags=["authentication"])
 
 # Include user endpoints
 api_router.include_router(users_router, prefix="/users", tags=["users"])
-
-# Include electric endpoints
-api_router.include_router(electric_router, prefix="/electric", tags=["electric"])
 
 # Include project endpoints
 api_router.include_router(projects_router, prefix="/projects", tags=["projects"])

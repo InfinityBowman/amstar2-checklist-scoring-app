@@ -1,127 +1,289 @@
-import * as localDB from '@offline/localDB';
+import { authFetch } from './authService';
+import * as projectAPI from './projectService';
+import * as reviewAPI from './reviewService';
+import * as checklistAPI from './checklistService';
+import { solidStore } from '@offline/solidStore';
 
-// Flag to track online status
-let isOnline = navigator.onLine;
+/**
+ * Responsible for syncing local store operations with remote API.
+ * SolidStore does optimistic updates, it then needs to call an intermediate queue with a rollback
+ * state if the API call fails. That queue uses the respective services to call the API. It will
+ * also save itself to local storage. It needs to be responsible for understanding if it is online.
+ * It also needs to update IDs for new entities created offline.
+ */
 
-// Listen for online/offline events
-window.addEventListener('online', () => {
-  isOnline = true;
-  syncPendingChanges(); // Attempt to sync when going online
-});
-window.addEventListener('offline', () => {
-  isOnline = false;
-});
+export function generateTempId(prefix = 'temp') {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
 
-// Queue for storing operations that need to be synced
-const syncQueue = [];
+const transactionQueue = [];
 
-// Add an operation to the sync queue
-export function queueSyncOperation(operation, data) {
-  syncQueue.push({ operation, data, timestamp: Date.now() });
+export const OperationType = {
+  CREATE_PROJECT: 'CREATE_PROJECT',
+  UPDATE_PROJECT: 'UPDATE_PROJECT',
+  DELETE_PROJECT: 'DELETE_PROJECT',
+};
 
-  // Store the queue in localStorage for persistence
-  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
+export function enqueueOperation(type, data, id, snapshot = null) {
+  console.log('Enqueuing operation:', type, data, id, snapshot);
+  const operation = {
+    id,
+    type,
+    data,
+    status: 'pending',
+    snapshot,
+  };
+  transactionQueue.push(operation);
+  processQueue();
+  return operation;
+}
 
-  // If we're online, try to sync immediately
-  if (isOnline) {
-    syncPendingChanges();
+// Process the queue
+async function processQueue() {
+  if (transactionQueue.length === 0) return;
+
+  const operation = transactionQueue[0];
+  console.log('Processing operation:', transactionQueue.length, operation);
+
+  try {
+    let result;
+    switch (operation.type) {
+      case OperationType.CREATE_PROJECT:
+        result = await projectAPI.createProject(operation.data);
+        console.log('Created project on server:', result);
+        if (operation.id) {
+          // Replace temp ID with server ID in store and queue
+          console.log(`Replacing tempId ${operation.id} with server id ${result.id}`);
+          swapEntityIds(operation.id, result.id, 'project');
+        }
+        break;
+
+      case OperationType.UPDATE_PROJECT:
+        // result = await projectAPI.updateProject(operation.data.id, operation.data);
+        break;
+
+      case OperationType.DELETE_PROJECT:
+        // result = await projectAPI.deleteProject(operation.data.id);
+        break;
+    }
+
+    operation.status = 'completed';
+    transactionQueue.shift(); // Remove completed operation
+
+    // Process next operation if any
+    if (transactionQueue.length > 0) {
+      processQueue();
+    }
+  } catch (error) {
+    operation.status = 'failed';
+    operation.error = error.message;
+    console.error('Operation failed:', error);
+    // Maybe want to implement retry logic here
+
+    // Apply snapshot
+    solidStore.loadStoreSnapshot(operation.snapshot);
+    console.log('Applied snapshot:', operation.snapshot);
+
+    // Remove failed operation from queue
+    transactionQueue.shift();
+
+    // Remove any dependent operations that would fail without this one
+    removeDependendentOperations(operation.id);
+
+    // Continue processing queue if there are more operations
+    if (transactionQueue.length > 0) {
+      processQueue();
+    }
   }
 }
 
-// Process the sync queue
-export async function syncPendingChanges() {
-  if (!isOnline || syncQueue.length === 0) return;
+// Example usage for creating a project
+export function createProject(projectData, snapshot) {
+  enqueueOperation(OperationType.CREATE_PROJECT, projectData, projectData.id, snapshot);
+}
 
-  console.log(`Attempting to sync ${syncQueue.length} pending changes`);
+/**
+ * Swaps temporary IDs with server IDs across all related tables
+ * And across the transaction queue
+ * @param {string} tempId - The temporary ID to replace
+ * @param {string} serverId - The new server ID
+ * @param {string} entityType - The type of entity (project, review, checklist)
+ */
+function swapEntityIds(tempId, serverId, entityType) {
+  const store = solidStore.tinyStore;
 
-  for (let i = 0; i < syncQueue.length; i++) {
-    const { operation, data } = syncQueue[i];
+  // First update the transaction queue
+  updateQueueIds(tempId, serverId, entityType);
 
-    try {
-      // Process different operation types
-      switch (operation) {
-        case 'createProject':
-          const { createProject } = await import('./projectService.js');
-          await createProject(data.name);
-          break;
-
-        case 'addUserToProject':
-          const { addUserToProject } = await import('./projectService.js');
-          await addUserToProject(data.projectId, data.userId);
-          break;
-
-        case 'addUserToProjectByEmail':
-          const { addUserToProjectByEmail } = await import('./projectService.js');
-          await addUserToProjectByEmail(data.projectId, data.email);
-          break;
-
-        case 'createReview':
-          const { createReview } = await import('./reviewService.js');
-          await createReview(data.name, data.projectId);
-          break;
-
-        case 'assignReviewer':
-          const { assignReviewer } = await import('./reviewService.js');
-          await assignReviewer(data.reviewId, data.userId);
-          break;
-
-        case 'createChecklist':
-          const { createChecklist } = await import('./checklistService.js');
-          await createChecklist(data.reviewId, data.reviewerId);
-          break;
-
-        case 'completeChecklist':
-          const { completeChecklist } = await import('./checklistService.js');
-          await completeChecklist(data.checklistId);
-          break;
-
-        case 'saveChecklistAnswer':
-          const { saveChecklistAnswer } = await import('./checklistService.js');
-          await saveChecklistAnswer(data.checklistId, data.questionKey, data.answers, data.isCritical);
-          break;
-
-        default:
-          console.warn(`Unknown operation type: ${operation}`);
-          continue;
+  switch (entityType) {
+    case 'project': {
+      // Update project ID
+      const projectData = store.getRow('projects', tempId);
+      if (projectData) {
+        store.delRow('projects', tempId);
+        store.setRow('projects', serverId, projectData);
       }
 
-      // If successful, remove the operation from the queue
-      syncQueue.splice(i, 1);
-      i--; // Adjust index since we removed an item
-    } catch (error) {
-      console.error(`Failed to sync operation ${operation}:`, error);
-      // We'll keep it in the queue to retry later
+      // Update project members
+      const projectMembers = Object.entries(store.getTable('project_members') || {}).filter(
+        ([_, member]) => member.project_id === tempId,
+      );
+
+      projectMembers.forEach(([memberId, member]) => {
+        store.delRow('project_members', memberId);
+        const newMemberId = memberId.replace(tempId, serverId);
+        store.setRow('project_members', newMemberId, {
+          ...member,
+          project_id: serverId,
+        });
+      });
+
+      // Update reviews project_id
+      const projectReviews = Object.entries(store.getTable('reviews') || {}).filter(
+        ([_, review]) => review.project_id === tempId,
+      );
+
+      projectReviews.forEach(([reviewId, review]) => {
+        store.setRow('reviews', reviewId, {
+          ...review,
+          project_id: serverId,
+        });
+      });
+      break;
+    }
+
+    case 'review': {
+      // Update review ID
+      const reviewData = store.getRow('reviews', tempId);
+      if (reviewData) {
+        store.delRow('reviews', tempId);
+        store.setRow('reviews', serverId, reviewData);
+      }
+
+      // Update review assignments
+      const reviewAssignments = Object.entries(store.getTable('review_assignments') || {}).filter(
+        ([_, assignment]) => assignment.review_id === tempId,
+      );
+
+      reviewAssignments.forEach(([assignmentId, assignment]) => {
+        store.delRow('review_assignments', assignmentId);
+        const newAssignmentId = assignmentId.replace(tempId, serverId);
+        store.setRow('review_assignments', newAssignmentId, {
+          ...assignment,
+          review_id: serverId,
+        });
+      });
+
+      // Update checklists review_id
+      const reviewChecklists = Object.entries(store.getTable('checklists') || {}).filter(
+        ([_, checklist]) => checklist.review_id === tempId,
+      );
+
+      reviewChecklists.forEach(([checklistId, checklist]) => {
+        store.setRow('checklists', checklistId, {
+          ...checklist,
+          review_id: serverId,
+        });
+      });
+      break;
+    }
+
+    case 'checklist': {
+      // Update checklist ID
+      const checklistData = store.getRow('checklists', tempId);
+      if (checklistData) {
+        store.delRow('checklists', tempId);
+        store.setRow('checklists', serverId, checklistData);
+      }
+
+      // Update checklist answers
+      const checklistAnswers = Object.entries(store.getTable('checklist_answers') || {}).filter(
+        ([_, answer]) => answer.checklist_id === tempId,
+      );
+
+      checklistAnswers.forEach(([answerId, answer]) => {
+        store.setRow('checklist_answers', answerId, {
+          ...answer,
+          checklist_id: serverId,
+        });
+      });
+      break;
     }
   }
-
-  // Update stored queue
-  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
-
-  console.log(`Sync complete. ${syncQueue.length} operations remaining.`);
 }
 
-// Initialize: Load queue from localStorage and attempt to sync
-export function initializeSync() {
-  const storedQueue = localStorage.getItem('syncQueue');
-  if (storedQueue) {
-    try {
-      const parsedQueue = JSON.parse(storedQueue);
-      syncQueue.push(...parsedQueue);
-    } catch (error) {
-      console.error('Failed to parse stored sync queue:', error);
+/**
+ * Updates IDs in the transaction queue data
+ * @param {string} tempId - The temporary ID to replace
+ * @param {string} serverId - The new server ID
+ * @param {string} entityType - The type of entity
+ */
+function updateQueueIds(tempId, serverId, entityType) {
+  console.log(`Updating queue IDs from ${tempId} to ${serverId} for entity type ${entityType}`);
+  for (const operation of transactionQueue) {
+    // Skip the first operation since it's the one that triggered the swap
+    if (operation === transactionQueue[0]) continue;
+
+    // Update operation ID if it matches
+    if (operation.id === tempId) {
+      operation.id = serverId;
+    }
+
+    // Update data based on entity type
+    switch (entityType) {
+      case 'project': {
+        if (operation.data.project_id === tempId) {
+          operation.data.project_id = serverId;
+        }
+        // Handle rollback data
+        if (operation.rollbackData?.project_id === tempId) {
+          operation.rollbackData.project_id = serverId;
+        }
+        break;
+      }
+      case 'review': {
+        if (operation.data.review_id === tempId) {
+          operation.data.review_id = serverId;
+        }
+        // Handle rollback data
+        if (operation.rollbackData?.review_id === tempId) {
+          operation.rollbackData.review_id = serverId;
+        }
+        break;
+      }
+      case 'checklist': {
+        if (operation.data.checklist_id === tempId) {
+          operation.data.checklist_id = serverId;
+        }
+        // Handle rollback data
+        if (operation.rollbackData?.checklist_id === tempId) {
+          operation.rollbackData.checklist_id = serverId;
+        }
+        break;
+      }
     }
   }
-
-  // Try to sync on initialization if online
-  if (isOnline) {
-    syncPendingChanges();
-  }
 }
 
-// Export utility to check if we're online
-export function getOnlineStatus() {
-  return isOnline;
-}
+/**
+ * Removes operations that depend on a failed operation
+ * @param {string} failedId - The ID of the failed operation
+ */
+function removeDependendentOperations(failedId) {
+  // Remove operations that reference the failed ID
+  transactionQueue.forEach((op, index) => {
+    const hasReference = Object.values(op.data).some((value) => value === failedId);
+    if (hasReference) {
+      console.log(`Removing dependent operation:`, op);
+      // Might need to go down the tree more to remove all things like
+      // reviews for a project and then checklists for those reviews
+      // Mark for removal
+      op.status = 'removed';
+    }
+  });
 
-// Initialize on import
-initializeSync();
+  // Filter out removed operations
+  const newQueue = transactionQueue.filter((op) => op.status !== 'removed');
+  transactionQueue.length = 0;
+  transactionQueue.push(...newQueue);
+}

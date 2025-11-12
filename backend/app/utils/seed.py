@@ -51,9 +51,9 @@ async def seed_database():
     Seed the database with initial data for development.
     Only runs in development mode.
     """
-    if os.getenv("ENV", "development") != "development":
-        logger.info("Skipping database seeding in non-development environment")
-        return
+    # if os.getenv("ENV", "development") != "development":
+    #     logger.info("Skipping database seeding in non-development environment")
+    #     return
     
     # Check if database is already seeded
     needs_seeding = await check_needs_seeding()
@@ -71,7 +71,6 @@ async def seed_database():
     await seed_demo_review_assignments()
     await seed_demo_checklists()
     await seed_demo_checklist_answers()
-    await seed_scores_table()
     
     logger.info("Full database seeding completed successfully.")
 
@@ -208,9 +207,9 @@ async def seed_demo_projects():
             # Add each project
             for project in demo_projects:
                 sql = f"""
-                INSERT INTO projects (id, owner_id, name, updated_at)
+                INSERT INTO projects (id, owner_id, name, created_at, updated_at)
                 VALUES 
-                ('{project['id']}', '{project['owner_id']}', '{project['name']}', NOW());
+                ('{project['id']}', '{project['owner_id']}', '{project['name']}', NOW(), NOW());
                 """
                 try:
                     await db.execute(text(sql))
@@ -440,64 +439,6 @@ async def seed_demo_checklist_answers():
             logger.info("Demo checklist answers seeding completed")
         except Exception as e:
             logger.error(f"Error seeding demo checklist answers: {e}")
-            # Don't fail the entire seeding process if one step fails
-            pass
-
-async def seed_scores_table():
-    """Seed the backward compatibility scores table"""
-    
-    demo_scores = [
-        {"name": "Alice", "value": 3.14},
-        {"name": "Bob", "value": 2.71},
-        {"name": "Charlie", "value": -1.618},
-        {"name": "David", "value": 1.414},
-        {"name": "Eve", "value": 0}
-    ]
-    
-    logger.info("Seeding scores table...")
-    
-    async for db in get_session():
-        try:
-            # First check if scores table exists
-            try:
-                # Create the table if it doesn't exist
-                create_table_sql = """
-                CREATE TABLE IF NOT EXISTS scores (
-                  id SERIAL PRIMARY KEY,
-                  name VARCHAR(255),
-                  value FLOAT
-                );
-                """
-                await db.execute(text(create_table_sql))
-                await db.commit()
-            except Exception as e:
-                logger.error(f"Error creating scores table: {e}")
-                await db.rollback()
-                return
-            
-            # Check if scores table has data
-            result = await db.execute(text("SELECT COUNT(*) FROM scores"))
-            count = result.scalar()
-            if count and count > 0:
-                logger.info(f"Scores table already has {count} rows, skipping")
-                return
-            
-            # Add each score
-            for score in demo_scores:
-                sql = f"""
-                INSERT INTO scores (name, value) VALUES
-                ('{score['name']}', {score['value']});
-                """
-                try:
-                    await db.execute(text(sql))
-                    await db.commit()
-                except Exception as e:
-                    logger.error(f"Error adding score for {score['name']}: {e}")
-                    await db.rollback()
-            
-            logger.info("Scores table seeding completed")
-        except Exception as e:
-            logger.error(f"Error seeding scores table: {e}")
             # Don't fail the entire seeding process if one step fails
             pass
 

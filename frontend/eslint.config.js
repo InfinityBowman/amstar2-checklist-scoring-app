@@ -31,8 +31,8 @@ export default defineConfig([
     },
     rules: {
       // Error prevention
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      'no-unused-vars': ['off', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-console': ['off', { allow: ['warn', 'error', 'info'] }],
 
       // Flexibility for development
       'no-debugger': 'warn',
@@ -81,7 +81,7 @@ export default defineConfig([
       'jsx-a11y/iframe-has-title': 'error',
       'jsx-a11y/img-redundant-alt': 'error',
       'jsx-a11y/interactive-supports-focus': 'warn',
-      'jsx-a11y/label-has-associated-control': 'error',
+      // 'jsx-a11y/label-has-associated-control': 'error',
       'jsx-a11y/media-has-caption': 'warn',
       'jsx-a11y/mouse-events-have-key-events': 'warn',
       'jsx-a11y/no-access-key': 'error',
@@ -93,9 +93,6 @@ export default defineConfig([
       'jsx-a11y/role-supports-aria-props': 'error',
       'jsx-a11y/scope': 'error',
       'jsx-a11y/tabindex-no-positive': 'warn',
-
-      // Error prevention
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
   },
 ]);

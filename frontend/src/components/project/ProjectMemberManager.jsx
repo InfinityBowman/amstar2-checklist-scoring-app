@@ -1,9 +1,9 @@
-import { createSignal, createEffect, Show } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { useAppStore } from '@/AppStore';
 
 export default function ProjectMemberManager(props) {
-  const { searchUsers, addUserToProjectByEmail, currentProject } = useAppStore();
+  const { searchUsers, addUserToProjectByEmail } = useAppStore();
 
   // Local state
   const [searchQuery, setSearchQuery] = createSignal('');
@@ -29,7 +29,7 @@ export default function ProjectMemberManager(props) {
       debounceTimeout = setTimeout(async () => {
         try {
           const results = await searchUsers(query);
-          await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay
+          await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
           setSearchResults(results);
         } catch (err) {
           console.error('Search error:', err);
@@ -38,7 +38,7 @@ export default function ProjectMemberManager(props) {
         } finally {
           setIsSearching(false);
         }
-      }, 300);
+      }, 100);
     }
   });
 
@@ -62,14 +62,9 @@ export default function ProjectMemberManager(props) {
     setSuccess('');
 
     try {
-      const result = await addUserToProjectByEmail(currentProject().id, email());
+      const result = await addUserToProjectByEmail(props.projectId, email());
       setSuccess(`Added ${result.user.name} (${result.user.email}) to the project`);
       setEmail('');
-
-      // Notify parent component about the new member
-      if (props.onMemberAdded) {
-        props.onMemberAdded(result.user);
-      }
     } catch (err) {
       setError(err.message || 'Failed to add user to project');
     }
@@ -78,8 +73,29 @@ export default function ProjectMemberManager(props) {
   return (
     <Show when={props.open}>
       <Portal>
-        <div class="fixed inset-0 z-50 w-full flex items-center justify-center bg-black/40 overflow-auto py-8">
-          <div class="max-w-2xl w-full mx-auto p-6 md:p-8 bg-white rounded-xl shadow-lg border border-gray-100 m-4">
+        <div
+          class="fixed inset-0 z-50 w-full flex items-center justify-center bg-black/40 overflow-auto py-8"
+          tabIndex={-1}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              props.onClose?.();
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              props.onClose?.();
+            }
+          }}
+          aria-label="Close dialog on backdrop click or Escape"
+        >
+          <div
+            class="max-w-2xl w-full mx-auto p-6 md:p-8 bg-white rounded-xl shadow-lg border border-gray-100 m-4"
+            tabIndex={0}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={() => {}}
+            aria-modal="true"
+            role="dialog"
+          >
             <div class="flex justify-between items-start mb-6">
               <div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">Add Team Members</h3>
@@ -125,30 +141,41 @@ export default function ProjectMemberManager(props) {
                 <Show when={searchResults().length > 0}>
                   <div class="absolute w-full z-50">
                     <ul class="max-h-[240px] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg divide-y divide-gray-100">
-                      {searchResults().map((user) => (
-                        <li
-                          onClick={() => handleSelectUser(user)}
-                          class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-150 flex items-center justify-between group"
-                        >
-                          <div class="flex items-center min-w-0">
-                            <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                              {user.name?.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="ml-3 min-w-0 flex-1">
-                              <p class="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-                              <p class="text-sm text-gray-500 truncate">{user.email}</p>
-                            </div>
-                          </div>
-                          <svg
-                            class="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                      <For each={searchResults()}>
+                        {(user) => (
+                          <li
+                            onClick={() => handleSelectUser(user)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleSelectUser(user);
+                              }
+                            }}
+                            tabIndex={0}
+                            role="button"
+                            aria-label={`Select user ${user.name}`}
+                            class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-150 flex items-center justify-between group"
                           >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </li>
-                      ))}
+                            <div class="flex items-center min-w-0">
+                              <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                {user.name?.charAt(0).toUpperCase()}
+                              </div>
+                              <div class="ml-3 min-w-0 flex-1">
+                                <p class="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                                <p class="text-sm text-gray-500 truncate">{user.email}</p>
+                              </div>
+                            </div>
+                            <svg
+                              class="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </li>
+                        )}
+                      </For>
                     </ul>
                   </div>
                 </Show>
@@ -163,19 +190,12 @@ export default function ProjectMemberManager(props) {
                         fill="none"
                         viewBox="0 0 24 24"
                       >
-                        <circle
-                          class="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                         <path
                           class="opacity-75"
                           fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                        />
                       </svg>
                       Searching...
                     </div>
@@ -212,7 +232,7 @@ export default function ProjectMemberManager(props) {
             {/* Divider */}
             <div class="relative mb-8">
               <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-300"></div>
+                <div class="w-full border-t border-gray-300" />
               </div>
               <div class="relative flex justify-center text-sm">
                 <span class="px-4 bg-white text-gray-500 font-medium">Or add by email</span>
