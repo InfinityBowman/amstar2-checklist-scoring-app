@@ -2851,7 +2851,7 @@ class NetworkOnly extends Strategy {
 }
 
 console.info("Service worker loaded");
-precacheAndRoute([{"revision":null,"url":"assets/AppStore.api-BNN_Z6Yy.js"},{"revision":null,"url":"assets/index-ClkFceIj.js"},{"revision":null,"url":"assets/index-DNLPTaif.css"},{"revision":null,"url":"assets/userService-Bob0mo3v.js"},{"revision":"e69679d8817b94c2108d23e600bc4b71","url":"index.html"},{"revision":"583140937b17754a4b0727098720af0e","url":"registerSW.js"},{"revision":"5d3e0acfe04a12d24de1307fec167172","url":"apple-touch-icon.png"},{"revision":"de11fb7ff41c47fa98878b1c73faa2f5","url":"favicon-16x16.png"},{"revision":"a00092ad4c3f35955796184e7ba8c011","url":"favicon-32x32.png"},{"revision":"a252619223354bc5b54898df190cfd20","url":"manifest.webmanifest"}]);
+precacheAndRoute([{"revision":null,"url":"assets/AppStore.api-DxbeyeXD.js"},{"revision":null,"url":"assets/index-B1dtUATT.css"},{"revision":null,"url":"assets/index-Usmw01oK.js"},{"revision":null,"url":"assets/userService-oe71G94y.js"},{"revision":"7c6064be14a0b4744773654df6545e3d","url":"index.html"},{"revision":"583140937b17754a4b0727098720af0e","url":"registerSW.js"},{"revision":"5d3e0acfe04a12d24de1307fec167172","url":"apple-touch-icon.png"},{"revision":"de11fb7ff41c47fa98878b1c73faa2f5","url":"favicon-16x16.png"},{"revision":"a00092ad4c3f35955796184e7ba8c011","url":"favicon-32x32.png"},{"revision":"a252619223354bc5b54898df190cfd20","url":"manifest.webmanifest"}]);
 cleanupOutdatedCaches();
 let allowlist;
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/amstar2-checklist-scoring-app/index.html"), { allowlist }));
