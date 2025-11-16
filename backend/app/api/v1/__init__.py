@@ -3,7 +3,8 @@ from fastapi import APIRouter
 from app.api.v1.endpoints import (
     auth_router, users_router,
     projects_router, project_members_router, reviews_router,
-    review_assignments_router, checklists_router, checklist_answers_router
+    review_assignments_router, checklists_router, checklist_answers_router,
+    electric_proxy_router
 )
 
 api_router = APIRouter()
@@ -31,3 +32,6 @@ api_router.include_router(checklists_router, prefix="/checklists", tags=["checkl
 
 # Include checklist answer endpoints
 api_router.include_router(checklist_answers_router, prefix="/checklists", tags=["checklist-answers"])
+
+# Include electric proxy endpoints
+api_router.include_router(electric_proxy_router, prefix="/electric-proxy", tags=["electric-proxy"])
