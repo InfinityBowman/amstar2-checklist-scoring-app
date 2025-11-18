@@ -32,8 +32,9 @@ export const API_ENDPOINTS = {
   // Checklist endpoints
   CHECKLISTS: `${baseUrl}${API_PREFIX}/checklists`,
 
-  // Use Caddy proxy for ElectricSQL when available, otherwise direct
-  ELECTRIC_SHAPE: `https://localhost/v1/shape`, // Through Caddy proxy
+  // Use Caddy proxy for ElectricSQL
+  // ELECTRIC_SHAPE: `https://localhost/v1/shape`,
+  ELECTRIC_SHAPE: `${baseUrl}${API_PREFIX}/electric-proxy/v1/shape`,
 
   // Health check endpoints (no API prefix)
   HEALTH: `${baseUrl}/healthz`,
